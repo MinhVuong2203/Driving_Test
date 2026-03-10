@@ -38,7 +38,7 @@ class DrivingCenterService {
       DrivingCenter(
         "Trung tâm đào tạo lái xe Thủ Đức",
         "+84901234501",
-        "",
+        "https:/ffdg.com",
         "https://example.com",
         4.9,
         120,
