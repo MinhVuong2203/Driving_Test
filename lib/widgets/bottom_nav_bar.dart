@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../features/driving_centers/screens/center_list_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
 
-  final int index;
-
-  const BottomNavBar({super.key, required this.index});
+  const BottomNavBar({super.key});
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -15,30 +12,36 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
 
-  late int currentIndex;
+  int currentIndex = 1;
 
   final screens = [
 
-    const Center(child: Text("Ôn luyện GPLX")),
+    const Center(
+      child: Text(
+        "Ôn luyện GPLX",
+        style: TextStyle(fontSize: 20),
+      ),
+    ),
 
     const CenterListScreen(),
 
-    const Center(child: Text("Thông tin")),
-
+    const Center(
+      child: Text(
+        "Thông tin",
+        style: TextStyle(fontSize: 20),
+      ),
+    ),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    currentIndex = widget.index;
-  }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
 
-      body: screens[currentIndex],
+      body: IndexedStack(
+        index: currentIndex,
+        children: screens,
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
 
@@ -47,14 +50,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
         onTap: (index) {
 
           setState(() {
+
             currentIndex = index;
+
           });
 
-          if (index == 0) context.go("/practice");
-          if (index == 1) context.go("/centers");
-          if (index == 2) context.go("/info");
-
         },
+
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
 
         items: const [
 
@@ -78,5 +82,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       ),
 
     );
+
   }
+
 }
