@@ -1,0 +1,227 @@
+1. DATABASE LOCAL (SQLite)
+
+CREATE TABLE topics (
+    id INTEGER PRIMARY KEY, -- ID chủ đề
+    name TEXT NOT NULL, -- Tên chủ đề (khái niệm và quy tắc, Văn hóa dao duc, Kỹ thuật lái xe, Biển báo dường bộ, Sa hình)
+    description TEXT -- Mô tả chủ đề
+);
+
+
+-- Câu hỏi
+CREATE TABLE questions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID câu hỏi (là câu bao nhiêu)
+
+    topic_id INTEGER, -- Thuộc chủ đề nào
+
+    question TEXT NOT NULL, -- Nội dung câu hỏi
+
+    image_url TEXT, -- Hình minh họa cho câu hỏi (nếu có)  assets/images/questions/{Tên}.png
+
+    answer_a TEXT, -- Nội dung đáp án A
+    answer_b TEXT, -- Nội dung đáp án B
+    answer_c TEXT, -- Nội dung đáp án C
+    answer_d TEXT, -- Nội dung đáp án D
+
+	ofRankA INTEGER DEFAULT 0; -- 0 là Không thuộc, 1 là thuộc
+	ofRankB INTEGER DEFAULT 0; -- 0 là Không thuộc, 1 là thuộc
+
+    correct_answer TEXT NOT NULL, -- Đáp án đúng (A,B,C,D)
+
+    explanation TEXT, -- Giải thích vì sao đáp án đúng
+
+    is_critical INTEGER DEFAULT 0, -- Câu điểm liệt (1 = điểm liệt)
+
+    FOREIGN KEY (topic_id) REFERENCES topics(id) -- liên kết tới bảng chủ đề
+);
+
+CREATE TABLE [rank](
+	id INTEGER PRIMARY KEY,
+	name TEXT NOT NULL, -- Tên chủ đề (khái niệm và quy tắc, Văn hóa dao duc, Kỹ thuật lái xe, Biển báo dường bộ, Sa hình)
+    description TEXT -- Mô tả chủ đề
+)
+
+
+CREATE TABLE practice_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID phiên làm bài
+
+    mode TEXT, -- Chế độ làm bài (topic / exam / review_wrong)
+
+    topic_id INTEGER, -- Chủ đề đang làm (nếu luyện theo chủ đề)
+
+    total_questions INTEGER, -- Tổng số câu trong bài
+
+    correct_answers INTEGER, -- Số câu trả lời đúng
+
+    score INTEGER, -- Điểm số đạt được
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Thời gian bắt đầu làm bài
+
+    FOREIGN KEY (topic_id) REFERENCES topics(id)
+);
+
+CREATE TABLE user_answers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID bản ghi
+
+    session_id INTEGER, -- Phiên làm bài
+
+    question_id INTEGER, -- Câu hỏi đã trả lời
+
+    selected_answer TEXT, -- Đáp án người dùng chọn
+
+    is_correct INTEGER, -- Có đúng hay không (1 = đúng)
+
+    FOREIGN KEY (session_id) REFERENCES practice_sessions(id),
+
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+CREATE TABLE wrong_questions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID bản ghi
+
+    question_id INTEGER UNIQUE, -- Câu hỏi bị làm sai
+
+    wrong_count INTEGER DEFAULT 1, -- Số lần làm sai câu này
+
+    last_wrong_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Lần sai gần nhất
+
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+CREATE TABLE exam_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID lần thi
+
+    license_type TEXT, -- Loại bằng (A1, B1, B2...)
+
+    total_questions INTEGER, -- Tổng số câu trong đề thi
+
+    correct_answers INTEGER, -- Số câu đúng
+
+    is_passed INTEGER, -- Kết quả (1 = đậu, 0 = rớt)
+
+    time_spent INTEGER, -- Thời gian làm bài (giây)
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Thời gian thi
+);
+
+2. DATABASE ONLINE (Supabase - PostgreSQL)
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY, -- ID người dùng (từ Supabase Auth)
+
+    name TEXT, -- Tên người dùng
+
+    email TEXT UNIQUE, -- Email đăng nhập
+
+    avatar_url TEXT, -- Ảnh đại diện
+
+	isVip isActive INTEGER DEFAULT 0; -- 0 là thường, 1 là vip
+
+	isActive INTEGER DEFAULT 1; -- 0 là khóa, 1 là hoạt động
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Ngày tạo tài khoản
+);
+
+
+
+CREATE TABLE posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- ID bài viết
+
+    user_id UUID REFERENCES users(id), -- Người đăng
+
+    content TEXT NOT NULL, -- Nội dung bài viết
+
+    image_url TEXT, -- Hình ảnh bài viết
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời gian đăng
+);
+
+
+CREATE TABLE comments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- ID bình luận
+
+    post_id UUID REFERENCES posts(id), -- Bài viết
+
+    user_id UUID REFERENCES users(id), -- Người bình luận
+
+    content TEXT NOT NULL, -- Nội dung bình luận
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời gian bình luận
+);
+
+
+CREATE TABLE driving_centers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- ID trung tâm
+
+    name TEXT NOT NULL, -- Tên trung tâm dạy lái xe
+
+    address TEXT, -- Địa chỉ trung tâm
+
+    latitude DOUBLE PRECISION, -- Vĩ độ (dùng cho bản đồ)
+
+    longitude DOUBLE PRECISION, -- Kinh độ
+
+    phone TEXT, -- Số điện thoại
+
+    rating FLOAT DEFAULT 0 -- Điểm đánh giá trung bình
+);
+
+
+CREATE TABLE reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- ID đánh giá
+
+    center_id UUID REFERENCES driving_centers(id), -- Trung tâm được đánh giá
+
+    user_id UUID REFERENCES users(id), -- Người đánh giá
+
+    rating INTEGER, -- Số sao đánh giá (1-5)
+
+    comment TEXT -- Nội dung đánh giá
+);
+
+
+CREATE TABLE reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- ID đánh giá
+
+    center_id UUID REFERENCES driving_centers(id), -- Trung tâm được đánh giá
+
+    user_id UUID REFERENCES users(id), -- Người đánh giá
+
+    rating INTEGER, -- Số sao đánh giá (1-5)
+
+    comment TEXT -- Nội dung đánh giá
+);
+
+
+CREATE TABLE ai_questions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- ID câu hỏi AI
+
+    user_id UUID REFERENCES users(id), -- Người hỏi
+
+    question TEXT, -- Nội dung câu hỏi gửi AI
+
+    answer TEXT, -- Câu trả lời từ AI
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Thời gian hỏi
+);
+
+CREATE TABLE donate(
+	 id INTEGER PRIMARY KEY AUTOINCREMENT,
+	 donate_name TEXT, -- Bánh mì ốp la 15k, Trà sữa Phúc Long 100k, Phở Bò Landmark Tầng 80 999k
+	 [money] DOUBLE
+)
+
+CREATE TABLE payment(
+	id PRIMARY KEY DEFAULT
+	id_User UUID REFERENCES users(id),
+	id_donate INTEGER REFERENCES donate(id_donate),
+	time_Payment TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PaymentMethod TEXT NULL,
+	Notes TEXT NULL,
+	 -- Cung cấp cho PayOS
+	OrderCode BIGINT,
+)
+
+
+
+
+
