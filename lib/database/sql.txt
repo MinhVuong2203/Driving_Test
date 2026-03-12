@@ -3,13 +3,14 @@
 CREATE TABLE topics (
     id INTEGER PRIMARY KEY, -- ID chủ đề
     name TEXT NOT NULL, -- Tên chủ đề (khái niệm và quy tắc, Văn hóa dao duc, Kỹ thuật lái xe, Biển báo dường bộ, Sa hình)
+    full_name TEXT NOT NULL,
     description TEXT -- Mô tả chủ đề
 );
 
 
 -- Câu hỏi
 CREATE TABLE questions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, -- ID câu hỏi (là câu bao nhiêu)
+    id INTEGER PRIMARY KEY, -- ID câu hỏi (là câu bao nhiêu)
 
     topic_id INTEGER, -- Thuộc chủ đề nào
 
@@ -22,8 +23,8 @@ CREATE TABLE questions (
     answer_c TEXT, -- Nội dung đáp án C
     answer_d TEXT, -- Nội dung đáp án D
 
-	ofRankA INTEGER DEFAULT 0; -- 0 là Không thuộc, 1 là thuộc
-	ofRankB INTEGER DEFAULT 0; -- 0 là Không thuộc, 1 là thuộc
+	ofRankA INTEGER DEFAULT 0, -- 0 là Không thuộc, 1 là thuộc
+	ofRankB INTEGER DEFAULT 0, -- 0 là Không thuộc, 1 là thuộc
 
     correct_answer TEXT NOT NULL, -- Đáp án đúng (A,B,C,D)
 
