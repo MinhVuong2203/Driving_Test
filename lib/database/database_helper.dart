@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -201,40 +204,32 @@ class DatabaseHelper {
     }
   }
 
-  Future _insertQuestions(Database db) async {
-    List<Map<String, dynamic>> questions = [
-      {
-        'id': 451,
-        'topic_id': 5,
-        'question': 'Biển nào chỉ dẫn cho người đi bộ sử dụng hầm chui qua đường?',
-        'image_url': 'assets/images/questions/c451.png',
-        'answer_a': 'Biển 1.',
-        'answer_b': 'Biển 2.',
-        'answer_c': 'Cả hai biển.',
-        'answer_d': 'Không biển nào.',
-        'ofRankA': 1,
-        'ofRankB': 1,
-        'correct_answer': 'B',
-        'explanation': 'Biển 1: I424b “Cầu vượt qua đường cho người đi bộ”; Biển 2: I424d “Hầm chui qua đường cho người đi bộ” nên đáp án đúng là biển 2.'
-      },
-      {
-        'id': 452,
-        'topic_id': 5,
-        'question': 'Biển nào báo hiệu "Nơi đỗ xe dành cho người khuyết tật"?',
-        'image_url': 'assets/images/questions/c452.png',
-        'answer_a': 'Biển 1.',
-        'answer_b': 'Biển 2.',
-        'answer_c': 'Biển 3.',
-        'correct_answer': 'B',
-        'ofRankA': 1,
-        'ofRankB': 1,
-        'explanation': ' Biển 1: R.304 “Đường dành cho xe thô sơ”; Biển 2: I.446 “Nơi đỗ xe dành cho người khuyết tật”; Biển 3: R.305 “Đường dành cho người đi bộ”'
-      },
+  // Future<List<Map<String, dynamic>>> loadQuestionsFromJson() async {
+  //   final String jsonString =
+  //   await rootBundle.loadString('assets/json/questions_451_600.json');
+  //
+  //   final List<dynamic> jsonData = json.decode(jsonString);
+  //
+  //   return jsonData.map((e) => Map<String, dynamic>.from(e)).toList();
+  // }
 
+  Future _insertQuestions(Database db) async {
+
+    List<String> files = [
+      'assets/json/questions_1_150.json',
+      'assets/json/questions_151_300.json',
+      'assets/json/questions_301_450.json',
+      'assets/json/questions_451_600.json',
     ];
 
-    for (var q in questions) {
-      await db.insert('questions', q);
+    for (String file in files) {
+      final String jsonString = await rootBundle.loadString(file);
+
+      final List<dynamic> jsonData = json.decode(jsonString);
+
+      for (var q in jsonData) {
+        await db.insert('questions', Map<String, dynamic>.from(q));
+      }
     }
   }
 
