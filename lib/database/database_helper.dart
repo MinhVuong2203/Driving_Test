@@ -212,6 +212,8 @@ class DatabaseHelper {
         'answer_b': 'Biển 2.',
         'answer_c': 'Cả hai biển.',
         'answer_d': 'Không biển nào.',
+        'ofRankA': 1,
+        'ofRankB': 1,
         'correct_answer': 'B',
         'explanation': 'Biển 1: I424b “Cầu vượt qua đường cho người đi bộ”; Biển 2: I424d “Hầm chui qua đường cho người đi bộ” nên đáp án đúng là biển 2.'
       },
@@ -224,6 +226,8 @@ class DatabaseHelper {
         'answer_b': 'Biển 2.',
         'answer_c': 'Biển 3.',
         'correct_answer': 'B',
+        'ofRankA': 1,
+        'ofRankB': 1,
         'explanation': ' Biển 1: R.304 “Đường dành cho xe thô sơ”; Biển 2: I.446 “Nơi đỗ xe dành cho người khuyết tật”; Biển 3: R.305 “Đường dành cho người đi bộ”'
       },
 
