@@ -39,6 +39,7 @@ flutter:
   assets:
     - assets/icon/
     - assets/images/
+    - assets/json/
 
   # the material Icons class.
   uses-material-design: true
