@@ -1,3 +1,4 @@
+import 'package:driving_test_prep/features/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../features/driving_centers/screens/center_list_screen.dart';
 
@@ -12,16 +13,10 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
 
-  int currentIndex = 1;
+  int currentIndex = 0;
 
   final screens = [
-
-    const Center(
-      child: Text(
-        "Ôn luyện GPLX",
-        style: TextStyle(fontSize: 20),
-      ),
-    ),
+    HomeScreen(),
 
     const CenterListScreen(),
 
