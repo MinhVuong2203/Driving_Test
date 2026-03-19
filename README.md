@@ -1,8 +1,9 @@
 ÔN LUYỆN GPLX
 Ứng dụng mobile phục vụ cho ôn thi GPLX với 600 câu hỏi phục vụ cho tất cả các loại bằng lái
 
+```bash
 - Màn hình chính
- - Home: Tổng quan tiến độ học, truy cập nhanh các tính năng
+ + Home: Tổng quan tiến độ học, truy cập nhanh các tính năng
 - Ôn luyện
  + Danh sách chủ đề: Hiển thị các chủ đề câu hỏi (biển báo, sa hình, luật giao thông...)
  + Làm bài theo chủ đề: Giao diện câu hỏi trắc nghiệm, có giải thích đáp án
@@ -27,27 +28,28 @@
 - Cá nhân & Cài đặt
  + Hồ sơ cá nhân: Thông tin người dùng, huy hiệu đạt được
  + Cài đặt: Thông báo, giao diện (dark/light mode).
-
+```
 Cấu trúc file 
+```bash
 lib/
 ├── apps/
 ├── database/
 ├── features/
-         ├── home/
-               ├── screens/
-               ├── widgets/
-         ├── driving_center/
-               ├── screens/
-               ├── widgets/
-         └── practice/
-               ├── screens/
-               ├── widgets/
+│   ├── home/
+│   │   ├── screens/
+│   │   └── widgets/
+│   ├── driving_center/
+│   │   ├── screens/
+│   │   └── widgets/
+│   └── practice/
+│       ├── screens/
+│       └── widgets/
 ├── models/
 ├── services/
 ├── utils/
 ├── widgets/
 └── main.dart
-
+```
 main.dart
   Điểm khởi chạy của ứng dụng (runApp)
   Cấu hình MaterialApp, theme, routes,...
