@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: "GPLX App",
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
       debugShowCheckedModeBanner: false,
       home: const BottomNavBar(),
     );
