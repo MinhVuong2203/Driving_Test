@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/bottom_nav_bar.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 class MyApp extends StatelessWidget {
 
