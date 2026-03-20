@@ -41,8 +41,8 @@ flutter:
   assets:
     - assets/icon/
     - assets/images/
-    - assets/json/
-
+    - assets/json/questions/
+    - assets/json/ranks/
   # the material Icons class.
   uses-material-design: true
 

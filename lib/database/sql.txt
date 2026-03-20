@@ -35,13 +35,46 @@ CREATE TABLE questions (
     FOREIGN KEY (topic_id) REFERENCES topics(id) -- liên kết tới bảng chủ đề
 );
 
-CREATE TABLE [rank](
+CREATE TABLE ranks(
 	id INTEGER PRIMARY KEY,
 	name TEXT NOT NULL,
     description TEXT,
     total_questions INTEGER, -- TỔng số câu hỏi trong booj đề
     total_exam INTEGER, -- Tổng số câu thi
+    total_pass INTEGER, -- Số câu cần để đạt
+    time INTEGER -- thời gian thi (phút)
 )
+
+
+INSERT INTO [rank] (id, name, description, total_questions, total_exam, total_pass, time) VALUES
+
+-- Nhóm 25 câu
+('A1', 'Mô tô 2 bánh nhỏ', 'Mô tô hai bánh dung tích xi-lanh ≤ 125cm³ hoặc công suất động cơ điện ≤ 11kW', 250, 25, 21, 19),
+('A', 'Mô tô hai bánh lớn', 'Mô tô hai bánh dung tích xi-lanh > 125cm³ hoặc công suất động cơ điện > 11kW', 250, 25, 23, 19),
+('B1', 'Mô tô ba bánh', 'Xe mô tô ba bánh (luật mới từ 2025)', 300, 25, 23, 19),
+
+-- Nhóm 30 câu
+('B', 'Ô tô con', 'Ô tô chở người đến 8 chỗ (không kể chỗ lái), ô tô tải ≤ 3.500kg', 600, 30, 27, 30),
+
+-- nhóm 35 câu
+('C1', 'Ô tô tải trung', 'Ô tô tải và ô tô chuyên dùng có khối lượng > 3.500kg đến 7.500kg', 600, 35, 32, 22),
+
+-- nhóm 40 câu
+('C', 'Ô tô tải nặng', 'Ô tô tải và ô tô chuyên dùng có khối lượng > 7.500kg', 600, 40, 36, 24),
+
+-- nhóm 45 câu
+('D1', 'Ô tô khách nhỏ', 'Ô tô chở người > 8 chỗ đến 16 chỗ (không kể chỗ lái)', 600, 45, 41, 26),
+('D2', 'Ô tô khách trung' , 'Ô tô chở người > 16 chỗ đến 29 chỗ (không kể chỗ lái)', 600, 45, 41, 26),
+('D', 'Ô tô khách lớn', 'Ô tô chở người > 29 chỗ, xe giường nằm', 600, 45, 41, 26),
+('BE', 'Ô tô con kéo rơ-moóc', 'Các xe hạng B kéo rơ-moóc > 750kg', 600, 45, 41, 26),
+('C1E', 'Ô tô tải C1 kéo rơ-moóc', 'Các xe hạng C1 kéo rơ-moóc > 750kg', 600, 45, 41, 26),
+('CE', 'Ô tô tải C kéo rơ-moóc', 'Các xe hạng C kéo rơ-moóc > 750kg, xe đầu kéo', 600, 45, 41, 26),
+('D1E', 'Ô tô khách D1 kéo rơ-moóc', 'Các xe hạng D1 kéo rơ-moóc > 750kg', 600, 45, 41, 26),
+('D2E', 'Ô tô khách D2 kéo rơ-moóc', 'Các xe hạng D2 kéo rơ-moóc > 750kg', 600, 45, 41, 26),
+('DE', 'Ô tô khách D kéo rơ-moóc', 'Các xe hạng D kéo rơ-moóc > 750kg, xe nối toa', 600, 45, 41, 26),
+
+
+
 
 
 CREATE TABLE practice_sessions (
