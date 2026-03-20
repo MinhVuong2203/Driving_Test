@@ -708,6 +708,7 @@
     "id": 61,
     "topic_id": 1,
     "question": "Khi dừng, đỗ xe trên đường phố hẹp, người lái xe ô tô phải dừng, đỗ xe ở vị trí cách xe ô tô đang đỗ ngược chiều khoảng cách tối thiểu là bao nhiêu mét trong các trường hợp dưới đây để bảo đảm an toàn?",
+    "correct_answer": "C",
     "explanation": " Dừng xe, đỗ xe trên đường hẹp cách xe khác 20 mét",
     "answer_a": "10 mét.",
     "answer_b": "15 mét.",
