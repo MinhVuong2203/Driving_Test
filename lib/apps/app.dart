@@ -1,3 +1,4 @@
+// import 'package:driving_test_prep/widgets/loginwithgg.dart';
 import 'package:flutter/material.dart';
 import '../widgets/bottom_nav_bar.dart';
 
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
       title: "GPLX App",
       theme: ThemeData.light(),
       debugShowCheckedModeBanner: false,
+      // home: const GoogleLoginScreen(),
       home: const BottomNavBar(),
     );
 
