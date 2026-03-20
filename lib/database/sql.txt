@@ -37,8 +37,8 @@ CREATE TABLE questions (
 
 CREATE TABLE [rank](
 	id INTEGER PRIMARY KEY,
-	name TEXT NOT NULL, -- Tên chủ đề (khái niệm và quy tắc, Văn hóa dao duc, Kỹ thuật lái xe, Biển báo dường bộ, Sa hình)
-    description TEXT -- Mô tả chủ đề
+	name TEXT NOT NULL,
+    description TEXT,
 )
 
 
@@ -103,6 +103,17 @@ CREATE TABLE exam_history (
 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP -- Thời gian thi
 );
+
+
+CREATE TABLE setting(
+    rank TEXT,
+    models INTEGER DEFAULT 0,  -- 0 là chấm điểm sau khi nộp, 1 là chấm tại chỗ khi chọn 1 đáp án
+    mode INTEGER DEFAULT 0, --- 0 là không có gì (tối), 1 là có (sáng)
+    vibration INTEGER DEFAULT 0, -- 0 là không rung, 1 là rung
+
+
+)
+
 
 2. DATABASE ONLINE (Supabase - PostgreSQL)
 

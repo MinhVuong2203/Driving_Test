@@ -33,7 +33,7 @@
     "answer_c": "Biển 1 và biển 3",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -46,7 +46,7 @@
     "answer_b": "Biển 3 và biển 3.",
     "answer_c": "Biển 2 và biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -59,7 +59,7 @@
     "answer_b": "Biển 2",
     "answer_c": "Cả hai biển",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -72,7 +72,7 @@
     "answer_b": "Biển 2",
     "answer_c": "Biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -86,7 +86,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -156,7 +156,7 @@
     "answer_c": "Không biển nào.",
     "answer_d": "Cả hai biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -169,7 +169,7 @@
     "answer_b": "Biển 2.",
     "answer_c": "Cả hai biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -182,7 +182,7 @@
     "answer_b": "Biển 2.",
     "answer_c": "Không biển nào.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -207,7 +207,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -221,7 +221,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -259,7 +259,7 @@
     "answer_c": "Không biển nào.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 1 là biển cấm ô tô; Biển 2 là biển cấm xe taxi."
   },
@@ -273,7 +273,7 @@
     "answer_c": "Không biển nào.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1 là biển cấm rẽ trái; Biển 2 là biển chỉ dẫn được phép rẽ trái."
   },
@@ -287,7 +287,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 1 cấm rẽ trái nhưng không cấm quay đầu; Biển 2 là biển chỉ dẫn được phép rẽ trái và quay đầu."
   },
@@ -301,7 +301,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cấm rẽ trái nhưng không cấm quay đầu; Biển 2 là biển hiệu lệnh chỉ được rẽ trái."
   },
@@ -315,7 +315,7 @@
     "answer_c": "Cả ba biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cấm đi ngược chiều; Biển 1 là biển đường cấm; Biển 3 là biển cấm đỗ xe."
   },
@@ -329,7 +329,7 @@
     "answer_c": "Biển 1 và biển 2.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 1 là biển đường cấm; Biển 2 là biển cấm đi ngược chiều; cả hai đều không cho phương tiện đi vào theo hướng đặt biển."
   },
@@ -343,7 +343,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Biển 3.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 1 là cấm đỗ xe; Biển 3 là cấm đỗ xe ngày chẵn; vì vậy gặp biển 1 và biển 3 thì không được đỗ xe vào ngày chẵn."
   },
@@ -357,7 +357,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Biển 3.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 là cấm đỗ xe; Biển 2 là cấm đỗ xe ngày lẻ; vì vậy gặp biển 1 và biển 2 thì không được đỗ xe vào ngày lẻ."
   },
@@ -371,7 +371,7 @@
     "answer_c": "Cả ba biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển STOP, kể cả xe ưu tiên theo luật định vẫn phải dừng lại."
   },
@@ -385,7 +385,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển đường cấm, cấm tất cả xe cơ giới và xe thô sơ đi lại; Biển 2 là biển STOP."
   },
@@ -399,7 +399,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển cấm xe chở hàng nguy hiểm; Biển 1 cấm ô tô tải, Biển 2 cấm ô tô tải có khối lượng chuyên chở trên 2,5 tấn."
   },
@@ -413,7 +413,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 1 và biển 2.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": "Biển 1 cấm xe lam; Biển 2 cấm xe mô tô ba bánh; Biển 3 cấm xe xích lô, nên xe xích lô được phép đi vào khi gặp biển 1 và biển 2."
   },
@@ -427,7 +427,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 cấm xe xích lô nên không cấm xe lam, xe xích lô máy; Biển 1 cấm xe lam, Biển 2 cấm xe mô tô ba bánh."
   },
@@ -441,7 +441,7 @@
     "answer_c": "Đường cấm súc vật vận tải hàng hóa hoặc hành khách dù kéo xe hay chở trên lưng đi qua.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển báo này cấm các loại súc vật vận tải hàng hóa hoặc hành khách đi qua, سواء kéo xe hay chở trên lưng."
   },
@@ -455,7 +455,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển cho biết tốc độ tối đa cho phép vào ban đêm là 70 km/h, áp dụng trong khoảng thời gian từ 22:00 đến 5:00."
   },
@@ -469,7 +469,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Xe ưu tiên theo luật định nếu có tải trọng hoặc chiều cao vượt quá trị số ghi trên biển thì vẫn không được phép đi qua."
   },
@@ -483,7 +483,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển hạn chế chiều cao; Biển 2 là hạn chế tải trọng trục xe; Biển 3 là hạn chế khối lượng toàn bộ xe."
   },
@@ -497,7 +497,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển số 2 là biển hạn chế tải trọng trên trục xe, chỉ cho xe có tải trọng trục từ 7 tấn trở xuống đi qua."
   },
@@ -511,7 +511,7 @@
     "answer_c": "Hạn chế tải trọng trên trục xe.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển số 3 là biển hạn chế khối lượng toàn bộ xe, cấm xe có khối lượng toàn bộ trên 10 tấn đi qua."
   },
@@ -525,7 +525,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Biển 1 cấm xe kéo rơ moóc; Biển 2 cấm máy kéo. Máy kéo kéo theo rơ moóc thuộc trường hợp bị cấm bởi cả hai biển."
   },
@@ -539,7 +539,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cấm xe kéo rơ moóc, không cấm xe ô tô tải không kéo moóc."
   },
@@ -553,7 +553,7 @@
     "answer_c": "Biển 1 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 cấm xe kéo rơ moóc, biển 2 cấm máy kéo; cả hai không áp dụng với ô tô tải không kéo moóc. Biển 3 là biển cấm ô tô tải."
   },
@@ -567,7 +567,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Biển 2 là biển cấm máy kéo; biển 3 là biển cấm ô tô tải và máy kéo. Biển 1 chỉ cấm xe kéo rơ moóc."
   },
@@ -581,7 +581,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển cấm ô tô và mô tô đi theo hướng trái và phải trong phạm vi hiệu lực của biển phụ mũi tên hai chiều, nên xe mô tô ba bánh chở hàng không được rẽ trái hoặc rẽ phải."
   },
@@ -595,7 +595,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển thể hiện cấm ô tô và mô tô đi theo hướng trái và phải, nên có hiệu lực với mô tô hai bánh và ba bánh chở hàng."
   },
@@ -609,7 +609,7 @@
     "answer_c": "Hướng trái và phải không cấm xe cơ giới.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển báo cấm ô tô và mô tô đi về bên trái và bên phải trong phạm vi hiệu lực của biển phụ."
   },
@@ -623,7 +623,7 @@
     "answer_c": "Báo cấm dùng còi có độ vang xa 500 m.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển phụ '500 m' với hai mũi tên lên xuống cho biết chiều dài đoạn đường cấm bóp còi tính từ vị trí đặt biển."
   },
@@ -637,7 +637,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển cấm bóp còi kèm biển phụ chỉ chiều dài 500 m, nên trong suốt đoạn đường này không được phép bấm còi."
   },
@@ -651,7 +651,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển tròn viền đỏ kèm biển phụ bên dưới cấm theo loại xe ghi ở biển phụ. Biển 1 cấm ô tô, biển 3 cấm ô tô tải nên mô tô hai bánh vẫn được đi vào; biển 2 cấm mô tô."
   },
@@ -665,7 +665,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 có biển phụ hình xe mô tô, nên cấm mô tô hai bánh đi vào."
   },
@@ -679,7 +679,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển tròn viền đỏ trắng kết hợp biển phụ hình phương tiện có ý nghĩa cấm đúng loại xe thể hiện trên biển phụ đi vào."
   },
@@ -693,7 +693,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 có biển phụ mũi tên hai đầu và số 800 m, cho biết chiều dài đoạn đường phải giữ cự ly tối thiểu giữa hai xe. Biển 2 chỉ báo khoảng cách đến nơi bắt đầu."
   },
@@ -707,7 +707,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 2 với biển phụ ghi '200 m' báo khoảng cách từ nơi đặt biển đến vị trí bắt đầu phải giữ cự ly tối thiểu."
   },
@@ -721,7 +721,7 @@
     "answer_c": "Được phép đỗ xe và dừng xe theo hướng bên phải.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển cấm dừng và đỗ xe kèm biển phụ mũi tên sang phải cho biết cấm dừng, đỗ theo hướng bên phải kể từ vị trí đặt biển."
   },
@@ -735,7 +735,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển cấm dừng và đỗ xe kèm mũi tên sang phải áp dụng về phía bên phải của vị trí đặt biển, nên không được phép dừng, đỗ."
   },
@@ -749,7 +749,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển báo hạn chế chiều dài toàn bộ xe. Xe ô tô sơ mi rơ moóc có tổng chiều dài lớn hơn trị số ghi trên biển thì không được đi vào."
   },
@@ -763,7 +763,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển hạn chế chiều dài toàn bộ xe và hàng. Trường hợp hàng vượt quá quy định ở cả trước và sau thùng xe thì vẫn không được phép đi vào theo đáp án chuẩn trong bộ đề."
   },
@@ -777,7 +777,7 @@
     "answer_c": "Cấm xe ô tô con.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển này là biển cấm xe ô tô khách đi vào."
   },
@@ -791,7 +791,7 @@
     "answer_c": "Hạn chế chiều dài của xe và hàng.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển có hai mũi tên ngang đối đầu và trị số 3,2 m là biển hạn chế chiều ngang của xe và hàng."
   },
@@ -805,7 +805,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 có nội dung 'ĐÊM 70' kèm khung giờ 22:00 - 5:00, là biển tốc độ tối đa cho phép về ban đêm; biển 2 chỉ là biển hạn chế tốc độ tối đa thông thường."
   },
@@ -819,7 +819,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển bắt đầu khu đông dân cư; Biển 2 là biển hết khu đông dân cư."
   },
@@ -833,7 +833,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 viền đỏ nền trắng là biển hạn chế tốc độ tối đa; Biển 1 nền xanh là biển tốc độ tối thiểu."
   },
@@ -847,7 +847,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển kết thúc đường cao tốc; Biển 1 là biển hết đường ưu tiên, Biển 3 là biển hết đường dành cho ô tô."
   },
@@ -861,7 +861,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển tròn viền đỏ số 50 quy định tốc độ tối đa cho phép là 50 km/h."
   },
@@ -875,7 +875,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển chỉ dẫn bắt đầu đường cao tốc có các làn quy định tốc độ khác nhau; Biển 1 chỉ là biển báo đường cao tốc."
   },
@@ -889,7 +889,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển nền xanh số 60 là biển tốc độ tối thiểu, yêu cầu xe cơ giới chạy không thấp hơn tốc độ ghi trên biển khi điều kiện cho phép."
   },
@@ -903,7 +903,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo chỗ người đi bộ qua đường, người lái xe phải chú ý nhường đường; Biển 2 cấm người đi bộ, Biển 3 là đường dành cho người đi bộ."
   },
@@ -917,7 +917,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển chỉ dẫn đường dành cho người đi bộ; các loại xe không được đi vào đường này."
   },
@@ -931,7 +931,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển chỉ dẫn đường dành cho xe thô sơ; Biển 2 là biển cấm xe đạp, Biển 3 là biển cảnh báo người đi xe đạp cắt ngang."
   },
@@ -945,7 +945,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": "Cả ba biển đều là biển cảnh báo nguy hiểm báo trước các vị trí giao nhau cần chú ý."
   },
@@ -959,7 +959,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo giao nhau với đường sắt có rào chắn."
   },
@@ -973,7 +973,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 có hình đèn tín hiệu giao thông, dùng để báo trước nơi giao nhau có đèn tín hiệu."
   },
@@ -987,7 +987,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1 báo giao nhau với đường sắt có rào chắn; Biển 3 là biển báo vị trí giao cắt đường sắt. Cả hai đều liên quan nguy hiểm giao nhau với đường sắt."
   },
@@ -1001,7 +1001,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 2 báo giao nhau với đường sắt không có rào chắn; Biển 3 là biển báo vị trí giao cắt cùng mức với đường sắt không có rào chắn."
   },
@@ -1015,7 +1015,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 1 và biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo sắp đến chỗ giao nhau giữa đường bộ và đường sắt."
   },
@@ -1029,7 +1029,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo cửa chui; Biển 1 là cầu lõm, Biển 3 là hầm."
   },
@@ -1043,7 +1043,7 @@
     "answer_c": "Nơi đường sắt giao nhau với đường bộ.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Hai biển chữ X là biển báo vị trí nơi đường sắt giao vuông góc với đường bộ, không có rào chắn."
   },
@@ -1057,7 +1057,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 1 và biển 2.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "D",
     "explanation": "Biển 1 và Biển 2 đều là biển chữ X báo nơi đường sắt giao vuông góc với đường bộ; số nét thể hiện số đường sắt giao cắt."
   },
@@ -1071,7 +1071,7 @@
     "answer_c": "Để báo trước sắp đến vị trí đường sắt giao không vuông góc với đường bộ, không có người gác và không có rào chắn.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Các biển vạch chéo đỏ là biển báo trước vị trí giao cắt với đường sắt không vuông góc, không có người gác và không có rào chắn."
   },
@@ -1085,7 +1085,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển hết đoạn đường ưu tiên; Biển 1 là giao nhau với đường ưu tiên, Biển 2 là nhường đường."
   },
@@ -1099,7 +1099,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1 là biển báo giao nhau với đường ưu tiên; Biển 3 là biển đường ưu tiên. Hai biển này đều thể hiện xe đi trên đường này được quyền ưu tiên qua nơi giao nhau."
   },
@@ -1113,7 +1113,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 2 và biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo giao nhau với đường không ưu tiên. Biển 2 là biển nhường đường, Biển 3 là biển đường ưu tiên."
   },
@@ -1127,7 +1127,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo giao nhau với đường ưu tiên."
   },
@@ -1141,7 +1141,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 báo đường bị thu hẹp cả hai bên; Biển 2 báo đường bị thu hẹp bên phải. Biển 3 là đường hẹp bên trái."
   },
@@ -1155,7 +1155,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 2 và Biển 3 là các biển báo đường bị hẹp một bên. Xe đi ở phía đường bị hẹp phải giảm tốc độ và nhường đường cho xe đi ngược chiều."
   },
@@ -1169,7 +1169,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển nhường đường, đặt trên đường không ưu tiên trước nơi giao nhau với đường ưu tiên."
   },
@@ -1183,7 +1183,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo đường giao nhau của các tuyến đường cùng cấp."
   },
@@ -1197,7 +1197,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo giao nhau với đường không ưu tiên."
   },
@@ -1211,7 +1211,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo đường hai chiều."
   },
@@ -1225,7 +1225,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển phải nhường đường cho xe đi ngược chiều qua đường hẹp."
   },
@@ -1239,7 +1239,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 2 và biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển chỉ dẫn được ưu tiên qua đường hẹp."
   },
@@ -1253,7 +1253,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển báo hiệu bắt đầu đường đôi."
   },
@@ -1267,7 +1267,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển báo hiệu bắt đầu đường đôi."
   },
@@ -1281,7 +1281,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển báo hiệu kết thúc đường đôi."
   },
@@ -1295,7 +1295,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo giao nhau với đường hai chiều."
   },
@@ -1309,7 +1309,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo đường hai chiều."
   },
@@ -1323,7 +1323,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo giao nhau với đường hai chiều."
   },
@@ -1337,7 +1337,7 @@
     "answer_c": "Cả ba biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 và Biển 3 là các biển báo chú ý chướng ngại vật. Biển 1 là biển đường bị hẹp."
   },
@@ -1351,7 +1351,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển chỉ dẫn vị trí và khoảng cách đến làn đường cứu nạn hoặc làn thoát xe khẩn cấp."
   },
@@ -1365,7 +1365,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển báo đường hầm. Biển 1 là cửa chui, Biển 3 là cầu vượt qua đường."
   },
@@ -1379,7 +1379,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo cầu hẹp. Biển 1 là cầu hẹp có thành cầu, Biển 3 là cầu quay - cầu cất."
   },
@@ -1393,7 +1393,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển cảnh báo cầu quay - cầu cất."
   },
@@ -1407,7 +1407,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo kè, vực sâu phía trước."
   },
@@ -1421,7 +1421,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 1 và biển 2.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển cảnh báo kè, vực sâu bên đường phía bên trái."
   },
@@ -1435,7 +1435,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo kè, vực sâu bên đường phía bên phải."
   },
@@ -1449,7 +1449,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo đường trơn."
   },
@@ -1463,7 +1463,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo lề đường nguy hiểm."
   },
@@ -1477,7 +1477,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Không biển nào.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo công trường đang thi công sửa chữa."
   },
@@ -1491,7 +1491,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo đoạn đường thường xảy ra tai nạn."
   },
@@ -1505,7 +1505,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo đoạn đường hay xảy ra ùn tắc giao thông."
   },
@@ -1519,7 +1519,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo trẻ em, yêu cầu đi chậm và thận trọng."
   },
@@ -1533,7 +1533,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển chỉ dẫn bắt đầu đoạn đường dành cho người đi bộ."
   },
@@ -1547,7 +1547,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo gần đến đoạn đường thường có trẻ em đi ngang qua."
   },
@@ -1561,7 +1561,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo gió ngang."
   },
@@ -1575,7 +1575,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển cảnh báo dốc xuống nguy hiểm."
   },
@@ -1589,7 +1589,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển cảnh báo dốc lên nguy hiểm."
   },
@@ -1603,7 +1603,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển báo cảnh báo chỗ ngoặt nguy hiểm có nguy cơ lật xe bên phải khi đường cong vòng sang trái."
   },
@@ -1617,7 +1617,7 @@
     "answer_c": "Báo trước sắp đến bến phà.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển báo này dùng để báo trước sắp đến bến phà."
   },
@@ -1631,7 +1631,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển báo này cảnh báo đường có ổ gà, lồi lõm."
   },
@@ -1645,7 +1645,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển báo này cảnh báo phía trước có gồ giảm tốc."
   },
@@ -1659,7 +1659,7 @@
     "answer_c": "Để cảnh báo những đoạn nền đường yếu, đoạn đường đang theo dõi lún mà việc vận hành xe ở tốc độ cao có thể gây nguy hiểm.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển này cảnh báo đoạn đường nền yếu hoặc đang theo dõi lún, cần giảm tốc độ để bảo đảm an toàn."
   },
@@ -1673,7 +1673,7 @@
     "answer_c": "Để cảnh báo những đoạn nền đường yếu, đoạn đường đang theo dõi lún mà việc vận hành xe ở tốc độ cao có thể gây nguy hiểm.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Hai biển này đều báo trước đoạn đường có nguy cơ đất đá sụt lở từ taluy dương."
   },
@@ -1687,7 +1687,7 @@
     "answer_c": "Để cảnh báo những đoạn nền đường yếu, đoạn đường đang theo dõi lún mà việc vận hành xe ở tốc độ cao có thể gây nguy hiểm.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển này cảnh báo mặt đường có đá, sỏi văng bắn lên khi xe đi qua."
   },
@@ -1701,7 +1701,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển báo có gia súc qua đường, người lái xe phải giảm tốc độ, quan sát và sẵn sàng dừng lại."
   },
@@ -1715,7 +1715,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển này cảnh báo phía trên tuyến đường có đường dây điện cắt ngang."
   },
@@ -1729,7 +1729,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 vừa quy định loại xe đi theo từng làn, vừa quy định tốc độ tối đa cho từng làn."
   },
@@ -1743,7 +1743,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Cả hai biển đều thể hiện tốc độ tối đa cho phép trên từng làn đường."
   },
@@ -1757,7 +1757,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển chỉ dẫn đường dành cho xe ô tô; Biển 2 là hết đoạn đường dành cho xe ô tô."
   },
@@ -1771,7 +1771,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 2 có vạch chéo đỏ là biển báo hết đoạn đường dành cho xe ô tô."
   },
@@ -1785,7 +1785,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 chỉ đường dành cho xe ô tô và xe mô tô; các phương tiện khác không được đi vào."
   },
@@ -1799,7 +1799,7 @@
     "answer_c": "Chỉ hướng đường phải theo.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển này cho biết số lượng làn đường và hướng đi bắt buộc trên từng làn."
   },
@@ -1813,7 +1813,7 @@
     "answer_c": "Không biển nào.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Cả hai biển đều là biển hiệu lệnh hướng đi phải theo, không cho phép rẽ sang hướng khác ngoài hướng chỉ định."
   },
@@ -1827,7 +1827,7 @@
     "answer_c": "",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển hiệu lệnh hướng đi thẳng phải theo."
   },
@@ -1841,7 +1841,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển chỉ dẫn đường một chiều; Biển 1 là hiệu lệnh đi thẳng."
   },
@@ -1855,7 +1855,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 là biển báo hết tốc độ tối đa cho phép; Biển 2 là hết mọi lệnh cấm; Biển 3 là hết tốc độ tối thiểu."
   },
@@ -1869,7 +1869,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 1 và biển 2.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": "Biển tốc độ tối đa cho phép hết hiệu lực khi gặp biển hết tốc độ tối đa cho phép hoặc biển hết mọi lệnh cấm."
   },
@@ -1883,7 +1883,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển hết tốc độ tối thiểu."
   },
@@ -1897,7 +1897,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 2 và biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": "Biển 2 là hết mọi lệnh cấm; Biển 3 là hết cấm vượt; cả hai đều làm chấm dứt hiệu lực cấm vượt."
   },
@@ -1911,7 +1911,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 2 là biển báo hết mọi lệnh cấm."
   },
@@ -1925,7 +1925,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Không biển nào.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 3 cho phép đi thẳng hoặc rẽ trái, nên được phép quay đầu tại nơi giao nhau nếu không có cấm khác."
   },{
@@ -1938,7 +1938,7 @@
   "answer_c": "Biển 3.",
   "answer_d": "Biển 1 và biển 3.",
   "ofRankA": 1,
-  "ofRankB": 1,
+  "ofRankB1": 1,
   "correct_answer": "A",
   "explanation": "Biển 1 là hiệu lệnh chỉ được rẽ trái nên không cho phép rẽ phải. Biển 2 cho phép rẽ trái hoặc rẽ phải; Biển 3 cho phép đi thẳng hoặc rẽ phải."
 },
@@ -1952,7 +1952,7 @@
     "answer_c": "Biển 2 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 chỉ được rẽ trái, Biển 2 chỉ được rẽ trái hoặc rẽ phải nên đều không cho đi thẳng. Biển 3 cho phép đi thẳng hoặc rẽ phải."
   },
@@ -1966,7 +1966,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Cả hai biển đều là biển chỉ dẫn nơi được phép quay đầu xe."
   },
@@ -1980,7 +1980,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "Biển 1 và biển 2.",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Biển 3 là biển chỉ dẫn tên đường trên các tuyến đường đối ngoại, ví dụ AH112. Biển 1 và Biển 2 là biển khu vực cấm đỗ xe."
   },
@@ -1994,7 +1994,7 @@
     "answer_c": "Biển chỉ dẫn khu vực đỗ xe trên các tuyến đường đối ngoại.",
     "answer_d": "",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển số 1 có nền chữ ZONE, biểu tượng cấm đỗ xe theo giờ và có vạch chéo, nên là biển hết cấm đỗ xe theo giờ trong khu vực."
   },
@@ -2008,7 +2008,7 @@
     "answer_c": "Biển hạn chế tốc độ tối đa trong khu vực.",
     "answer_d": "Biển chỉ dẫn hết hiệu lực khu vực cấm đỗ xe theo giờ trên các tuyến đường đối ngoại.",
     "ofRankA": 0,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển số 3 có chữ ZONE và số 50 trong vòng tròn viền đỏ, thể hiện tốc độ tối đa cho phép trong khu vực."
   },
@@ -2022,7 +2022,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "B",
     "explanation": "Biển 2 báo phía trước có làn đường dành riêng cho ô tô khách. Biển 1 là đường dành cho ô tô; Biển 3 báo rẽ ra đường có làn dành cho ô tô khách."
   },
@@ -2036,7 +2036,7 @@
     "answer_c": "Biển 3.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "C",
     "explanation": "Biển 3 báo hiệu rẽ ra đường có làn đường dành cho ô tô khách."
   },
@@ -2050,7 +2050,7 @@
     "answer_c": "Không biển nào.",
     "answer_d": "",
     "ofRankA": 0,
-    "ofRankB": 0,
+    "ofRankB1": 0,
     "correct_answer": "A",
     "explanation": "Biển 1 và Biển 2 là các biển chỉ dẫn đường cụt đặt trên đường chính trước nơi giao nhau để chỉ hướng rẽ vào đường cụt bên phải hoặc bên trái. Biển 3 thường đặt ngay tại đầu đường cụt."
   },
@@ -2064,7 +2064,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "Không biển nào.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1 chỉ dẫn cho người đi bộ sử dụng cầu vượt qua đường. Biển 2 là biển chỉ dẫn hầm chui cho người đi bộ."
   }
