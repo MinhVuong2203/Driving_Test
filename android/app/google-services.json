@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "66434628345",
+    "project_id": "driver-test-abe4d",
+    "storage_bucket": "driver-test-abe4d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66434628345:android:cb860af41fda6b93474028",
+        "android_client_info": {
+          "package_name": "com.example.driving_test_prep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBllSdYPhMrsWYd0_4nsoaQ6KaKHqheO4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
