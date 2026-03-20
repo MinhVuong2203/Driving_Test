@@ -39,6 +39,8 @@ CREATE TABLE [rank](
 	id INTEGER PRIMARY KEY,
 	name TEXT NOT NULL,
     description TEXT,
+    total_questions INTEGER, -- TỔng số câu hỏi trong booj đề
+    total_exam INTEGER, -- Tổng số câu thi
 )
 
 
