@@ -43,12 +43,14 @@ class DatabaseHelper {
   Future _createData(Database db, int version) async {
     await _createDB(db);
     await _insertTopics(db);
+    await _insertExamGroup(db);
     await _insertQuestions(db);
+    await _insertRanks(db);
   }
 
   Future _createDB(Database db) async {
-      // TABLE: topics
-      await db.execute('''
+    // TABLE: topics
+    await db.execute('''
       CREATE TABLE topics(
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
@@ -56,8 +58,8 @@ class DatabaseHelper {
         description TEXT
       )
       ''');
-      // TABLE: questions
-      await db.execute('''
+    // TABLE: questions
+    await db.execute('''
       CREATE TABLE questions(
         id INTEGER PRIMARY KEY,
         topic_id INTEGER,
@@ -76,17 +78,59 @@ class DatabaseHelper {
       )
       ''');
 
-      // TABLE: ranks
-      await db.execute('''
+    // Nhóm đề
+    await db.execute('''
+      CREATE TABLE exam_groups(
+      exam_groups_id INTEGER PRIMARY KEY,
+      name TEXT, -- Ví dụ: "25 câu", "30 câu"
+      total_questions INTEGER -- số câu trong đề
+      )
+      ''');
+    // TABLE: ranks
+    await db.execute('''
       CREATE TABLE ranks(
-      id INTEGER PRIMARY KEY,
+      rank_id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
-      description TEXT
+      description TEXT,
+      total_questions INTEGER, 
+      total_exam INTEGER, 
+      total_pass INTEGER, 
+      time INTEGER,
+      exam_groups_id INTEGER,
+      FOREIGN KEY(exam_groups_id) REFERENCES exam_groups(exam_groups_id)
+      )
+      ''');
+    // Đề
+    await db.execute('''
+      CREATE TABLE exam_sets(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        exam_groups_id INTEGER, -- nhóm đề (25, 30, 35, 40, 45 câu)
+        name TEXT, -- Đề 1, Đề 2...
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(exam_groups_id) REFERENCES exam_groups(exam_groups_id)
+      )
+      ''');
+    // Câu hỏi trong đề
+    await db.execute('''
+      CREATE TABLE exam_set_questions(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+      
+        exam_set_id INTEGER,
+      
+        question_id INTEGER,
+      
+        question_order INTEGER, -- thứ tự câu
+      
+        FOREIGN KEY(exam_set_id) REFERENCES exam_sets(id),
+        FOREIGN KEY(question_id) REFERENCES questions(id)
       )
       ''');
 
-      // TABLE: practice_sessions
-      await db.execute('''
+
+
+
+    // TABLE: practice_sessions
+    await db.execute('''
       CREATE TABLE practice_sessions(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
     
@@ -106,8 +150,8 @@ class DatabaseHelper {
       )
       ''');
 
-      // TABLE: user_answers
-      await db.execute('''
+    // TABLE: user_answers
+    await db.execute('''
       CREATE TABLE user_answers(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
     
@@ -125,8 +169,8 @@ class DatabaseHelper {
       )
       ''');
 
-      // TABLE: wrong_questions
-      await db.execute('''
+    // TABLE: wrong_questions
+    await db.execute('''
       CREATE TABLE wrong_questions(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
     
@@ -140,8 +184,8 @@ class DatabaseHelper {
       )
       ''');
 
-      // TABLE: exam_history
-      await db.execute('''
+    // TABLE: exam_history
+    await db.execute('''
       CREATE TABLE exam_history(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
     
@@ -158,6 +202,20 @@ class DatabaseHelper {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
       ''');
+  }
+
+  Future _insertRanks(Database db) async {
+    const String file = 'assets/json/ranks/data_ranks.json';
+
+    final String jsonString = await rootBundle.loadString(file);
+    final List<dynamic> jsonData = json.decode(jsonString);
+
+    for (var item in jsonData) {
+      await db.insert(
+        'ranks',
+        Map<String, dynamic>.from(item),
+      );
+    }
   }
 
   Future _insertTopics(Database db) async {
@@ -204,22 +262,46 @@ class DatabaseHelper {
     }
   }
 
-  // Future<List<Map<String, dynamic>>> loadQuestionsFromJson() async {
-  //   final String jsonString =
-  //   await rootBundle.loadString('assets/json/questions_451_600.json');
-  //
-  //   final List<dynamic> jsonData = json.decode(jsonString);
-  //
-  //   return jsonData.map((e) => Map<String, dynamic>.from(e)).toList();
-  // }
+  Future _insertExamGroup(Database db) async {
+    List<Map<String, dynamic>> examGroups = [
+      {
+        'exam_groups_id': 1,
+        'name': '25 câu',
+        'total_questions': 25,
+      },
+      {
+        'exam_groups_id': 2,
+        'name': '30 câu',
+        'total_questions': 30,
+      },
+      {
+        'exam_groups_id': 3,
+        'name': '35 câu',
+        'total_questions': 35,
+      },
+      {
+        'exam_groups_id': 4,
+        'name': '40 câu',
+        'total_questions': 40,
+      },
+      {
+        'exam_groups_id': 5,
+        'name': '45 câu',
+        'total_questions': 45,
+      }
+    ];
+    for (var examGroup in examGroups) {
+      await db.insert('exam_groups', examGroup);
+    }
+  }
 
   Future _insertQuestions(Database db) async {
 
     List<String> files = [
-      'assets/json/questions_1_150.json',
-      'assets/json/questions_151_300.json',
-      'assets/json/questions_301_450.json',
-      'assets/json/questions_451_600.json',
+      'assets/json/questions/questions_1_150.json',
+      'assets/json/questions/questions_151_300.json',
+      'assets/json/questions/questions_301_450.json',
+      'assets/json/questions/questions_451_600.json',
     ];
 
     for (String file in files) {

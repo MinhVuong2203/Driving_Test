@@ -1,0 +1,151 @@
+[
+  {
+    "rank_id": "A1",
+    "name": "Mô tô 2 bánh nhỏ",
+    "description": "Mô tô hai bánh ≤125cc hoặc ≤11kW",
+    "total_questions": 250,
+    "total_exam": 25,
+    "total_pass": 21,
+    "time": 19,
+    "exam_groups_id": 1
+  },
+  {
+    "rank_id": "A",
+    "name": "Mô tô 2 bánh lớn",
+    "description": "Mô tô hai bánh >125cc hoặc >11kW",
+    "total_questions": 250,
+    "total_exam": 25,
+    "total_pass": 23,
+    "time": 19,
+    "exam_groups_id": 1
+  },
+  {
+    "rank_id": "B1",
+    "name": "Mô tô ba bánh",
+    "description": "Xe mô tô ba bánh (luật mới 2025)",
+    "total_questions": 300,
+    "total_exam": 25,
+    "total_pass": 23,
+    "time": 19,
+    "exam_groups_id": 1
+  },
+  {
+    "rank_id": "B",
+    "name": "Ô tô con",
+    "description": "Ô tô ≤9 chỗ, tải ≤3500kg",
+    "total_questions": 600,
+    "total_exam": 30,
+    "total_pass": 27,
+    "time": 20,
+    "exam_groups_id": 2
+  },
+  {
+    "rank_id": "C1",
+    "name": "Ô tô tải trung",
+    "description": "Ô tô tải >3500kg đến 7500kg",
+    "total_questions": 600,
+    "total_exam": 35,
+    "total_pass": 32,
+    "time": 22,
+    "exam_groups_id": 3
+  },
+  {
+    "rank_id": "C",
+    "name": "Ô tô tải nặng",
+    "description": "Ô tô tải >7500kg",
+    "total_questions": 600,
+    "total_exam": 40,
+    "total_pass": 36,
+    "time": 24,
+    "exam_groups_id": 4
+  },
+  {
+    "rank_id": "D1",
+    "name": "Ô tô khách nhỏ",
+    "description": "Xe >8 đến 16 chỗ",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "D2",
+    "name": "Ô tô khách trung",
+    "description": "Xe >16 đến 29 chỗ",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "D",
+    "name": "Ô tô khách lớn",
+    "description": "Xe >29 chỗ, giường nằm",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "BE",
+    "name": "Ô tô B kéo rơ-moóc",
+    "description": "Xe B kéo rơ-moóc >750kg",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "C1E",
+    "name": "Ô tô C1 kéo rơ-moóc",
+    "description": "Xe C1 kéo rơ-moóc >750kg",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "CE",
+    "name": "Ô tô C kéo rơ-moóc",
+    "description": "Xe C kéo rơ-moóc, xe đầu kéo",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26
+  },
+  {
+    "rank_id": "D1E",
+    "name": "Ô tô D1 kéo rơ-moóc",
+    "description": "Xe D1 kéo rơ-moóc >750kg",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "D2E",
+    "name": "Ô tô D2 kéo rơ-moóc",
+    "description": "Xe D2 kéo rơ-moóc >750kg",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  },
+  {
+    "rank_id": "DE",
+    "name": "Ô tô D kéo rơ-moóc",
+    "description": "Xe D kéo rơ-moóc, xe nối toa",
+    "total_questions": 600,
+    "total_exam": 45,
+    "total_pass": 41,
+    "time": 26,
+    "exam_groups_id": 5
+  }
+]
