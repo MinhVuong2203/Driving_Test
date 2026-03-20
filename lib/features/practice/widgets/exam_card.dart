@@ -1,3 +1,4 @@
+import 'package:driving_test_prep/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExamCard extends StatelessWidget {
@@ -17,7 +18,7 @@ class ExamCard extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.grey[900],
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(

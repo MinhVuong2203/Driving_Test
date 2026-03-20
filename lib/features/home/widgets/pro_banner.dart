@@ -1,3 +1,4 @@
+import 'package:driving_test_prep/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProBanner extends StatelessWidget {
@@ -18,9 +19,10 @@ class ProBanner extends StatelessWidget {
           ElevatedButton(
               onPressed: null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white
+                backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight
               ),
-              child: const Text('Nâng cấp', style: TextStyle(fontSize: 18, color: Colors.blue),))
+              child: const Text('Nâng cấp', style: TextStyle(fontSize: 18, color: AppColors.primary))
+          )
         ],
       ),
     );

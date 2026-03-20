@@ -9,7 +9,7 @@
     "answer_c": "Cả hai biển.",
     "answer_d": "Không biển nào.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1: I424b Cầu vượt qua đường cho người đi bộ; Biển 2: I424d Hầm chui qua đường cho người đi bộ"
   },
@@ -23,7 +23,7 @@
     "answer_c": "Biển 3.",
     "correct_answer": "B",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "explanation": "Biển 1: R.304 “Đường dành cho xe thô sơ”; Biển 2: I.446 “Nơi đỗ xe dành cho người khuyết tật”; Biển 3: R.305 “Đường dành cho người đi bộ"
   },
   {
@@ -46,7 +46,7 @@
     "answer_b": "Tiếp tục lưu thông với tốc độ bình thường.",
     "answer_c": "Phải giảm tốc độ đến mức an toàn và không được vượt khi đi qua khu vực này.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển I.436 “Trạm cảnh sát giao thông”. Các phương tiện phải giảm tốc độ đến mức an toàn và không được vượt khi đi qua khu vực này."
   },
@@ -58,7 +58,7 @@
     "answer_a": "Bắt buộc.",
     "answer_b": "Không bắt buộc.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển số R.303 “Nơi giao nhau chạy theo vòng xuyến”"
   },
@@ -70,7 +70,7 @@
     "answer_a": "Biển 1.",
     "answer_b": "Biển 2.",
     "answer_c": "Biển 3.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Biển 1: I.414a “Chỉ hướng đường”; Biển 2: I.419a “Chỉ dẫn địa giới”; Biển 3: I.422 “Di tích lịch sử”."
   },
@@ -84,7 +84,7 @@
     "answer_c": "Biển 1 và biển 3.",
     "answer_d": "Cả ba biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 1: I.447d “Cầu vượt liên thông”; Biển 2: R.308b “Tuyến đường cầu vượt cắt qua”; Biển 3: I.447a “Cầu vượt liên thông”;"
   },
@@ -97,7 +97,7 @@
     "answer_b": "Đi thẳng hoặc rẽ phải trên cầu vượt.",
     "answer_c": "Báo hiệu cầu vượt liên thông.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": "Biển 1: I.447d “Cầu vượt liên thông”; Biển 2, Biển 3: R.308 (a,b) “Tuyến đường cầu vượt cắt qua”."
   },
@@ -110,7 +110,7 @@
     "answer_b": "Biển 1 và biển 3.",
     "answer_c": "Biển 2 và biển 3.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển 1, Biển 2: R.308 (a,b) “Tuyến đường cầu vượt cắt qua”; Biển 3: W.237 “Cầu vồng”."
   },
@@ -124,7 +124,7 @@
     "answer_c": "Báo hiệu nút giao gần nhất phía trước.",
     "answer_d": "Báo hiệu trạm dừng nghỉ phía trước.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển số I.448 “Làn đường cứu nạn hay làn thoát xe khẩn cấp”."
   },
@@ -136,7 +136,7 @@
     "answer_a": "Được phép chuyển sang làn khác.",
     "answer_b": "Không được phép chuyển sang làn khác, chỉ được đi trong làn quy định theo biển.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": "Biển số R.412 (a,b,c,d,e,f,g,h) “Làn đường dành riêng cho từng loại xe hoặc nhóm xe”: Khi đến gần nơi đường bộ giao nhau, xe được phép chuyển làn để đi theo hành trình mong muốn. Việc chuyển làn phải thực hiện theo đúng các quy định."
   },
@@ -280,7 +280,7 @@
     "answer_a": "Biển 1.",
     "answer_b": "Biển 2.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Đáp án đúng là B."
   },
@@ -292,7 +292,7 @@
     "answer_a": "Chỉ dẫn chướng ngại vật phía trước để cảnh báo phía trước có sự cản trở lưu thông bình thường và chỉ dẫn hướng đi qua đó cần đi bên trái.",
     "answer_b": "Chỉ dẫn hướng rẽ để nhắc người điều khiển phương tiện chuẩn bị đổi hướng đi khi sắp vào đường cong nguy hiểm, có bán kính cong nhỏ",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": "Đáp án đúng là B"
   },
@@ -306,7 +306,7 @@
     "answer_c": "Vạch 3.",
     "answer_d": "Vạch 1 và vạch 2.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": " Vạch 9.3: Vạch mũi tên chỉ hướng trên mặt đường chỉ hướng xe phải đi: Vạch 1 chỉ được rẽ phải; Vạch 2 đi thẳng và rẽ trái; Vạch 3 đi thẳng và rẽ phải;"
   },
@@ -319,7 +319,7 @@
     "answer_b": "Vạch 2.",
     "answer_c": "Vạch 3.",
     "answer_d": "Vạch 1 và vạch 2.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": " Vạch 1: Phân chia các làn xe cùng chiều, cho phép lấn làn đè vạch; Vạch 2: Phân chia các làn xe cùng chiều, không cho phép lấn làn, không cho phép đè vạch;  Vạch 3: Phân chia hai chiều xe chạy ngược chiều, xe không được lấn làn, không được đè lên vạch."
   },
@@ -333,7 +333,7 @@
     "answer_c": "Vạch 3.",
     "answer_d": "Cả ba vạch.",
     "ofRankA": 1,
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": " Vạch 1: Phân chia các làn xe cùng chiều, cho phép lấn làn đè vạch; Vạch 2: Phân chia hai chiều xe chạy ngược chiều; xe không được lấn làn, không được đè lên vạch. Vạch 3: Phân chia các làn xe cùng chiều, không cho phép lấn làn, không cho phép đè vạch;"
   },
@@ -346,7 +346,7 @@
     "answer_b": "Vạch 2.",
     "answer_c": "Vạch 3.",
     "answer_d": "Vạch 1 và vạch 3.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": " Vạch 1: Phân chia hai chiều xe chạy ngược chiều. Xe được phép cắt qua để sử dụng làn ngược chiều từ cả hai phía; Vạch 2: Phân chia các làn xe cùng chiều, cho phép lấn làn đè vạch; Vạch 3: Phân chia hai chiều xe chạy ngược chiều; xe không được lấn làn, không được đè lên vạch."
   },
@@ -357,7 +357,7 @@
     "image_url": "assets/images/questions/c480.png",
     "answer_a": "Phân chia hai chiều xe chạy ngược chiều nhau.",
     "answer_b": "Phân chia các làn xe chạy cùng chiều nhau.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": " Vạch 1: Phân chia hai chiều xe chạy ngược chiều, cho phép lấn làn, đè vạch ở cả 2 chiều; Vạch 2: Phân chia hai chiều xe chạy ngược chiều; xe không được lấn làn, không được đè lên vạch; Vạch 3: Phân chia hai chiều xe chạy ngược chiều có 4 làn xe cơ giới trở lên; xe không được lấn làn, không được đè lên vạch."
   },
@@ -368,7 +368,7 @@
     "image_url": "assets/images/questions/c481.png",
     "answer_a": "Phân chia hai chiều xe chạy ngược chiều nhau.",
     "answer_b": "Phân chia các làn xe chạy cùng chiều nhau.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "B",
     "explanation": " Vạch 1: Phân chia các làn xe cùng chiều, cho phép lấn làn đè vạch; Vạch 2: Phân chia các làn xe cùng chiều, không cho phép lấn làn, không cho phép đè vạch;"
   },
@@ -381,7 +381,7 @@
     "answer_b": "Vạch 2.",
     "answer_c": "Vạch 3.",
     "answer_d": "Vạch 1 và vạch 3.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "D",
     "explanation": " Vạch 1: Phân chia hai chiều xe chạy ngược chiều, cho phép lấn làn, đè vạch ở cả 2 chiều; Vạch 2: Phân chia các làn xe cùng chiều, không cho phép lấn làn, không cho phép đè vạch; Vạch 3: Phân chia các làn xe cùng chiều, cho phép lấn làn đè vạch;"
   },
@@ -393,7 +393,7 @@
     "answer_a": "Để xác định làn đường.",
     "answer_b": "Báo hiệu người lái xe chỉ được phép đi thẳng.",
     "answer_c": "Dùng để xác định khoảng cách giữa các phương tiện trên đường.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "C",
     "explanation": " Vạch 7.8: Vạch xác định khoảng cách xe trên đường."
   },
@@ -416,7 +416,7 @@
     "answer_a": "Vị trí dừng xe của các phương tiện vận tải hành khách công cộng.",
     "answer_b": "Báo cho người điều khiển được dừng phương tiện trong phạm vi phần mặt đường có bố trí vạch để tránh ùn tắc giao thông.",
     "answer_c": "Dùng để xác định vị trí giữa các phương tiện trên đường.",
-    "ofRankB": 1,
+    "ofRankB1": 1,
     "correct_answer": "A",
     "explanation": " Vạch 9.2: Vạch quy định vị trí dừng đỗ của phương tiện giao thông công cộng trên đường."
   },
@@ -429,7 +429,7 @@
     "answer_b":"Xe tải, xe mô tô.",
     "answer_c":"Chỉ xe con.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"1. Xe khách: Sai làn, Đi thẳng đèn đang đỏ; 2. Xe tải: Sai làn: Đi trên làn đi thẳng trong khi thực hiện rẽ trái. 3. Xe mô tô: Sai làn: Đi trên làn rẽ trái trong khi thực hiện rẽ phải, 4. Xe con: Đèn xanh rẽ phải: Đúng đèn đúng làn."
   },
@@ -443,7 +443,7 @@
     "answer_c":"Xe khách, xe tải, xe con, xe mô tô.",
     "answer_d":"Xe mô tô, xe khách, xe tải, xe con.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":" Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Đường cùng cấp theo thứ tự bên phải trống - rẽ phải - đi thẳng - rẽ trái. 1. Xe tải: Đường ưu tiên và đi thẳng; 2. Mô tô: Đường ưu tiên và rẽ trái; 3. Xe khách: Đường không ưu tiên, đi thẳng. 4. Xe con: Đường không ưu tiên, rẽ trái."
   },
@@ -481,7 +481,7 @@
     "answer_c":"Xe mô tô, xe con, xe tải.",
     "answer_d":"Xe con, xe mô tô, xe tải.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Đường cùng cấp theo thứ tự bên phải trống - rẽ phải - đi thẳng - rẽ trái. 1. Xe mô tô: Bên phải trống; 2. Xe con: Đi thẳng; 3. Xe tải: Rẽ trái;"
   },
@@ -503,7 +503,7 @@
     "answer_a":"Xe mô tô.",
     "answer_b":"Xe con.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe con được đi trước vì mô tô có biển STOP trước mặt."
   },
@@ -537,7 +537,7 @@
     "answer_a":"Xe mô tô.",
     "answer_b":"Xe cứu thương đi làm nhiệm vụ cấp cứu.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe ưu tiên đi trước"
   },
@@ -580,7 +580,7 @@
     "answer_a":"Xe con và xe khách.",
     "answer_b":"Xe mô tô.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Xe con và xe khách đang ở làn đường có tín hiệu đèn xanh nên được phép đi."
   },
@@ -593,7 +593,7 @@
     "answer_b":"Xe con, xe tải.",
     "answer_c":"Xe tải, xe mô tô.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe con và xe tải đang ở trên làn đường có tín hiệu đèn xanh nên được phép đi."
   },
@@ -628,7 +628,7 @@
     "answer_b":"Xe tải, xe con, xe mô tô.",
     "answer_c":"Xe khách, xe con, xe mô tô.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"1. Xe khách: Sai làn, Đi thẳng đèn đang đỏ; 2. Xe tải: Sai làn: Đi trên làn đi thẳng trong khi thực hiện rẽ trái. 3. Xe mô tô: Sai làn: Đi trên làn rẽ trái trong khi thực hiện rẽ phải, Nên đáp án đúng là xe khách, xe tải và xe mô tô đều vi phạm quy tắc giao thông."
   },
@@ -642,7 +642,7 @@
     "answer_c":"Xe mô tô, xe tải, xe khách, xe con.",
     "answer_d":"Xe mô tô, xe tải, xe con, xe khách.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Giao nhau cùng cấp có vòng xuyến: Chưa vào vòng xuyến thì ưu tiên xe bên phải; đã vào vòng xuyến ưu tiên xe từ bên trái tới. Toàn bộ các xe chưa vào phòng xuyến nên ưu tiên xe bên phải. Thứ tự sẽ là Mô tô, xe tải, xe khách, xe con."
   },
@@ -656,7 +656,7 @@
     "answer_c":"Cả ba xe.",
     "answer_d":"Xe con và xe tải.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Biển cấm đỗ xe tải (ở biển phụ) nên chỉ có xe tải vi phạm."
   },
@@ -680,7 +680,7 @@
     "answer_b":"Chỉ hướng 1 và 3.",
     "answer_c":"Chỉ hướng 1.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Bạn lưu ý câu hỏi này hỏi về hướng đi của xe  GẮN MÁY . Hướng 1 và 3 chắc chắn là đi được rồi. Với hướng 2, biển báo cấm mô tô đi vào chỉ có tác dụng với xe MÔ TÔ nên xe gắn máy không có hiệu lực. Do đó vẫn đi vào bình thường."
   },
@@ -694,7 +694,7 @@
     "answer_c":"Chỉ xe mô tô vi phạm.",
     "answer_d":"Chỉ xe tải vi phạm.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Biển cấm đỗ xe ở cả phía trước và phía sau biển (ở biển báo phụ) nên cả 2 xe vi phạm."
   },
@@ -708,7 +708,7 @@
     "answer_c":"Cả ba xe.",
     "answer_d":"Chỉ xe mô tô và xe tải.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Xe tải đậu trái đường; Xe con và mô tô đậu xe đè vạch nên cả 3 xe vi phạm."
   },
@@ -794,7 +794,7 @@
     "answer_a":"Xe con.",
     "answer_b":"Xe mô tô.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Cả 2 xe đều gặp đèn xanh nên áp dụng quy tắc đường cùng cấp: Bên phải trống - Rẽ phải - Đi thẳng - Rẽ trái. Nên đáp án đúng là xe mô tô rẽ phải được quyền đi trước. Xe con rẽ trái phải nhường đường."
   },
@@ -830,7 +830,7 @@
     "answer_c":"Xe con (A), xe con (B), xe mô tô và xe đạp.",
     "answer_d":"Xe mô tô và xe đạp, xe con (A), xe con (B).",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"D",
     "explanation":"Thứ tự ưu tiên đường cùng cấp: Xe ưu tiên - Đường ưu tiên - Bên phải trống - rẽ phải - đi thẳng - rẽ trái. 1. Mô tô và xe đạp: Bên phải trống; 2. Xe con (A): Đi thẳng; 3. Xe con (B): Rẽ trái."
   },
@@ -888,7 +888,7 @@
     "answer_a":"Xe mô tô.",
     "answer_b":"Xe con.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Bên phải trống - Rẽ phải - Đi thẳng - Rẽ trái. Xe mô tô rẽ trái từ đường ưu tiên vào đường ưu tiên (theo biển báo và biển phụ) nên được quyền đi trước."
   },
@@ -912,7 +912,7 @@
     "answer_c":"Xe con.",
     "answer_d":"Xe con và xe mô tô.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Xe con quay đầu đè vạch liền trên đường nên vi phạm."
   },
@@ -925,7 +925,7 @@
     "answer_b":"Cho phép các xe ở mọi hướng được rẽ phải.",
     "answer_c":"Tất cả các xe phải dừng lại trước ngã tư, trừ những xe đã ở trong ngã tư được tiếp tục đi.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Giơ tay thẳng đứng: Tất cả dừng, trừ xe đã ở trong ngã tư được phép đi; Giang ngang tay: Trái phải đi; Trước sau dừng; Tay phải giơ trước: Sau, phải dừng, trước rẽ phải, trái đi các hướng, người đi bộ qua đường đi sau người điều khiển."
   },
@@ -939,7 +939,7 @@
     "answer_c":"Xe mô tô, xe tải.",
     "answer_d":"Cả ba xe.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Giang ngang tay: Trái phải đi; Trước sau dừng. Xe mô tô và xe tải được phép đi là đáp án đúng."
   },{
@@ -1040,7 +1040,7 @@
     "answer_b":"Tất cả các loại xe trên.",
     "answer_c":"Không xe nào chấp hành đúng quy tắc giao thông.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe khách chờ đèn đỏ rẽ trái. Xe tải đi thẳng và rẽ phải theo tín hiệu đèn xanh. Xe con đi thẳng và rẽ phải theo tín hiệu đèn xanh. Xe mô tô chờ đèn đỏ rẽ trái. Nên tất cả xe đều chấp hành."
   },
@@ -1054,7 +1054,7 @@
     "answer_c":"Hướng 1 và 3.",
     "answer_d":"Hướng 2 và 3.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Hướng 2 có Biển số P.104 “Cấm mô tô”. Hướng 3 Biển số P.103a “Cấm ô tô” nhưng không cấm mô tô. Nên đáp án đúng là hướng 1 và hướng 3."
   },
@@ -1067,7 +1067,7 @@
     "answer_b":"Xe quân sự đi làm nhiệm vụ khẩn cấp, xe công an đi làm nhiệm vụ khẩn cấp, xe con, xe mô tô.",
     "answer_c":"Xe mô tô, xe con, xe quân sự đi làm nhiệm vụ khẩn cấp, xe công an đi làm nhiệm vụ khẩn cấp.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Bên phải trống - Rẽ phải - Đi thẳng - Rẽ trái. 1. Xe quân sự: Xe ưu tiên cùng cấp xe công an nhưng đi thẳng; 2. Xe công an: Xe ưu tiên; rẽ trái; 3. Xe con và xe mô tô: Cùng đi thẳng."
   },
@@ -1101,7 +1101,7 @@
     "answer_c":"Xe khách (B), xe mô tô (C).",
     "answer_d":"Xe khách (B), xe mô tô (D).",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Xe mô tô C chạy vào làn dành riêng xe ô tô: Vi phạm; Xe con E chạy vào làn dành riêng xe máy: Vi phạm."
   },
@@ -1158,7 +1158,7 @@
     "answer_c":"Xe con (E), xe mô tô (D).",
     "answer_d":"Tất cả các loại xe trên.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Nhìn vào bảng chỉ dẫn loại phương tiện theo làn đường: Xe con (E) đi trên làn dành riêng cho mô tô nên vi phạm: Xe mô tô (D) chạy trên làn dành riêng xe ô tô nên cũng vi phạm."
   },
@@ -1215,7 +1215,7 @@
     "answer_b":"Xe tải, xe mô tô.",
     "answer_c":"Xe con, xe tải.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Xe con và xe tải đang ở trên làn đường có tín hiệu đèn đỏ nên phải dừng lại."
   },
@@ -1248,7 +1248,7 @@
     "answer_a":"Được phép.",
     "answer_b":"Không được phép.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Tại nơi giao nhau, trên đoạn đường có làn đường dành cho người đi bộ cắt ngang thì không được phép vượt."
   },
@@ -1286,7 +1286,7 @@
     "answer_c":"Không xe nào vi phạm.",
     "answer_d":"Cả hai xe.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"D",
     "explanation":"Biển số R.301a chỉ cho phép các phương tiện đi thẳng trong khi cả hai xe đều có tín hiệu xi nhan rẽ sang hướng khác nên cả 2 xe đều vi phạm quy tắc giao thông."
   },
@@ -1299,7 +1299,7 @@
     "answer_b":"Xe tải.",
     "answer_c":"Xe con, xe tải.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe con trong cả hai phía đều đang ở đúng làn đường và đi theo hướng mà đèn xanh đang bật nên đúng quy tắc. Xe tải trong cả hai phía đều ở sai làn đường so với hướng rẽ nên vi phạm quy tắc giao thông."
   },
@@ -1324,7 +1324,7 @@
     "answer_c":"Xe khách, xe mô tô, xe con.",
     "answer_d":"Cả bốn xe.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe con đi đúng làn đường theo hướng rẽ và tín hiệu đèn. Xe khách: Sai làn đường và tín hiệu đèn. Xe tải: Đi thẳng vi phạm đèn đỏ. Xe mô tô: Đi thẳng vi phạm đèn đỏ."
   },
@@ -1361,7 +1361,7 @@
     "answer_c":"Xe tải, xe con.",
     "answer_d":"Xe mô tô, xe con.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Xe con và xe tải: Vi phạm tín hiệu đèn; Xe khách và xe mô tô: Đúng làn đường và đúng tín hiệu đèn."
   },
@@ -1386,7 +1386,7 @@
     "answer_b":"Xe con, xe của bạn, xe mô tô.",
     "answer_c":"Xe mô tô, xe con, xe của bạn.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Bên phải trống - Rẽ phải - Đi thẳng - Rẽ trái. Biển báo phía trước là đường ưu tiên và biển phụ báo hướng di chuyển của xe mô tô là hướng ưu tiên. 1. Xe mô tô: Đường ưu tiên; 2. Xe con: Đường không ưu tiên, bên phải trống; 3. Xe của bạn: Đường không ưu tiên, bên phải vướng xe con."
   },
@@ -1399,7 +1399,7 @@
     "answer_b":"Xe con, xe của bạn, xe mô tô.",
     "answer_c":"Xe mô tô, xe con, xe của bạn.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Đường cùng cấp: Bên phải trống, rẽ phải, đi thẳng, rẽ trái. 1. Xe con: Rẽ phải; 2. Xe của bạn: Đi thẳng; 3. Mô tô: Rẽ trái."
   },
@@ -1566,7 +1566,7 @@
     "answer_b":"Xe mô tô, xe đạp, xe của bạn.",
     "answer_c":"Xe đạp, xe mô tô, xe của bạn.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"C",
     "explanation":"Thứ tự ưu tiên: Xe ưu tiên - Đường ưu tiên - Bên phải trống - Rẽ phải - Đi thẳng - Rẽ trái. 1. Xe đạp: Bên phải trống; 2. Xe mô tô: Đi thẳng; 3. Xe của bạn: Rẽ trái."
   },
@@ -1664,7 +1664,7 @@
     "answer_b":"Xe mô tô.",
     "answer_c":"Cả 2 xe đều đúng.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"A",
     "explanation":"Biển số W.211a “Giao nhau với đường sắt không có rào chắn” thì các phương tiện đứng cách xa đường sắt tối thiểu 5m nên xe con đúng."
   },
@@ -1751,7 +1751,7 @@
     "answer_b":"Giảm tốc độ chờ xe container rẽ xong rồi tiếp tục đi.",
     "answer_c":"Vượt về phía bên trái để đi tiếp.",
     "ofRankA":1,
-    "ofRankB":1,
+    "ofRankB1":1,
     "correct_answer":"B",
     "explanation":"Giảm tốc độ chờ xe đầu kéo rẽ phải rồi mới tiếp tục đi."
   }
