@@ -68,7 +68,7 @@ class DatabaseHelper {
         answer_c TEXT,
         answer_d TEXT,
         ofRankA INTEGER DEFAULT 0,
-        ofRankB INTEGER DEFAULT 0,
+        ofRankB1 INTEGER DEFAULT 0,
         correct_answer TEXT NOT NULL,  
         explanation TEXT, 
         is_critical INTEGER DEFAULT 0,

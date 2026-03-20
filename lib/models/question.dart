@@ -10,7 +10,7 @@ class Question {
   String? answerD;
 
   int ofRankA;
-  int ofRankB;
+  int ofRankB1;
 
   String correctAnswer;
   String? explanation;
@@ -27,7 +27,7 @@ class Question {
     this.answerC,
     this.answerD,
     this.ofRankA = 0,
-    this.ofRankB = 0,
+    this.ofRankB1 = 0,
     required this.correctAnswer,
     this.explanation,
     this.isCritical = 0,
@@ -44,7 +44,7 @@ class Question {
       'answer_c': answerC,
       'answer_d': answerD,
       'ofRankA': ofRankA,
-      'ofRankB': ofRankB,
+      'ofRankB1': ofRankB1,
       'correct_answer': correctAnswer,
       'explanation': explanation,
       'is_critical': isCritical,
@@ -62,7 +62,7 @@ class Question {
       answerC: map['answer_c'],
       answerD: map['answer_d'],
       ofRankA: map['ofRankA'] ?? 0,
-      ofRankB: map['ofRankB'] ?? 0,
+      ofRankB1: map['ofRankB1'] ?? 0,
       correctAnswer: map['correct_answer'],
       explanation: map['explanation'],
       isCritical: map['is_critical'] ?? 0,
