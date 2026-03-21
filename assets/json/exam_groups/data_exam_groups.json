@@ -1,0 +1,27 @@
+[
+  {
+    "exam_groups_id": 1,
+    "name": "25 câu",
+    "total_questions": 25
+  },
+  {
+    "exam_groups_id": 2,
+    "name": "30 câu",
+    "total_questions": 30
+  },
+  {
+    "exam_groups_id": 3,
+    "name": "35 câu",
+    "total_questions": 35
+  },
+  {
+    "exam_groups_id": 4,
+    "name": "40 câu",
+    "total_questions": 40
+  },
+  {
+    "exam_groups_id": 5,
+    "name": "45 câu",
+    "total_questions": 45
+  }
+]
