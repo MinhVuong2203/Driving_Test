@@ -58,3 +58,5 @@ flutter:
     - assets/json/topics/
     - assets/json/exam_groups/
     - assets/json/ranks/
+    - assets/json/exam_sets/
+    - assets/json/exam_sets_questions/

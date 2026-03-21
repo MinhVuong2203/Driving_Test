@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:driving_test_prep/database/seeds/seed_exam_group.dart';
+import 'package:driving_test_prep/database/seeds/seed_exam_sets.dart';
+import 'package:driving_test_prep/database/seeds/seed_exam_sets_questions.dart';
 import 'package:driving_test_prep/database/seeds/seed_questions.dart';
 import 'package:driving_test_prep/database/seeds/seed_ranks.dart';
 import 'package:driving_test_prep/database/seeds/seeds_topics.dart';
@@ -45,6 +47,8 @@ class AppDatabase extends _$AppDatabase {
       await SeedsExamGroups.seedExamGroups(this);
       await SeedsRanks.seedRanks(this);
       await SeedsQuestions.seedQuestions(this);
+      await SeedsExamSets.seedExamSets(this);
+      await SeedsExamSetQuestions.seedExamSetQuestions(this);
     },
   );
 }
@@ -67,3 +71,4 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file);
   });
 }
+
