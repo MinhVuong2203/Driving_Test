@@ -1895,12 +1895,8 @@ class $ExamSetsTable extends ExamSets with TableInfo<$ExamSetsTable, ExamSet> {
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
   );
   static const VerificationMeta _examGroupsIdMeta = const VerificationMeta(
     'examGroupsId',
@@ -1909,9 +1905,9 @@ class $ExamSetsTable extends ExamSets with TableInfo<$ExamSetsTable, ExamSet> {
   late final GeneratedColumn<int> examGroupsId = GeneratedColumn<int>(
     'exam_groups_id',
     aliasedName,
-    true,
+    false,
     type: DriftSqlType.int,
-    requiredDuringInsert: false,
+    requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES exam_groups (exam_groups_id)',
     ),
@@ -1962,6 +1958,8 @@ class $ExamSetsTable extends ExamSets with TableInfo<$ExamSetsTable, ExamSet> {
           _examGroupsIdMeta,
         ),
       );
+    } else if (isInserting) {
+      context.missing(_examGroupsIdMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -1991,7 +1989,7 @@ class $ExamSetsTable extends ExamSets with TableInfo<$ExamSetsTable, ExamSet> {
       examGroupsId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}exam_groups_id'],
-      ),
+      )!,
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -2011,12 +2009,12 @@ class $ExamSetsTable extends ExamSets with TableInfo<$ExamSetsTable, ExamSet> {
 
 class ExamSet extends DataClass implements Insertable<ExamSet> {
   final int id;
-  final int? examGroupsId;
+  final int examGroupsId;
   final String? name;
   final DateTime createdAt;
   const ExamSet({
     required this.id,
-    this.examGroupsId,
+    required this.examGroupsId,
     this.name,
     required this.createdAt,
   });
@@ -2024,9 +2022,7 @@ class ExamSet extends DataClass implements Insertable<ExamSet> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    if (!nullToAbsent || examGroupsId != null) {
-      map['exam_groups_id'] = Variable<int>(examGroupsId);
-    }
+    map['exam_groups_id'] = Variable<int>(examGroupsId);
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
@@ -2037,9 +2033,7 @@ class ExamSet extends DataClass implements Insertable<ExamSet> {
   ExamSetsCompanion toCompanion(bool nullToAbsent) {
     return ExamSetsCompanion(
       id: Value(id),
-      examGroupsId: examGroupsId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(examGroupsId),
+      examGroupsId: Value(examGroupsId),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       createdAt: Value(createdAt),
     );
@@ -2052,7 +2046,7 @@ class ExamSet extends DataClass implements Insertable<ExamSet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ExamSet(
       id: serializer.fromJson<int>(json['id']),
-      examGroupsId: serializer.fromJson<int?>(json['examGroupsId']),
+      examGroupsId: serializer.fromJson<int>(json['examGroupsId']),
       name: serializer.fromJson<String?>(json['name']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -2062,7 +2056,7 @@ class ExamSet extends DataClass implements Insertable<ExamSet> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'examGroupsId': serializer.toJson<int?>(examGroupsId),
+      'examGroupsId': serializer.toJson<int>(examGroupsId),
       'name': serializer.toJson<String?>(name),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -2070,12 +2064,12 @@ class ExamSet extends DataClass implements Insertable<ExamSet> {
 
   ExamSet copyWith({
     int? id,
-    Value<int?> examGroupsId = const Value.absent(),
+    int? examGroupsId,
     Value<String?> name = const Value.absent(),
     DateTime? createdAt,
   }) => ExamSet(
     id: id ?? this.id,
-    examGroupsId: examGroupsId.present ? examGroupsId.value : this.examGroupsId,
+    examGroupsId: examGroupsId ?? this.examGroupsId,
     name: name.present ? name.value : this.name,
     createdAt: createdAt ?? this.createdAt,
   );
@@ -2115,7 +2109,7 @@ class ExamSet extends DataClass implements Insertable<ExamSet> {
 
 class ExamSetsCompanion extends UpdateCompanion<ExamSet> {
   final Value<int> id;
-  final Value<int?> examGroupsId;
+  final Value<int> examGroupsId;
   final Value<String?> name;
   final Value<DateTime> createdAt;
   const ExamSetsCompanion({
@@ -2126,10 +2120,10 @@ class ExamSetsCompanion extends UpdateCompanion<ExamSet> {
   });
   ExamSetsCompanion.insert({
     this.id = const Value.absent(),
-    this.examGroupsId = const Value.absent(),
+    required int examGroupsId,
     this.name = const Value.absent(),
     this.createdAt = const Value.absent(),
-  });
+  }) : examGroupsId = Value(examGroupsId);
   static Insertable<ExamSet> custom({
     Expression<int>? id,
     Expression<int>? examGroupsId,
@@ -2146,7 +2140,7 @@ class ExamSetsCompanion extends UpdateCompanion<ExamSet> {
 
   ExamSetsCompanion copyWith({
     Value<int>? id,
-    Value<int?>? examGroupsId,
+    Value<int>? examGroupsId,
     Value<String?>? name,
     Value<DateTime>? createdAt,
   }) {
@@ -2194,19 +2188,6 @@ class $ExamSetQuestionsTable extends ExamSetQuestions
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ExamSetQuestionsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
   static const VerificationMeta _examSetIdMeta = const VerificationMeta(
     'examSetId',
   );
@@ -2247,12 +2228,7 @@ class $ExamSetQuestionsTable extends ExamSetQuestions
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    examSetId,
-    questionId,
-    questionOrder,
-  ];
+  List<GeneratedColumn> get $columns => [examSetId, questionId, questionOrder];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2265,9 +2241,6 @@ class $ExamSetQuestionsTable extends ExamSetQuestions
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
     if (data.containsKey('exam_set_id')) {
       context.handle(
         _examSetIdMeta,
@@ -2293,15 +2266,11 @@ class $ExamSetQuestionsTable extends ExamSetQuestions
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {examSetId, questionId};
   @override
   ExamSetQuestion map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ExamSetQuestion(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
       examSetId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}exam_set_id'],
@@ -2324,20 +2293,13 @@ class $ExamSetQuestionsTable extends ExamSetQuestions
 }
 
 class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
-  final int id;
   final int? examSetId;
   final int? questionId;
   final int? questionOrder;
-  const ExamSetQuestion({
-    required this.id,
-    this.examSetId,
-    this.questionId,
-    this.questionOrder,
-  });
+  const ExamSetQuestion({this.examSetId, this.questionId, this.questionOrder});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
     if (!nullToAbsent || examSetId != null) {
       map['exam_set_id'] = Variable<int>(examSetId);
     }
@@ -2352,7 +2314,6 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
 
   ExamSetQuestionsCompanion toCompanion(bool nullToAbsent) {
     return ExamSetQuestionsCompanion(
-      id: Value(id),
       examSetId: examSetId == null && nullToAbsent
           ? const Value.absent()
           : Value(examSetId),
@@ -2371,7 +2332,6 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ExamSetQuestion(
-      id: serializer.fromJson<int>(json['id']),
       examSetId: serializer.fromJson<int?>(json['examSetId']),
       questionId: serializer.fromJson<int?>(json['questionId']),
       questionOrder: serializer.fromJson<int?>(json['questionOrder']),
@@ -2381,7 +2341,6 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'examSetId': serializer.toJson<int?>(examSetId),
       'questionId': serializer.toJson<int?>(questionId),
       'questionOrder': serializer.toJson<int?>(questionOrder),
@@ -2389,12 +2348,10 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
   }
 
   ExamSetQuestion copyWith({
-    int? id,
     Value<int?> examSetId = const Value.absent(),
     Value<int?> questionId = const Value.absent(),
     Value<int?> questionOrder = const Value.absent(),
   }) => ExamSetQuestion(
-    id: id ?? this.id,
     examSetId: examSetId.present ? examSetId.value : this.examSetId,
     questionId: questionId.present ? questionId.value : this.questionId,
     questionOrder: questionOrder.present
@@ -2403,7 +2360,6 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
   );
   ExamSetQuestion copyWithCompanion(ExamSetQuestionsCompanion data) {
     return ExamSetQuestion(
-      id: data.id.present ? data.id.value : this.id,
       examSetId: data.examSetId.present ? data.examSetId.value : this.examSetId,
       questionId: data.questionId.present
           ? data.questionId.value
@@ -2417,7 +2373,6 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
   @override
   String toString() {
     return (StringBuffer('ExamSetQuestion(')
-          ..write('id: $id, ')
           ..write('examSetId: $examSetId, ')
           ..write('questionId: $questionId, ')
           ..write('questionOrder: $questionOrder')
@@ -2426,68 +2381,64 @@ class ExamSetQuestion extends DataClass implements Insertable<ExamSetQuestion> {
   }
 
   @override
-  int get hashCode => Object.hash(id, examSetId, questionId, questionOrder);
+  int get hashCode => Object.hash(examSetId, questionId, questionOrder);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ExamSetQuestion &&
-          other.id == this.id &&
           other.examSetId == this.examSetId &&
           other.questionId == this.questionId &&
           other.questionOrder == this.questionOrder);
 }
 
 class ExamSetQuestionsCompanion extends UpdateCompanion<ExamSetQuestion> {
-  final Value<int> id;
   final Value<int?> examSetId;
   final Value<int?> questionId;
   final Value<int?> questionOrder;
+  final Value<int> rowid;
   const ExamSetQuestionsCompanion({
-    this.id = const Value.absent(),
     this.examSetId = const Value.absent(),
     this.questionId = const Value.absent(),
     this.questionOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   ExamSetQuestionsCompanion.insert({
-    this.id = const Value.absent(),
     this.examSetId = const Value.absent(),
     this.questionId = const Value.absent(),
     this.questionOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   static Insertable<ExamSetQuestion> custom({
-    Expression<int>? id,
     Expression<int>? examSetId,
     Expression<int>? questionId,
     Expression<int>? questionOrder,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (examSetId != null) 'exam_set_id': examSetId,
       if (questionId != null) 'question_id': questionId,
       if (questionOrder != null) 'question_order': questionOrder,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   ExamSetQuestionsCompanion copyWith({
-    Value<int>? id,
     Value<int?>? examSetId,
     Value<int?>? questionId,
     Value<int?>? questionOrder,
+    Value<int>? rowid,
   }) {
     return ExamSetQuestionsCompanion(
-      id: id ?? this.id,
       examSetId: examSetId ?? this.examSetId,
       questionId: questionId ?? this.questionId,
       questionOrder: questionOrder ?? this.questionOrder,
+      rowid: rowid ?? this.rowid,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (examSetId.present) {
       map['exam_set_id'] = Variable<int>(examSetId.value);
     }
@@ -2497,16 +2448,19 @@ class ExamSetQuestionsCompanion extends UpdateCompanion<ExamSetQuestion> {
     if (questionOrder.present) {
       map['question_order'] = Variable<int>(questionOrder.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('ExamSetQuestionsCompanion(')
-          ..write('id: $id, ')
           ..write('examSetId: $examSetId, ')
           ..write('questionId: $questionId, ')
-          ..write('questionOrder: $questionOrder')
+          ..write('questionOrder: $questionOrder, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -6076,14 +6030,14 @@ typedef $$RanksTableProcessedTableManager =
 typedef $$ExamSetsTableCreateCompanionBuilder =
     ExamSetsCompanion Function({
       Value<int> id,
-      Value<int?> examGroupsId,
+      required int examGroupsId,
       Value<String?> name,
       Value<DateTime> createdAt,
     });
 typedef $$ExamSetsTableUpdateCompanionBuilder =
     ExamSetsCompanion Function({
       Value<int> id,
-      Value<int?> examGroupsId,
+      Value<int> examGroupsId,
       Value<String?> name,
       Value<DateTime> createdAt,
     });
@@ -6100,9 +6054,9 @@ final class $$ExamSetsTableReferences
         ),
       );
 
-  $$ExamGroupsTableProcessedTableManager? get examGroupsId {
-    final $_column = $_itemColumn<int>('exam_groups_id');
-    if ($_column == null) return null;
+  $$ExamGroupsTableProcessedTableManager get examGroupsId {
+    final $_column = $_itemColumn<int>('exam_groups_id')!;
+
     final manager = $$ExamGroupsTableTableManager(
       $_db,
       $_db.examGroups,
@@ -6355,7 +6309,7 @@ class $$ExamSetsTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> examGroupsId = const Value.absent(),
+                Value<int> examGroupsId = const Value.absent(),
                 Value<String?> name = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => ExamSetsCompanion(
@@ -6367,7 +6321,7 @@ class $$ExamSetsTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<int?> examGroupsId = const Value.absent(),
+                required int examGroupsId,
                 Value<String?> name = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => ExamSetsCompanion.insert(
@@ -6470,17 +6424,17 @@ typedef $$ExamSetsTableProcessedTableManager =
     >;
 typedef $$ExamSetQuestionsTableCreateCompanionBuilder =
     ExamSetQuestionsCompanion Function({
-      Value<int> id,
       Value<int?> examSetId,
       Value<int?> questionId,
       Value<int?> questionOrder,
+      Value<int> rowid,
     });
 typedef $$ExamSetQuestionsTableUpdateCompanionBuilder =
     ExamSetQuestionsCompanion Function({
-      Value<int> id,
       Value<int?> examSetId,
       Value<int?> questionId,
       Value<int?> questionOrder,
+      Value<int> rowid,
     });
 
 final class $$ExamSetQuestionsTableReferences
@@ -6540,11 +6494,6 @@ class $$ExamSetQuestionsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<int> get questionOrder => $composableBuilder(
     column: $table.questionOrder,
     builder: (column) => ColumnFilters(column),
@@ -6606,11 +6555,6 @@ class $$ExamSetQuestionsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<int> get questionOrder => $composableBuilder(
     column: $table.questionOrder,
     builder: (column) => ColumnOrderings(column),
@@ -6672,9 +6616,6 @@ class $$ExamSetQuestionsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
   GeneratedColumn<int> get questionOrder => $composableBuilder(
     column: $table.questionOrder,
     builder: (column) => column,
@@ -6757,27 +6698,27 @@ class $$ExamSetQuestionsTableTableManager
               $$ExamSetQuestionsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
                 Value<int?> examSetId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
                 Value<int?> questionOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ExamSetQuestionsCompanion(
-                id: id,
                 examSetId: examSetId,
                 questionId: questionId,
                 questionOrder: questionOrder,
+                rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<int> id = const Value.absent(),
                 Value<int?> examSetId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
                 Value<int?> questionOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
               }) => ExamSetQuestionsCompanion.insert(
-                id: id,
                 examSetId: examSetId,
                 questionId: questionId,
                 questionOrder: questionOrder,
+                rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
