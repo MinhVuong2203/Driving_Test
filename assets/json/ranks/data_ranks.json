@@ -116,7 +116,8 @@
     "total_questions": 600,
     "total_exam": 45,
     "total_pass": 41,
-    "time": 26
+    "time": 26,
+    "exam_groups_id": 5
   },
   {
     "rank_id": "D1E",
