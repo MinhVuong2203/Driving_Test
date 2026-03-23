@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:driving_test_prep/database/app_database.dart';
+import 'package:driving_test_prep/core/database/app_database.dart';
+
 import 'package:flutter/services.dart';
 
 class SeedsExamGroups {

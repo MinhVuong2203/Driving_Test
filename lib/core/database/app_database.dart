@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:driving_test_prep/database/seeds/seed_exam_group.dart';
-import 'package:driving_test_prep/database/seeds/seed_exam_sets.dart';
-import 'package:driving_test_prep/database/seeds/seed_exam_sets_questions.dart';
-import 'package:driving_test_prep/database/seeds/seed_questions.dart';
-import 'package:driving_test_prep/database/seeds/seed_ranks.dart';
-import 'package:driving_test_prep/database/seeds/seeds_topics.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_exam_group.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_exam_sets.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_exam_sets_questions.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_questions.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_ranks.dart';
+import 'package:driving_test_prep/core/database/seeds/seeds_topics.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';

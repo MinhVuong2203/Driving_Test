@@ -1,6 +1,6 @@
+import 'package:driving_test_prep/features/driving_centers/screens/center_list_screen.dart';
 import 'package:driving_test_prep/features/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import '../features/driving_centers/screens/center_list_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
 

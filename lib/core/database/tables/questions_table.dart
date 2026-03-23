@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:driving_test_prep/database/tables/topics_table.dart';
+import 'package:driving_test_prep/core/database/tables/topics_table.dart';
 
 class Questions extends Table {
   IntColumn  get id            => integer()();
