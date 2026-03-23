@@ -32,57 +32,112 @@
 Cấu trúc file 
 ```bash
 lib/
-├── apps/
-├── database/
+├── app/
+├── core/
+│   ├── database/
+│   │   ├── tables/
+│   │   ├── daos/
+│   │   └── seeds/
+│   └── network/
+│
+├── data/
+│   ├── datasource/
+│   │   ├── remote/
+│   │   └── external/
+│   ├── models/
+│   ├── mapper/
+│   └── repository/
+│
 ├── features/
-│   ├── home/
-│   │   ├── screens/
-│   │   └── widgets/
-│   ├── driving_center/
-│   │   ├── screens/
-│   │   └── widgets/
-│   └── practice/
-│       ├── screens/
-│       └── widgets/
-├── models/
-├── services/
-├── utils/
-├── widgets/
+│   ├── topic/
+│   ├── question/
+│   ├── exam/
+│   └── driving_center/
+│
+├── shared/
+│   ├── widgets/
+│   └── utils/
+│
 └── main.dart
 ```
-main.dart
-  Điểm khởi chạy của ứng dụng (runApp)
-  Cấu hình MaterialApp, theme, routes,...
+```bash
+#  Flutter App Structure (Drift + API)
+# Tổng quan kiến trúc
 
-apps/
-  Chứa cấu hình cấp cao của ứng dụng
-  routing (AppRouter)
-  theme (AppTheme)
-  constants toàn app
+App sử dụng **Layered Architecture + Repository Pattern**:
+UI → Repository → (Local DB + API)
+-------------------------------------------------------
 
-features/ 
-  Chia theo từng chức năng (feature-based)
-  Mỗi feature là một module độc lập, bao gồm đầy đủ UI, logic và dữ liệu liên quan.
+## 📂 Cấu trúc thư mục
+### core/
 
-models/
-  Chứa các model (data class)
-  Dùng để: mapping JSON từ API, lưu trữ dữ liệu
+Chứa các thành phần nền tảng dùng chung:
 
-services/
-  Xử lý logic giao tiếp bên ngoài
-  API call (HTTP)
-  Firebase
-  Authentication service
+* `database/`: SQLite (Drift), tables, DAO, seed data
+* `network/`: cấu hình API (Dio, interceptor, endpoints)
 
-utils/
-  Các hàm tiện ích dùng chung
-  format date
-  validate input
-  helper functions
-  main color
+---
 
-widgets/
-  Chứa các widget tái sử dụng, các widgets dùng chung
+### data/
+
+Xử lý toàn bộ dữ liệu của app:
+
+* `datasource/`
+
+  * `remote/`: API server của hệ thống
+  * `external/`: API bên thứ 3 (Google, map, ...)
+* `models/`: model dùng cho API (JSON)
+* `mapper/`: convert giữa API model ↔ Drift (DB)
+* `repository/`: lớp trung gian, quyết định lấy dữ liệu từ API hay DB
+
+---
+
+### features/
+
+Chia theo từng chức năng (module):
+
+* topic/
+* question/
+* exam/
+* driving_center/
+
+Mỗi feature chứa UI + state management (Provider/Riverpod/Bloc)
+
+---
+
+### shared/
+
+Dùng chung toàn app:
+
+* `widgets/`: widget reusable
+* `utils/`: constants, helper
+
+---
+
+## 🔄 Data Flow
+
+UI (features)
+→ Repository
+→ (DAO - Drift / Remote API / External API)
+
+---
+
+## 📝 Quy ước
+
+* Drift model chỉ dùng cho database
+* API dùng model riêng (`models/`)
+* Luôn dùng `mapper` để convert dữ liệu
+* Không gọi API trực tiếp trong UI
+* Repository là nơi xử lý dữ liệu trung tâm
+
+---
+
+## 🎯 Mục tiêu
+
+* Code rõ ràng, dễ maintain
+* Tách biệt DB, API, UI
+* Hỗ trợ offline (cache bằng Drift)
+```
 
 
 
