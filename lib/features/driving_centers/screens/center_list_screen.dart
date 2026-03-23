@@ -1,6 +1,6 @@
+import 'package:driving_test_prep/data/models/driving_center_model.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_detail_screen.dart';
-import 'package:driving_test_prep/models/driving_center_model.dart';
-import 'package:driving_test_prep/services/driving_center_service.dart';
+import 'package:driving_test_prep/data/datasource/external/driving_center_service.dart';
 import 'package:flutter/material.dart';
 
 class CenterListScreen extends StatefulWidget {

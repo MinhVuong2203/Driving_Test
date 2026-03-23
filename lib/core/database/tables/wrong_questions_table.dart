@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:driving_test_prep/database/tables/questions_table.dart';
-
+import 'package:driving_test_prep/core/database/tables/questions_table.dart';
 class WrongQuestions extends Table {
   IntColumn  get id          => integer().autoIncrement()();
   IntColumn  get questionId  => integer().unique().nullable().references(Questions, #id)();
