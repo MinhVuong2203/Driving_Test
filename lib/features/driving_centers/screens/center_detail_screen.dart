@@ -1,4 +1,4 @@
-import 'package:driving_test_prep/models/driving_center_model.dart';
+import 'package:driving_test_prep/data/models/driving_center_model.dart';
 import 'package:flutter/material.dart';
 
 class CenterDetailScreen extends StatelessWidget {

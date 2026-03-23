@@ -1,4 +1,4 @@
-import 'package:driving_test_prep/utils/app_colors.dart';
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExamCard extends StatelessWidget {

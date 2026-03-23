@@ -1,0 +1,17 @@
+[
+  {
+    "id": 401,
+    "exam_groups_id": 5,
+    "name": "Đề 1"
+  },
+  {
+    "id": 402,
+    "exam_groups_id": 5,
+    "name": "Đề 2"
+  },
+  {
+    "id": 403,
+    "exam_groups_id": 5,
+    "name": "Đề 3"
+  }
+]
