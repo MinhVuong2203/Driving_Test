@@ -6,7 +6,9 @@ import 'package:driving_test_prep/core/database/seeds/seed_exam_sets.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_exam_sets_questions.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_questions.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_ranks.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_setting.dart';
 import 'package:driving_test_prep/core/database/seeds/seeds_topics.dart';
+import 'package:driving_test_prep/core/database/tables/setting_table.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
@@ -28,10 +30,12 @@ part 'app_database.g.dart';
 @DriftDatabase(tables: [
   Topics, Questions, ExamGroups, Ranks, ExamSets,
   ExamSetQuestions, PracticeSessions, UserAnswers,
-  WrongQuestions, ExamHistory,
+  WrongQuestions, ExamHistory, Setting
 ])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  AppDatabase() : super(_openConnection()){
+    // print("✅ AppDatabase CREATED: ${identityHashCode(this)}");
+  }
 
   @override
   int get schemaVersion => 1;
@@ -44,6 +48,7 @@ class AppDatabase extends _$AppDatabase {
     onCreate: (m) async {
       await m.createAll();
       // 👇 SEED DATA
+      await SeedsSetting.seedsSetting(this);
       await SeedsTopics.seedTopics(this);
       await SeedsExamGroups.seedExamGroups(this);
       await SeedsRanks.seedRanks(this);
@@ -67,7 +72,6 @@ LazyDatabase _openConnection() {
       print('✅ Đã xóa DB cũ');
     }
 
-    print('✅ Đã tạo DB');
 
     return NativeDatabase.createInBackground(file);
   });

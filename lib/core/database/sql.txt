@@ -145,8 +145,6 @@ CREATE TABLE setting(
     models INTEGER DEFAULT 0,  -- 0 là chấm điểm sau khi nộp, 1 là chấm tại chỗ khi chọn 1 đáp án
     mode INTEGER DEFAULT 0, --- 0 là không có gì (tối), 1 là có (sáng)
     vibration INTEGER DEFAULT 0, -- 0 là không rung, 1 là rung
-
-
 )
 
 

@@ -4100,6 +4100,358 @@ class ExamHistoryCompanion extends UpdateCompanion<ExamHistoryData> {
   }
 }
 
+class $SettingTable extends Setting with TableInfo<$SettingTable, SettingData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SettingTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _SettingIdMeta = const VerificationMeta(
+    'SettingId',
+  );
+  @override
+  late final GeneratedColumn<int> SettingId = GeneratedColumn<int>(
+    'setting_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rankIdMeta = const VerificationMeta('rankId');
+  @override
+  late final GeneratedColumn<String> rankId = GeneratedColumn<String>(
+    'rank_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant("A1"),
+  );
+  static const VerificationMeta _modelsMeta = const VerificationMeta('models');
+  @override
+  late final GeneratedColumn<int> models = GeneratedColumn<int>(
+    'models',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _modeMeta = const VerificationMeta('mode');
+  @override
+  late final GeneratedColumn<int> mode = GeneratedColumn<int>(
+    'mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _vibrationMeta = const VerificationMeta(
+    'vibration',
+  );
+  @override
+  late final GeneratedColumn<int> vibration = GeneratedColumn<int>(
+    'vibration',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    SettingId,
+    rankId,
+    models,
+    mode,
+    vibration,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'setting';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SettingData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('setting_id')) {
+      context.handle(
+        _SettingIdMeta,
+        SettingId.isAcceptableOrUnknown(data['setting_id']!, _SettingIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_SettingIdMeta);
+    }
+    if (data.containsKey('rank_id')) {
+      context.handle(
+        _rankIdMeta,
+        rankId.isAcceptableOrUnknown(data['rank_id']!, _rankIdMeta),
+      );
+    }
+    if (data.containsKey('models')) {
+      context.handle(
+        _modelsMeta,
+        models.isAcceptableOrUnknown(data['models']!, _modelsMeta),
+      );
+    }
+    if (data.containsKey('mode')) {
+      context.handle(
+        _modeMeta,
+        mode.isAcceptableOrUnknown(data['mode']!, _modeMeta),
+      );
+    }
+    if (data.containsKey('vibration')) {
+      context.handle(
+        _vibrationMeta,
+        vibration.isAcceptableOrUnknown(data['vibration']!, _vibrationMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  SettingData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SettingData(
+      SettingId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}setting_id'],
+      )!,
+      rankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rank_id'],
+      )!,
+      models: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}models'],
+      )!,
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}mode'],
+      )!,
+      vibration: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}vibration'],
+      )!,
+    );
+  }
+
+  @override
+  $SettingTable createAlias(String alias) {
+    return $SettingTable(attachedDatabase, alias);
+  }
+}
+
+class SettingData extends DataClass implements Insertable<SettingData> {
+  final int SettingId;
+  final String rankId;
+  final int models;
+  final int mode;
+  final int vibration;
+  const SettingData({
+    required this.SettingId,
+    required this.rankId,
+    required this.models,
+    required this.mode,
+    required this.vibration,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['setting_id'] = Variable<int>(SettingId);
+    map['rank_id'] = Variable<String>(rankId);
+    map['models'] = Variable<int>(models);
+    map['mode'] = Variable<int>(mode);
+    map['vibration'] = Variable<int>(vibration);
+    return map;
+  }
+
+  SettingCompanion toCompanion(bool nullToAbsent) {
+    return SettingCompanion(
+      SettingId: Value(SettingId),
+      rankId: Value(rankId),
+      models: Value(models),
+      mode: Value(mode),
+      vibration: Value(vibration),
+    );
+  }
+
+  factory SettingData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SettingData(
+      SettingId: serializer.fromJson<int>(json['SettingId']),
+      rankId: serializer.fromJson<String>(json['rankId']),
+      models: serializer.fromJson<int>(json['models']),
+      mode: serializer.fromJson<int>(json['mode']),
+      vibration: serializer.fromJson<int>(json['vibration']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'SettingId': serializer.toJson<int>(SettingId),
+      'rankId': serializer.toJson<String>(rankId),
+      'models': serializer.toJson<int>(models),
+      'mode': serializer.toJson<int>(mode),
+      'vibration': serializer.toJson<int>(vibration),
+    };
+  }
+
+  SettingData copyWith({
+    int? SettingId,
+    String? rankId,
+    int? models,
+    int? mode,
+    int? vibration,
+  }) => SettingData(
+    SettingId: SettingId ?? this.SettingId,
+    rankId: rankId ?? this.rankId,
+    models: models ?? this.models,
+    mode: mode ?? this.mode,
+    vibration: vibration ?? this.vibration,
+  );
+  SettingData copyWithCompanion(SettingCompanion data) {
+    return SettingData(
+      SettingId: data.SettingId.present ? data.SettingId.value : this.SettingId,
+      rankId: data.rankId.present ? data.rankId.value : this.rankId,
+      models: data.models.present ? data.models.value : this.models,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      vibration: data.vibration.present ? data.vibration.value : this.vibration,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingData(')
+          ..write('SettingId: $SettingId, ')
+          ..write('rankId: $rankId, ')
+          ..write('models: $models, ')
+          ..write('mode: $mode, ')
+          ..write('vibration: $vibration')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(SettingId, rankId, models, mode, vibration);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SettingData &&
+          other.SettingId == this.SettingId &&
+          other.rankId == this.rankId &&
+          other.models == this.models &&
+          other.mode == this.mode &&
+          other.vibration == this.vibration);
+}
+
+class SettingCompanion extends UpdateCompanion<SettingData> {
+  final Value<int> SettingId;
+  final Value<String> rankId;
+  final Value<int> models;
+  final Value<int> mode;
+  final Value<int> vibration;
+  final Value<int> rowid;
+  const SettingCompanion({
+    this.SettingId = const Value.absent(),
+    this.rankId = const Value.absent(),
+    this.models = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.vibration = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SettingCompanion.insert({
+    required int SettingId,
+    this.rankId = const Value.absent(),
+    this.models = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.vibration = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : SettingId = Value(SettingId);
+  static Insertable<SettingData> custom({
+    Expression<int>? SettingId,
+    Expression<String>? rankId,
+    Expression<int>? models,
+    Expression<int>? mode,
+    Expression<int>? vibration,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (SettingId != null) 'setting_id': SettingId,
+      if (rankId != null) 'rank_id': rankId,
+      if (models != null) 'models': models,
+      if (mode != null) 'mode': mode,
+      if (vibration != null) 'vibration': vibration,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SettingCompanion copyWith({
+    Value<int>? SettingId,
+    Value<String>? rankId,
+    Value<int>? models,
+    Value<int>? mode,
+    Value<int>? vibration,
+    Value<int>? rowid,
+  }) {
+    return SettingCompanion(
+      SettingId: SettingId ?? this.SettingId,
+      rankId: rankId ?? this.rankId,
+      models: models ?? this.models,
+      mode: mode ?? this.mode,
+      vibration: vibration ?? this.vibration,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (SettingId.present) {
+      map['setting_id'] = Variable<int>(SettingId.value);
+    }
+    if (rankId.present) {
+      map['rank_id'] = Variable<String>(rankId.value);
+    }
+    if (models.present) {
+      map['models'] = Variable<int>(models.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<int>(mode.value);
+    }
+    if (vibration.present) {
+      map['vibration'] = Variable<int>(vibration.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettingCompanion(')
+          ..write('SettingId: $SettingId, ')
+          ..write('rankId: $rankId, ')
+          ..write('models: $models, ')
+          ..write('mode: $mode, ')
+          ..write('vibration: $vibration, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4117,6 +4469,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UserAnswersTable userAnswers = $UserAnswersTable(this);
   late final $WrongQuestionsTable wrongQuestions = $WrongQuestionsTable(this);
   late final $ExamHistoryTable examHistory = $ExamHistoryTable(this);
+  late final $SettingTable setting = $SettingTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4132,6 +4485,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     userAnswers,
     wrongQuestions,
     examHistory,
+    setting,
   ];
 }
 
@@ -8204,6 +8558,203 @@ typedef $$ExamHistoryTableProcessedTableManager =
       ExamHistoryData,
       PrefetchHooks Function()
     >;
+typedef $$SettingTableCreateCompanionBuilder =
+    SettingCompanion Function({
+      required int SettingId,
+      Value<String> rankId,
+      Value<int> models,
+      Value<int> mode,
+      Value<int> vibration,
+      Value<int> rowid,
+    });
+typedef $$SettingTableUpdateCompanionBuilder =
+    SettingCompanion Function({
+      Value<int> SettingId,
+      Value<String> rankId,
+      Value<int> models,
+      Value<int> mode,
+      Value<int> vibration,
+      Value<int> rowid,
+    });
+
+class $$SettingTableFilterComposer
+    extends Composer<_$AppDatabase, $SettingTable> {
+  $$SettingTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get SettingId => $composableBuilder(
+    column: $table.SettingId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get models => $composableBuilder(
+    column: $table.models,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get mode => $composableBuilder(
+    column: $table.mode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get vibration => $composableBuilder(
+    column: $table.vibration,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SettingTableOrderingComposer
+    extends Composer<_$AppDatabase, $SettingTable> {
+  $$SettingTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get SettingId => $composableBuilder(
+    column: $table.SettingId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get models => $composableBuilder(
+    column: $table.models,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get mode => $composableBuilder(
+    column: $table.mode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get vibration => $composableBuilder(
+    column: $table.vibration,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SettingTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SettingTable> {
+  $$SettingTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get SettingId =>
+      $composableBuilder(column: $table.SettingId, builder: (column) => column);
+
+  GeneratedColumn<String> get rankId =>
+      $composableBuilder(column: $table.rankId, builder: (column) => column);
+
+  GeneratedColumn<int> get models =>
+      $composableBuilder(column: $table.models, builder: (column) => column);
+
+  GeneratedColumn<int> get mode =>
+      $composableBuilder(column: $table.mode, builder: (column) => column);
+
+  GeneratedColumn<int> get vibration =>
+      $composableBuilder(column: $table.vibration, builder: (column) => column);
+}
+
+class $$SettingTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SettingTable,
+          SettingData,
+          $$SettingTableFilterComposer,
+          $$SettingTableOrderingComposer,
+          $$SettingTableAnnotationComposer,
+          $$SettingTableCreateCompanionBuilder,
+          $$SettingTableUpdateCompanionBuilder,
+          (
+            SettingData,
+            BaseReferences<_$AppDatabase, $SettingTable, SettingData>,
+          ),
+          SettingData,
+          PrefetchHooks Function()
+        > {
+  $$SettingTableTableManager(_$AppDatabase db, $SettingTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SettingTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SettingTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SettingTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> SettingId = const Value.absent(),
+                Value<String> rankId = const Value.absent(),
+                Value<int> models = const Value.absent(),
+                Value<int> mode = const Value.absent(),
+                Value<int> vibration = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SettingCompanion(
+                SettingId: SettingId,
+                rankId: rankId,
+                models: models,
+                mode: mode,
+                vibration: vibration,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int SettingId,
+                Value<String> rankId = const Value.absent(),
+                Value<int> models = const Value.absent(),
+                Value<int> mode = const Value.absent(),
+                Value<int> vibration = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SettingCompanion.insert(
+                SettingId: SettingId,
+                rankId: rankId,
+                models: models,
+                mode: mode,
+                vibration: vibration,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SettingTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SettingTable,
+      SettingData,
+      $$SettingTableFilterComposer,
+      $$SettingTableOrderingComposer,
+      $$SettingTableAnnotationComposer,
+      $$SettingTableCreateCompanionBuilder,
+      $$SettingTableUpdateCompanionBuilder,
+      (SettingData, BaseReferences<_$AppDatabase, $SettingTable, SettingData>),
+      SettingData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8228,4 +8779,6 @@ class $AppDatabaseManager {
       $$WrongQuestionsTableTableManager(_db, _db.wrongQuestions);
   $$ExamHistoryTableTableManager get examHistory =>
       $$ExamHistoryTableTableManager(_db, _db.examHistory);
+  $$SettingTableTableManager get setting =>
+      $$SettingTableTableManager(_db, _db.setting);
 }

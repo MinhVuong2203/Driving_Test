@@ -7,14 +7,17 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final db = AppDatabase();
-  var ex =  await db.select(db.examSets).get();
+  // var ex =  await db.select(db.examSets).get();
+  //
+  // final topic_repo = TopicRepository(TopicDao(db));
+  // final topics = await topic_repo.getTopics();
+  // print(topics);
+  // print("\n------------------------------");
+  // final topic3 = await topic_repo.getTopicById(3);
+  // print(topic3);
 
-  final topic_repo = TopicRepository(TopicDao(db));
-  final topics = await topic_repo.getTopics();
-  print(topics);
-  print("\n------------------------------");
-  final topic3 = await topic_repo.getTopicById(3);
-  print(topic3);
+
+
 
   runApp(const MyApp());
 }
