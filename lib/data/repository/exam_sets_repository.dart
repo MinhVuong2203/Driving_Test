@@ -11,5 +11,11 @@ class ExamSetsRepository {
     return dao.getExamByGroup(groupId);
   }
 
+  // Lấy tất cả exam dựa trên groupId (từ DB)
+  Future<List<ExamSet>> getExamByRank(String rankId) {
+    return dao.getExamByRank(rankId);
+  }
+
+
 
 }
