@@ -2,6 +2,7 @@ import 'package:driving_test_prep/features/home/widgets/menu_grid.dart';
 import 'package:driving_test_prep/features/home/widgets/pro_banner.dart';
 import 'package:driving_test_prep/features/home/widgets/progress_card.dart';
 import 'package:driving_test_prep/features/home/widgets/topic_card.dart';
+import 'package:driving_test_prep/features/settings/screens/settings_screens.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,12 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         leadingWidth: 70,
         leading: TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            );
+          },
           child: const Text('Cài đặt', style: TextStyle(color: Colors.blue)),
         ),
         title: const Text('Ôn luyện GPLX'),
