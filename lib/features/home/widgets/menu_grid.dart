@@ -16,12 +16,21 @@ class MenuGrid extends StatelessWidget {
         'color': Color.fromRGBO(8, 102, 255, 1),
         'route': const ExamListScreen()
       },
-      {'icon': Icons.close, 'text': 'Câu sai', 'color': Color.fromRGBO(255, 0, 0, 0.8)},
+      {
+        'icon': Icons.close,
+        'text': 'Câu sai',
+        'color': Color.fromRGBO(255, 0, 0, 0.8),
+      },
       {'icon': Icons.bookmark, 'text': 'Đã lưu', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
       {'icon': Icons.menu_book, 'text': 'Câu khó', 'color': Color.fromRGBO(3, 252, 69,0.6)},
       {'icon': Icons.change_history, 'text': 'Sa hình', 'color': Color.fromRGBO(3, 252, 69,0.6)},
       {'icon': Icons.lightbulb, 'text': 'Mẹo', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
-      {'icon': Icons.remove, 'text': 'Biển báo', 'color': Color.fromRGBO(255, 0, 0, 0.8)},
+      {
+        'icon': Icons.remove,
+        'text': 'Biển báo',
+        'color': Color.fromRGBO(255, 0, 0, 0.8),
+        'route': "" // Đặt vào đây nha Minh
+      },
       {'icon': Icons.facebook, 'text': 'Hỏi đáp', 'color': Color.fromRGBO(8, 102, 255, 1)},
     ];
 
@@ -48,10 +57,6 @@ class MenuGrid extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => items[index]['route'] as Widget )
                 );
               }
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Clicked ${items[index]['text']}')),
-              );
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
