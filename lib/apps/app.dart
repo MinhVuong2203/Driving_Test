@@ -1,7 +1,5 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
-import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
-import 'package:driving_test_prep/core/database/seeds/seed_setting.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/shared/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
