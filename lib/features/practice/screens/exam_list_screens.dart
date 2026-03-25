@@ -1,7 +1,9 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/exam_sets_dao.dart';
+import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/repository/exam_sets_repository.dart';
+import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_detail_screen.dart';
 import 'package:driving_test_prep/features/practice/widgets/exam_card.dart';
 import 'package:flutter/material.dart';
@@ -16,19 +18,22 @@ class ExamListScreen extends StatefulWidget {
 }
 
 class _ExamListScreenState extends State<ExamListScreen>{
-  late final db = DBProvider().db;
+  late final SettingRepository _settingRepository = SettingRepository(SettingDao(DBProvider().db));
   late final ExamSetsRepository exam_repo;
   List<ExamSet> exams = [];
+  late SettingData st;
 
   @override
   void initState(){
     super.initState();
-    exam_repo = ExamSetsRepository(ExamSetsDao(this.db));
+    exam_repo = ExamSetsRepository(ExamSetsDao(DBProvider().db)); // Gọi gọn DBProvider().db
+
     loadData();
   }
 
   Future<void> loadData() async {
-    final data = await exam_repo.getExamByGroup(5);
+    st = (await _settingRepository.getSetting())!;
+    final data = await exam_repo.getExamByRank(st.rankId);  // Lấy rankId
     setState(() {
       exams = data;
     });
@@ -61,7 +66,10 @@ class _ExamListScreenState extends State<ExamListScreen>{
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const ExamDetailScreen(),
+                  builder: (_) => ExamDetailScreen(
+                      exam: exam,
+                      rankId: st.rankId
+                  ),
                 ),
               );
             },

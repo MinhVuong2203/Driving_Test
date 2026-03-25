@@ -10,11 +10,13 @@ import '../../../shared/utils/constants/app_colors.dart';
 
 class ExamSetsQuestScreen extends StatefulWidget {
   final int examSetId;
+  final bool gradeInstantly;
   final int durationMinutes;
 
   const ExamSetsQuestScreen({
     super.key,
     required this.examSetId,
+    this.gradeInstantly = false,
     this.durationMinutes = 20,
   });
 
