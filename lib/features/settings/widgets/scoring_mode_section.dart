@@ -1,3 +1,4 @@
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ScoringModeSection extends StatelessWidget {
@@ -19,26 +20,27 @@ class ScoringModeSection extends StatelessWidget {
           isSelected: scoringAfterSubmit,
           onTap: () => onChanged(true),
         ),
-        const Divider(height: 1, color: Color(0xFF3A3A3C), indent: 16),
+        const Divider(height: 1, indent: 16),
         _ScoringOptionTile(
           title: 'Chấm điểm nhanh khi chọn đáp án',
           isSelected: !scoringAfterSubmit,
           onTap: () => onChanged(false),
         ),
         Container(
-          color: const Color(0xFF2C2C2E),
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
+
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text(
                 '• Ứng dụng sẽ chấm điểm và hiển thị kết quả sau khi bạn nộp bài thi.',
-                style: TextStyle(color: Colors.white54, fontSize: 13, height: 1.5),
+                style: TextStyle(fontSize: 13, height: 1.5),
               ),
               SizedBox(height: 4),
               Text(
                 '• Chế độ này tương tự khi thi sát hạch và phù hợp để luyện tập thi thử.',
-                style: TextStyle(color: Colors.white54, fontSize: 13, height: 1.5),
+                style: TextStyle(fontSize: 13, height: 1.5),
               ),
             ],
           ),
@@ -64,7 +66,7 @@ class _ScoringOptionTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: const Color(0xFF2C2C2E),
+        color: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
