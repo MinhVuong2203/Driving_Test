@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const SettingsScreen()),
             );
           },
-          child: const Text('Cài đặt', style: TextStyle(color: Colors.blue)),
+           child: const Text('Cài đặt', style: TextStyle(color: Colors.blue)),
         ),
         title: const Text('Ôn luyện GPLX'),
         centerTitle: true,
