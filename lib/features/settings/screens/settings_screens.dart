@@ -17,6 +17,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedGplx = 'B';
   bool _scoringAfterSubmit = true;
   bool _vibrationEnabled = true;
+  bool _darkModeEnabled = true;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           const SizedBox(height: 16),
+          const SettingsSectionHeader(title: 'GIAO DIỆN'),
+          Container(
+            color: const Color(0xFF2C2C2E),
+            child: SwitchListTile(
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              secondary: Icon(
+                _darkModeEnabled
+                    ? Icons.dark_mode_rounded
+                    : Icons.light_mode_rounded,
+                color: _darkModeEnabled ? Colors.blueAccent : Colors.orange,
+              ),
+              title: Text(
+                _darkModeEnabled ? 'Chế độ tối' : 'Chế độ sáng',
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              subtitle: Text(
+                _darkModeEnabled
+                    ? 'Đang sử dụng giao diện tối'
+                    : 'Đang sử dụng giao diện sáng',
+                style:
+                const TextStyle(color: Colors.white54, fontSize: 12),
+              ),
+              value: _darkModeEnabled,
+              onChanged: (value) => setState(() => _darkModeEnabled = value),
+              activeColor: Colors.blue,
+            ),
+          ),
 
+          const SizedBox(height: 16),
           // DỮ LIỆU
           const SettingsSectionHeader(title: 'DỮ LIỆU'),
           DeleteHistoryTile(
