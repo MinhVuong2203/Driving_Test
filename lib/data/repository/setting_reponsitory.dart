@@ -5,14 +5,27 @@ class SettingRepository {
   final SettingDao dao;
   SettingRepository(this.dao);
 
-  // Lấy tất cả topics (từ DB)
   Future<SettingData?> getSetting() {
     return dao.getSetting();
   }
 
-  /// Insert setting mặc định
   Future<void> insertDefault() async {
     await dao.insertDefault();
   }
 
+  Future<void> updateMode(int mode) async {
+    await dao.updateMode(mode);
+  }
+
+  Future<void> updateModels(int models) async {
+    await dao.updateModels(models);
+  }
+
+  Future<void> updateVibration(int vibration) async {
+    await dao.updateVibration(vibration);
+  }
+
+  Future<void> updateRankId(String rankId) async {
+    await dao.updateRankId(rankId);
+  }
 }

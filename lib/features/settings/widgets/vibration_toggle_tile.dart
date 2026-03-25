@@ -1,3 +1,4 @@
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class VibrationToggleTile extends StatelessWidget {
@@ -13,7 +14,8 @@ class VibrationToggleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF2C2C2E),
+      color: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
+
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -21,7 +23,6 @@ class VibrationToggleTile extends StatelessWidget {
           const Text(
             'Rung phản hồi',
             style: TextStyle(
-              color: Colors.white,
               fontSize: 17,
               fontWeight: FontWeight.w400,
             ),

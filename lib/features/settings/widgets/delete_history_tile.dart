@@ -1,3 +1,4 @@
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class DeleteHistoryTile extends StatelessWidget {
@@ -13,7 +14,7 @@ class DeleteHistoryTile extends StatelessWidget {
         InkWell(
           onTap: onTap,
           child: Container(
-            color: const Color(0xFF2C2C2E),
+            color:Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
@@ -40,12 +41,12 @@ class DeleteHistoryTile extends StatelessWidget {
           ),
         ),
         Container(
-          color: const Color(0xFF1C1C1E),
+          width: double.infinity,
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: const Text(
             'Xoá tất cả dữ liệu lịch sử ôn tập và làm bài thi thử.',
             style: TextStyle(
-              color: Colors.white54,
               fontSize: 13,
               height: 1.4,
             ),
