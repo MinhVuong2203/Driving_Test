@@ -60,3 +60,4 @@ flutter:
     - assets/json/ranks/
     - assets/json/exam_sets/
     - assets/json/exam_sets_questions/
+    - assets/json/traffic_signs/

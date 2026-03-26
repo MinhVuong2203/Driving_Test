@@ -4100,6 +4100,377 @@ class ExamHistoryCompanion extends UpdateCompanion<ExamHistoryData> {
   }
 }
 
+class $TrafficSignsTable extends TrafficSigns
+    with TableInfo<$TrafficSignsTable, TrafficSign> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TrafficSignsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _signIdMeta = const VerificationMeta('signId');
+  @override
+  late final GeneratedColumn<String> signId = GeneratedColumn<String>(
+    'sign_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    signId,
+    category,
+    name,
+    description,
+    imageUrl,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'traffic_signs';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TrafficSign> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sign_id')) {
+      context.handle(
+        _signIdMeta,
+        signId.isAcceptableOrUnknown(data['sign_id']!, _signIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_signIdMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {signId};
+  @override
+  TrafficSign map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TrafficSign(
+      signId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sign_id'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
+    );
+  }
+
+  @override
+  $TrafficSignsTable createAlias(String alias) {
+    return $TrafficSignsTable(attachedDatabase, alias);
+  }
+}
+
+class TrafficSign extends DataClass implements Insertable<TrafficSign> {
+  final String signId;
+  final String category;
+  final String name;
+  final String? description;
+  final String? imageUrl;
+  const TrafficSign({
+    required this.signId,
+    required this.category,
+    required this.name,
+    this.description,
+    this.imageUrl,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['sign_id'] = Variable<String>(signId);
+    map['category'] = Variable<String>(category);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
+    return map;
+  }
+
+  TrafficSignsCompanion toCompanion(bool nullToAbsent) {
+    return TrafficSignsCompanion(
+      signId: Value(signId),
+      category: Value(category),
+      name: Value(name),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
+    );
+  }
+
+  factory TrafficSign.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TrafficSign(
+      signId: serializer.fromJson<String>(json['signId']),
+      category: serializer.fromJson<String>(json['category']),
+      name: serializer.fromJson<String>(json['name']),
+      description: serializer.fromJson<String?>(json['description']),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'signId': serializer.toJson<String>(signId),
+      'category': serializer.toJson<String>(category),
+      'name': serializer.toJson<String>(name),
+      'description': serializer.toJson<String?>(description),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
+    };
+  }
+
+  TrafficSign copyWith({
+    String? signId,
+    String? category,
+    String? name,
+    Value<String?> description = const Value.absent(),
+    Value<String?> imageUrl = const Value.absent(),
+  }) => TrafficSign(
+    signId: signId ?? this.signId,
+    category: category ?? this.category,
+    name: name ?? this.name,
+    description: description.present ? description.value : this.description,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
+  );
+  TrafficSign copyWithCompanion(TrafficSignsCompanion data) {
+    return TrafficSign(
+      signId: data.signId.present ? data.signId.value : this.signId,
+      category: data.category.present ? data.category.value : this.category,
+      name: data.name.present ? data.name.value : this.name,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TrafficSign(')
+          ..write('signId: $signId, ')
+          ..write('category: $category, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('imageUrl: $imageUrl')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(signId, category, name, description, imageUrl);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TrafficSign &&
+          other.signId == this.signId &&
+          other.category == this.category &&
+          other.name == this.name &&
+          other.description == this.description &&
+          other.imageUrl == this.imageUrl);
+}
+
+class TrafficSignsCompanion extends UpdateCompanion<TrafficSign> {
+  final Value<String> signId;
+  final Value<String> category;
+  final Value<String> name;
+  final Value<String?> description;
+  final Value<String?> imageUrl;
+  final Value<int> rowid;
+  const TrafficSignsCompanion({
+    this.signId = const Value.absent(),
+    this.category = const Value.absent(),
+    this.name = const Value.absent(),
+    this.description = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TrafficSignsCompanion.insert({
+    required String signId,
+    required String category,
+    required String name,
+    this.description = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : signId = Value(signId),
+       category = Value(category),
+       name = Value(name);
+  static Insertable<TrafficSign> custom({
+    Expression<String>? signId,
+    Expression<String>? category,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<String>? imageUrl,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (signId != null) 'sign_id': signId,
+      if (category != null) 'category': category,
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (imageUrl != null) 'image_url': imageUrl,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TrafficSignsCompanion copyWith({
+    Value<String>? signId,
+    Value<String>? category,
+    Value<String>? name,
+    Value<String?>? description,
+    Value<String?>? imageUrl,
+    Value<int>? rowid,
+  }) {
+    return TrafficSignsCompanion(
+      signId: signId ?? this.signId,
+      category: category ?? this.category,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (signId.present) {
+      map['sign_id'] = Variable<String>(signId.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TrafficSignsCompanion(')
+          ..write('signId: $signId, ')
+          ..write('category: $category, ')
+          ..write('name: $name, ')
+          ..write('description: $description, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SettingTable extends Setting with TableInfo<$SettingTable, SettingData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -4469,6 +4840,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UserAnswersTable userAnswers = $UserAnswersTable(this);
   late final $WrongQuestionsTable wrongQuestions = $WrongQuestionsTable(this);
   late final $ExamHistoryTable examHistory = $ExamHistoryTable(this);
+  late final $TrafficSignsTable trafficSigns = $TrafficSignsTable(this);
   late final $SettingTable setting = $SettingTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -4485,6 +4857,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     userAnswers,
     wrongQuestions,
     examHistory,
+    trafficSigns,
     setting,
   ];
 }
@@ -8558,6 +8931,208 @@ typedef $$ExamHistoryTableProcessedTableManager =
       ExamHistoryData,
       PrefetchHooks Function()
     >;
+typedef $$TrafficSignsTableCreateCompanionBuilder =
+    TrafficSignsCompanion Function({
+      required String signId,
+      required String category,
+      required String name,
+      Value<String?> description,
+      Value<String?> imageUrl,
+      Value<int> rowid,
+    });
+typedef $$TrafficSignsTableUpdateCompanionBuilder =
+    TrafficSignsCompanion Function({
+      Value<String> signId,
+      Value<String> category,
+      Value<String> name,
+      Value<String?> description,
+      Value<String?> imageUrl,
+      Value<int> rowid,
+    });
+
+class $$TrafficSignsTableFilterComposer
+    extends Composer<_$AppDatabase, $TrafficSignsTable> {
+  $$TrafficSignsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get signId => $composableBuilder(
+    column: $table.signId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TrafficSignsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TrafficSignsTable> {
+  $$TrafficSignsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get signId => $composableBuilder(
+    column: $table.signId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TrafficSignsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TrafficSignsTable> {
+  $$TrafficSignsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get signId =>
+      $composableBuilder(column: $table.signId, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
+}
+
+class $$TrafficSignsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TrafficSignsTable,
+          TrafficSign,
+          $$TrafficSignsTableFilterComposer,
+          $$TrafficSignsTableOrderingComposer,
+          $$TrafficSignsTableAnnotationComposer,
+          $$TrafficSignsTableCreateCompanionBuilder,
+          $$TrafficSignsTableUpdateCompanionBuilder,
+          (
+            TrafficSign,
+            BaseReferences<_$AppDatabase, $TrafficSignsTable, TrafficSign>,
+          ),
+          TrafficSign,
+          PrefetchHooks Function()
+        > {
+  $$TrafficSignsTableTableManager(_$AppDatabase db, $TrafficSignsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TrafficSignsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TrafficSignsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TrafficSignsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> signId = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TrafficSignsCompanion(
+                signId: signId,
+                category: category,
+                name: name,
+                description: description,
+                imageUrl: imageUrl,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String signId,
+                required String category,
+                required String name,
+                Value<String?> description = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TrafficSignsCompanion.insert(
+                signId: signId,
+                category: category,
+                name: name,
+                description: description,
+                imageUrl: imageUrl,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TrafficSignsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TrafficSignsTable,
+      TrafficSign,
+      $$TrafficSignsTableFilterComposer,
+      $$TrafficSignsTableOrderingComposer,
+      $$TrafficSignsTableAnnotationComposer,
+      $$TrafficSignsTableCreateCompanionBuilder,
+      $$TrafficSignsTableUpdateCompanionBuilder,
+      (
+        TrafficSign,
+        BaseReferences<_$AppDatabase, $TrafficSignsTable, TrafficSign>,
+      ),
+      TrafficSign,
+      PrefetchHooks Function()
+    >;
 typedef $$SettingTableCreateCompanionBuilder =
     SettingCompanion Function({
       required int SettingId,
@@ -8779,6 +9354,8 @@ class $AppDatabaseManager {
       $$WrongQuestionsTableTableManager(_db, _db.wrongQuestions);
   $$ExamHistoryTableTableManager get examHistory =>
       $$ExamHistoryTableTableManager(_db, _db.examHistory);
+  $$TrafficSignsTableTableManager get trafficSigns =>
+      $$TrafficSignsTableTableManager(_db, _db.trafficSigns);
   $$SettingTableTableManager get setting =>
       $$SettingTableTableManager(_db, _db.setting);
 }

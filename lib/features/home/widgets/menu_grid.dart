@@ -3,6 +3,8 @@ import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/traffic_sign_screen.dart';
+
 class MenuGrid extends StatelessWidget {
 
   const MenuGrid({super.key});
@@ -29,7 +31,7 @@ class MenuGrid extends StatelessWidget {
         'icon': Icons.remove,
         'text': 'Biển báo',
         'color': Color.fromRGBO(255, 0, 0, 0.8),
-        'route': "" // Đặt vào đây nha Minh
+        'route': const TrafficSignsScreen() // Đặt vào đây nha Minh
       },
       {'icon': Icons.facebook, 'text': 'Hỏi đáp', 'color': Color.fromRGBO(8, 102, 255, 1)},
     ];
