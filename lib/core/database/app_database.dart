@@ -9,6 +9,7 @@ import 'package:driving_test_prep/core/database/seeds/seed_ranks.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_setting.dart';
 import 'package:driving_test_prep/core/database/seeds/seeds_topics.dart';
 import 'package:driving_test_prep/core/database/tables/setting_table.dart';
+import 'package:driving_test_prep/core/database/tables/traffic_signs_table.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
@@ -30,11 +31,11 @@ part 'app_database.g.dart';
 @DriftDatabase(tables: [
   Topics, Questions, ExamGroups, Ranks, ExamSets,
   ExamSetQuestions, PracticeSessions, UserAnswers,
-  WrongQuestions, ExamHistory, Setting
+  WrongQuestions, ExamHistory, TrafficSigns, Setting
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection()){
-    // print("✅ AppDatabase CREATED: ${identityHashCode(this)}");
+    // print("✅ AppDatabase CREATED: ${identityHashCode(Sthis)}");
   }
 
   @override
