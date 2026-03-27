@@ -12,12 +12,14 @@ class ExamSetsQuestScreen extends StatefulWidget {
   final int examSetId;
   final bool gradeInstantly;
   final int durationMinutes;
+  final int passScore;
 
   const ExamSetsQuestScreen({
     super.key,
     required this.examSetId,
     this.gradeInstantly = false,
     this.durationMinutes = 20,
+    this.passScore = 0,
   });
 
   @override
@@ -33,8 +35,14 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   Duration remaining = Duration.zero;
   Timer? timer;
 
+  // Lưu đáp án theo nhãn A/B/C/D
   final Map<int, String> selectedAnswers = {};
   final Set<int> bookmarkedQuestionIds = {};
+
+  // Dùng cho chế độ chấm nhanh: câu nào đã chấm thì khóa chọn lại
+  final Set<int> judgedQuestionIds = {};
+
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -64,6 +72,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       if (!mounted) return;
       if (remaining.inSeconds <= 0) {
         timer?.cancel();
+        _submitExam(autoSubmit: true);
         return;
       }
       setState(() {
@@ -78,13 +87,122 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     return '$m:$s';
   }
 
-  List<String> _optionsOf(Question q) {
-    return [q.answerA, q.answerB, q.answerC, q.answerD]
-        .whereType<String>()
-        .where((e) => e.trim().isNotEmpty)
+  List<MapEntry<String, String>> _optionsOf(Question q) {
+    final raw = <MapEntry<String, String?>>[
+      MapEntry('A', q.answerA),
+      MapEntry('B', q.answerB),
+      MapEntry('C', q.answerC),
+      MapEntry('D', q.answerD),
+    ];
+
+    return raw
+        .where((e) => (e.value ?? '').trim().isNotEmpty)
+        .map((e) => MapEntry(e.key, e.value!.trim()))
         .toList();
   }
 
+  String _normalize(String v) => v.trim().toUpperCase();
+
+  bool _isCorrect(Question q, String selectedLabel) {
+    return _normalize(q.correctAnswer) == _normalize(selectedLabel);
+  }
+
+  String _optionTextByLabel(List<MapEntry<String, String>> options, String label) {
+    for (final opt in options) {
+      if (_normalize(opt.key) == _normalize(label)) {
+        return opt.value;
+      }
+    }
+    return '';
+  }
+
+  int _countCorrectAnswers() {
+    var correct = 0;
+    for (final item in questions) {
+      final q = item.question;
+      final selected = selectedAnswers[q.id];
+      if (selected != null && _isCorrect(q, selected)) {
+        correct++;
+      }
+    }
+    return correct;
+  }
+
+  Future<void> _submitExam({bool autoSubmit = false}) async {
+    if (_isSubmitting) return;
+    _isSubmitting = true;
+    timer?.cancel();
+
+    final total = questions.length;
+    final answered = selectedAnswers.length;
+    final correct = _countCorrectAnswers();
+    final passNeed = widget.passScore > 0 ? widget.passScore : total;
+    final passed = correct >= passNeed;
+
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text(autoSubmit ? 'Hết giờ làm bài' : 'Kết quả bài thi'),
+        content: Text(
+          'Đã làm: $answered/$total câu\n'
+              'Đúng: $correct/$total câu\n'
+              'Điểm đậu tối thiểu: $passNeed\n'
+              'Kết quả: ${passed ? "ĐẠT" : "KHÔNG ĐẠT"}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Đóng'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('Về danh sách đề'),
+          ),
+        ],
+      ),
+    );
+
+    _isSubmitting = false;
+  }
+
+  void _onSelectAnswer(Question q, String label) {
+    final qId = q.id;
+    final isJudged = judgedQuestionIds.contains(qId);
+
+    if (widget.gradeInstantly && isJudged) return;
+
+    setState(() {
+      selectedAnswers[qId] = label;
+      if (widget.gradeInstantly) {
+        judgedQuestionIds.add(qId);
+      }
+    });
+
+    if (widget.gradeInstantly) {
+      final ok = _isCorrect(q, label);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(ok ? 'Chính xác' : 'Sai rồi'),
+          backgroundColor: ok ? Colors.green : Colors.red,
+          duration: const Duration(milliseconds: 650),
+        ),
+      );
+      //
+      // // Tự qua câu tiếp theo cho mượt khi chấm nhanh
+      // if (currentIndex < questions.length - 1) {
+      //   Future.delayed(const Duration(milliseconds: 180), () {
+      //     if (!mounted) return;
+      //     setState(() => currentIndex += 1);
+      //   });
+      // }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +218,14 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final qId = q.id;
     final selected = selectedAnswers[qId];
     final isBookmarked = bookmarkedQuestionIds.contains(qId);
+    final correctLabel = _normalize(q.correctAnswer);
+    final isJudged = judgedQuestionIds.contains(qId);
+    final correctText = _optionTextByLabel(opts, correctLabel);
+    final explanation = (q.explanation ?? '').trim();
+    final selectedLabel = selected ?? '';
+    final selectedText = selectedLabel.isEmpty ? '' : _optionTextByLabel(opts, selectedLabel);
+    final showInstantReview = widget.gradeInstantly && isJudged;
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -127,6 +253,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
+                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -139,8 +266,14 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         foregroundColor: Colors.white,
                         shape: const StadiumBorder(),
                       ),
-                      onPressed: () {},
-                      child: const Text('Nộp bài'),
+                      onPressed: () => _submitExam(),
+                      child: const Text(
+                        'Nộp bài',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -171,13 +304,17 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             ? const Color(0xFFEAF3FF)
                             : const Color(0xFFF0F0F0)),
                         border: Border.all(
-                          color: active ? AppColors.primary : Colors
-                              .transparent,
+                          color: active ? AppColors.primary : Colors.transparent,
                           width: 2,
                         ),
                       ),
-                      child: Text('${i + 1}', style: const TextStyle(
-                          fontSize: 14)),
+                      child: Text(
+                        '${i + 1}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   );
                 }),
@@ -200,7 +337,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                           style: const TextStyle(
                             fontSize: 42,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xFF707070),
+                            color: Colors.black,
                           ),
                         ),
                         const Spacer(),
@@ -215,8 +352,9 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             });
                           },
                           icon: Icon(
-                            isBookmarked ? Icons.bookmark : Icons
-                                .bookmark_border,
+                            isBookmarked
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
                             color: const Color(0xFF9E9E9E),
                           ),
                         ),
@@ -229,20 +367,43 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
+                        color: Colors.black,
                       ),
                     ),
                     const Divider(height: 26),
 
                     ...List.generate(opts.length, (i) {
-                      final value = '${i + 1}';
-                      final text = opts[i];
-                      final checked = selected == value;
+                      final label = opts[i].key;
+                      final text = opts[i].value;
+                      final checked = selected == label;
+
+                      Color borderColor = Colors.black;
+                      IconData? stateIcon;
+                      Color iconColor = AppColors.primary;
+
+                      if (widget.gradeInstantly && isJudged) {
+                        if (label == correctLabel) {
+                          borderColor = Colors.green;
+                          stateIcon = Icons.check;
+                          iconColor = Colors.green;
+                        } else if (checked && label != correctLabel) {
+                          borderColor = Colors.red;
+                          stateIcon = Icons.close;
+                          iconColor = Colors.red;
+                        } else {
+                          borderColor = Colors.black45;
+                        }
+                      } else {
+                        borderColor = checked ? AppColors.primary : Colors.black;
+                        stateIcon = checked ? Icons.check : null;
+                        iconColor = AppColors.primary;
+                      }
+
 
                       return Column(
                         children: [
                           InkWell(
-                            onTap: () =>
-                                setState(() => selectedAnswers[qId] = value),
+                            onTap: () => _onSelectAnswer(q, label),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Row(
@@ -254,23 +415,23 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: checked
-                                            ? AppColors.primary
-                                            : Colors.black,
+                                        color: borderColor,
                                         width: 2.2,
                                       ),
                                     ),
-                                    child: checked
-                                        ? const Icon(
-                                        Icons.check, color: AppColors.primary)
+                                    child: stateIcon != null
+                                        ? Icon(stateIcon, color: iconColor)
                                         : null,
                                   ),
                                   const SizedBox(width: 14),
                                   Expanded(
                                     child: Text(
-                                      '$value. $text',
+                                      '$label. $text',
                                       style: const TextStyle(
-                                          fontSize: 24, height: 1.35),
+                                        fontSize: 24,
+                                        height: 1.35,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -281,6 +442,56 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         ],
                       );
                     }),
+
+                    if (showInstantReview) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF7FAFF),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFD6E6FF)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Giải thích',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Bạn chọn: ${selectedLabel.isEmpty ? "Chưa chọn" : "$selectedLabel. $selectedText"}',
+                              style: const TextStyle(fontSize: 16, color: Colors.black87),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Đáp án đúng: $correctLabel${correctText.isEmpty ? "" : ". $correctText"}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.green,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              explanation.isEmpty ? 'Chưa có lời giải cho câu này.' : explanation,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                height: 1.4,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
                     const SizedBox(height: 90),
                   ],
                 ),
@@ -306,15 +517,19 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 label: const Text(
                   'CÂU TRƯỚC',
                   style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
             IconButton(
               onPressed: () => _openQuestionSheet(context),
               icon: const Icon(
-                  Icons.keyboard_double_arrow_up, color: Colors.white,
-                  size: 36),
+                Icons.keyboard_double_arrow_up,
+                color: Colors.white,
+                size: 36,
+              ),
             ),
             Expanded(
               child: TextButton.icon(
@@ -326,7 +541,9 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 label: const Text(
                   'CÂU SAU',
                   style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -335,6 +552,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       ),
     );
   }
+
   void _openQuestionSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -347,9 +565,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
             children: [
               Container(
                 color: AppColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  children: const [
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: const Row(
+                  children: [
                     Icon(Icons.close, color: Colors.white, size: 30),
                     SizedBox(width: 16),
                     Text(
@@ -375,22 +594,31 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         Navigator.pop(context);
                         setState(() => currentIndex = i);
                       },
-                      title: Text('Câu ${i + 1}', style: const TextStyle(fontWeight: FontWeight.w700)),
+                      title: Text(
+                        'Câu ${i + 1}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
+                      ),
                       subtitle: Text(
                         q.question,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Colors.black54),
                       ),
                       trailing: Wrap(
                         spacing: 6,
                         children: List.generate(opts.length, (idx) {
-                          final n = '${idx + 1}';
-                          final chosen = selectedAnswers[q.id] == n;
+                          final label = opts[idx].key;
+                          final chosen = selectedAnswers[q.id] == label;
                           return CircleAvatar(
                             radius: 16,
-                            backgroundColor: chosen ? AppColors.primary : const Color(0xFFEFEFEF),
+                            backgroundColor: chosen
+                                ? AppColors.primary
+                                : const Color(0xFFEFEFEF),
                             child: Text(
-                              n,
+                              label,
                               style: TextStyle(
                                 color: chosen ? Colors.white : Colors.black,
                                 fontWeight: FontWeight.w700,

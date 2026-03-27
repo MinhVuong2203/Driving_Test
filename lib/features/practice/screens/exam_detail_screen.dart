@@ -209,8 +209,8 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
                     builder: (_) => ExamSetsQuestScreen(
                       examSetId: widget.exam.id,
                       durationMinutes: rank?.time ?? 20,
-                      gradeInstantly:
-                          isChecked2, // Chấm điểm nhanh khi chọn đáp án
+                      gradeInstantly: isChecked2,
+                      passScore: rank?.totalPass ?? 0,
                     ),
                   ),
                 );
