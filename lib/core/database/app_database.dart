@@ -7,6 +7,7 @@ import 'package:driving_test_prep/core/database/seeds/seed_exam_sets_questions.d
 import 'package:driving_test_prep/core/database/seeds/seed_questions.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_ranks.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_setting.dart';
+import 'package:driving_test_prep/core/database/seeds/seed_traffic_signs.dart';
 import 'package:driving_test_prep/core/database/seeds/seeds_topics.dart';
 import 'package:driving_test_prep/core/database/tables/setting_table.dart';
 import 'package:driving_test_prep/core/database/tables/traffic_signs_table.dart';
@@ -56,6 +57,7 @@ class AppDatabase extends _$AppDatabase {
       await SeedsQuestions.seedQuestions(this);
       await SeedsExamSets.seedExamSets(this);
       await SeedsExamSetQuestions.seedExamSetQuestions(this);
+      await SeedsTrafficSigns.seedTrafficSigns(this);
     },
   );
 }

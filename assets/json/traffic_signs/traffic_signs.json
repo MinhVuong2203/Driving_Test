@@ -1,3 +1,44 @@
 [
-
+  {
+    "sign_id": "P.101",
+    "category": "cam",
+    "name": "Đường cấm",
+    "description": "Cấm các loại phương tiện đi lại cả hai hướng, trừ các xe được ưu tiên.",
+    "image_url": null
+  },
+  {
+    "sign_id": "W.201a",
+    "category": "canh-bao",
+    "name": "Chỗ ngoặt nguy hiểm vòng trái",
+    "description": "Báo trước sắp đến đoạn đường có chỗ ngoặt nguy hiểm vòng trái.",
+    "image_url": null
+  },
+  {
+    "sign_id": "I.407a",
+    "category": "chi-dan",
+    "name": "Bến xe buýt",
+    "description": "Chỉ dẫn vị trí bến xe buýt.",
+    "image_url": null
+  },
+  {
+    "sign_id": "R.302a",
+    "category": "hieu-lenh",
+    "name": "Hướng đi thẳng",
+    "description": "Buộc người điều khiển phương tiện phải đi thẳng.",
+    "image_url": null
+  },
+  {
+    "sign_id": "S.501",
+    "category": "phu",
+    "name": "Phạm vi tác dụng của biển",
+    "description": "Biển phụ xác định phạm vi tác dụng của biển chính.",
+    "image_url": null
+  },
+  {
+    "sign_id": "CT.01",
+    "category": "tren-cao-toc",
+    "name": "Đường cao tốc",
+    "description": "Báo hiệu bắt đầu đoạn đường cao tốc, áp dụng các quy tắc đặc biệt.",
+    "image_url": null
+  }
 ]
