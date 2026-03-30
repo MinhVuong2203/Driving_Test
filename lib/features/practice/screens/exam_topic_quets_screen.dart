@@ -1,90 +1,157 @@
-import 'dart:async';
-
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
+import 'package:driving_test_prep/core/database/daos/exam_sets_quest_dao.dart';
+import 'package:driving_test_prep/data/repository/exam_sets_quest_repository.dart';
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/database/daos/exam_sets_quest_dao.dart';
-import '../../../data/repository/exam_sets_quest_repository.dart';
-import '../../../shared/utils/constants/app_colors.dart';
-
-class ExamSetsQuestScreen extends StatefulWidget {
-  final int examSetId;
+class ExamTopicQuetsScreen extends StatefulWidget {
+  final int topicId;
+  final int mode; // 0: full, 1: random 20, 2: critical only
   final bool gradeInstantly;
-  final int durationMinutes;
-  final int passScore;
+  final int durationMinutes; // giu de tuong thich voi cho goi cu, khong su dung
+  final String? topicTitle;
 
-  const ExamSetsQuestScreen({
+  const ExamTopicQuetsScreen({
     super.key,
-    required this.examSetId,
+    required this.topicId,
+    this.mode = 0,
     this.gradeInstantly = false,
-    this.durationMinutes = 20,
-    this.passScore = 0,
+    this.durationMinutes = 0,
+    this.topicTitle,
   });
 
   @override
-  State<StatefulWidget> createState() => _ExamSetsQuestScreenState();
+  State<ExamTopicQuetsScreen> createState() => _ExamTopicQuetsScreenState();
 }
 
-class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
-  late final db = DBProvider().db;
-  late final ExamSetsQuestRepository repo;
+class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
+  late final ExamSetsQuestRepository repo =
+  ExamSetsQuestRepository(ExamSetsQuestDao(DBProvider().db));
 
-  List<ExamQuestionView> questions = [];
+  List<Question> questions = [];
   int currentIndex = 0;
-  Duration remaining = Duration.zero;
-  Timer? timer;
 
-  // Lưu đáp án theo nhãn A/B/C/D
   final Map<int, String> selectedAnswers = {};
   final Set<int> bookmarkedQuestionIds = {};
-
-  // Dùng cho chế độ chấm nhanh: câu nào đã chấm thì khóa chọn lại
   final Set<int> judgedQuestionIds = {};
 
+  final ScrollController _numberStripController = ScrollController();
+
+  static const double _numberItemWidth = 38;
+  static const double _numberItemGap = 6;
+
+  bool _isLoading = true;
   bool _isSubmitting = false;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    repo = ExamSetsQuestRepository(ExamSetsQuestDao(db));
-    remaining = Duration(minutes: widget.durationMinutes);
     _loadData();
-    _startTimer();
   }
 
   @override
   void dispose() {
-    timer?.cancel();
+    _numberStripController.dispose();
     super.dispose();
   }
 
   Future<void> _loadData() async {
-    final data = await repo.getQuestionsByExamSet(widget.examSetId);
-    if (!mounted) return;
     setState(() {
-      questions = data;
+      _isLoading = true;
+      _error = null;
     });
-  }
 
-  void _startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    try {
+      final data = await repo.getQuestionsByTopic(widget.topicId);
+      final filtered = _applyMode(data, widget.mode);
+
       if (!mounted) return;
-      if (remaining.inSeconds <= 0) {
-        timer?.cancel();
-        _submitExam(autoSubmit: true);
-        return;
-      }
       setState(() {
-        remaining -= const Duration(seconds: 1);
+        questions = filtered;
+        currentIndex = 0;
+        _isLoading = false;
       });
+
+      _scheduleStripScroll(animated: false);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _error = 'Không tải được câu hỏi theo chủ đề.';
+      });
+    }
+  }
+
+  List<Question> _applyMode(List<Question> source, int mode) {
+    final list = List<Question>.from(source);
+    switch (mode) {
+      case 1:
+        list.shuffle();
+        return list.take(20).toList();
+      case 2:
+        return list.where((q) => q.isCritical == 1).toList();
+      default:
+        return list;
+    }
+  }
+
+  void _setCurrentIndex(int index, {bool animated = true}) {
+    if (index < 0 || index >= questions.length) return;
+    setState(() {
+      currentIndex = index;
+    });
+    _scheduleStripScroll(animated: animated);
+  }
+
+  void _scheduleStripScroll({bool animated = true}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollNumberStripToCurrent(animated: animated);
     });
   }
 
-  String _timeText(Duration d) {
-    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$m:$s';
+  void _scrollNumberStripToCurrent({bool animated = true}) {
+    if (!_numberStripController.hasClients) return;
+
+    final position = _numberStripController.position;
+    final viewportWidth = position.viewportDimension;
+    final itemExtent = _numberItemWidth + _numberItemGap;
+
+    final rawOffset =
+        (currentIndex * itemExtent) - ((viewportWidth - _numberItemWidth) / 2);
+
+    final target = rawOffset.clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
+
+    if (animated) {
+      _numberStripController.animateTo(
+        target,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
+    } else {
+      _numberStripController.jumpTo(target);
+    }
+  }
+
+  String _normalize(String v) => v.trim().toUpperCase();
+
+  bool _isCorrect(Question q, String selectedLabel) {
+    return _normalize(q.correctAnswer) == _normalize(selectedLabel);
+  }
+
+  int _countCorrectAnswers() {
+    var correct = 0;
+    for (final q in questions) {
+      final selected = selectedAnswers[q.id];
+      if (selected != null && _isCorrect(q, selected)) {
+        correct++;
+      }
+    }
+    return correct;
   }
 
   List<MapEntry<String, String>> _optionsOf(Question q) {
@@ -101,43 +168,20 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         .toList();
   }
 
-  String _normalize(String v) => v.trim().toUpperCase();
-
-  bool _isCorrect(Question q, String selectedLabel) {
-    return _normalize(q.correctAnswer) == _normalize(selectedLabel);
-  }
-
   String _optionTextByLabel(List<MapEntry<String, String>> options, String label) {
     for (final opt in options) {
-      if (_normalize(opt.key) == _normalize(label)) {
-        return opt.value;
-      }
+      if (_normalize(opt.key) == _normalize(label)) return opt.value;
     }
     return '';
   }
 
-  int _countCorrectAnswers() {
-    var correct = 0;
-    for (final item in questions) {
-      final q = item.question;
-      final selected = selectedAnswers[q.id];
-      if (selected != null && _isCorrect(q, selected)) {
-        correct++;
-      }
-    }
-    return correct;
-  }
-
-  Future<void> _submitExam({bool autoSubmit = false}) async {
+  Future<void> _submitExam() async {
     if (_isSubmitting) return;
     _isSubmitting = true;
-    timer?.cancel();
 
     final total = questions.length;
     final answered = selectedAnswers.length;
     final correct = _countCorrectAnswers();
-    final passNeed = widget.passScore > 0 ? widget.passScore : total;
-    final passed = correct >= passNeed;
 
     if (!mounted) return;
 
@@ -145,12 +189,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        title: Text(autoSubmit ? 'Hết giờ làm bài' : 'Kết quả bài thi'),
+        title: const Text('Kết quả ôn luyện'),
         content: Text(
           'Đã làm: $answered/$total câu\n'
-              'Đúng: $correct/$total câu\n'
-              'Điểm đậu tối thiểu: $passNeed\n'
-              'Kết quả: ${passed ? "ĐẠT" : "KHÔNG ĐẠT"}',
+              'Đúng: $correct/$total câu',
         ),
         actions: [
           TextButton(
@@ -162,7 +204,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: const Text('Về danh sách đề'),
+            child: const Text('Về chủ đề'),
           ),
         ],
       ),
@@ -190,30 +232,56 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         SnackBar(
           content: Text(ok ? 'Chính xác' : 'Sai rồi'),
           backgroundColor: ok ? Colors.green : Colors.red,
-          duration: const Duration(milliseconds: 650),
+          duration: const Duration(milliseconds: 700),
         ),
       );
-      //
-      // // Tự qua câu tiếp theo cho mượt khi chấm nhanh
-      // if (currentIndex < questions.length - 1) {
-      //   Future.delayed(const Duration(milliseconds: 180), () {
-      //     if (!mounted) return;
-      //     setState(() => currentIndex += 1);
-      //   });
-      // }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (questions.isEmpty) {
+    final title = widget.topicTitle?.trim().isNotEmpty == true
+        ? widget.topicTitle!.trim()
+        : 'Ôn luyện theo chủ đề';
+
+    if (_isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    final item = questions[currentIndex];
-    final q = item.question;
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Ôn luyện theo chủ đề')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(_error!, textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: _loadData,
+                  child: const Text('Thử lại'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (questions.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Ôn luyện theo chủ đề')),
+        body: const Center(
+          child: Text('Không có câu hỏi cho chủ đề này.'),
+        ),
+      );
+    }
+
+    final q = questions[currentIndex];
     final opts = _optionsOf(q);
     final qId = q.id;
     final selected = selectedAnswers[qId];
@@ -223,18 +291,18 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final correctText = _optionTextByLabel(opts, correctLabel);
     final explanation = (q.explanation ?? '').trim();
     final selectedLabel = selected ?? '';
-    final selectedText = selectedLabel.isEmpty ? '' : _optionTextByLabel(opts, selectedLabel);
+    final selectedText =
+    selectedLabel.isEmpty ? '' : _optionTextByLabel(opts, selectedLabel);
+
     final showInstantReview = widget.gradeInstantly && isJudged;
     final isLastQuestion = currentIndex == questions.length - 1;
     final isFirstQuestion = currentIndex == 0;
-
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
               child: Row(
@@ -248,18 +316,21 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                       child: Icon(Icons.close, size: 30, color: Colors.black),
                     ),
                   ),
+                  const SizedBox(width: 10),
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        _timeText(remaining),
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
                       ),
                     ),
                   ),
+                  const SizedBox(width: 10),
                   SizedBox(
                     height: 46,
                     child: ElevatedButton(
@@ -268,13 +339,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         foregroundColor: Colors.white,
                         shape: const StadiumBorder(),
                       ),
-                      onPressed: () => _submitExam(),
+                      onPressed: _submitExam,
                       child: const Text(
                         'Nộp bài',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -282,21 +350,22 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
               ),
             ),
 
-            // Number grid
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: List.generate(questions.length, (i) {
+            SizedBox(
+              height: 40,
+              child: ListView.separated(
+                controller: _numberStripController,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                scrollDirection: Axis.horizontal,
+                itemCount: questions.length,
+                separatorBuilder: (_, __) => const SizedBox(width: _numberItemGap),
+                itemBuilder: (_, i) {
                   final active = i == currentIndex;
-                  final hasAnswer =
-                  selectedAnswers.containsKey(questions[i].question.id);
+                  final hasAnswer = selectedAnswers.containsKey(questions[i].id);
+
                   return GestureDetector(
-                    onTap: () => setState(() => currentIndex = i),
+                    onTap: () => _setCurrentIndex(i),
                     child: Container(
-                      width: 38,
-                      height: 32,
+                      width: _numberItemWidth,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
@@ -312,20 +381,16 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                       ),
                       child: Text(
                         '${i + 1}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
+                        style: const TextStyle(fontSize: 14, color: Colors.black),
                       ),
                     ),
                   );
-                }),
+                },
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -335,10 +400,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                     Row(
                       children: [
                         Text(
-                          'Câu ${currentIndex + 1}',
+                          'Câu ${currentIndex + 1}/${questions.length}',
                           style: const TextStyle(
-                            fontSize: 42,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),
                         ),
@@ -354,32 +419,30 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             });
                           },
                           icon: Icon(
-                            isBookmarked
-                                ? Icons.bookmark
-                                : Icons.bookmark_border,
+                            isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                             color: const Color(0xFF9E9E9E),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       q.question,
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 22,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
                         color: Colors.black,
                       ),
                     ),
-                    const Divider(height: 26),
+                    const Divider(height: 24),
 
                     ...List.generate(opts.length, (i) {
                       final label = opts[i].key;
                       final text = opts[i].value;
                       final checked = selected == label;
 
-                      Color borderColor = Colors.black;
+                      Color borderColor;
                       IconData? stateIcon;
                       Color iconColor = AppColors.primary;
 
@@ -398,9 +461,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                       } else {
                         borderColor = checked ? AppColors.primary : Colors.black;
                         stateIcon = checked ? Icons.check : null;
-                        iconColor = AppColors.primary;
                       }
-
 
                       return Column(
                         children: [
@@ -412,25 +473,22 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    width: 44,
-                                    height: 44,
+                                    width: 42,
+                                    height: 42,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: borderColor,
-                                        width: 2.2,
-                                      ),
+                                      border: Border.all(color: borderColor, width: 2.1),
                                     ),
                                     child: stateIcon != null
                                         ? Icon(stateIcon, color: iconColor)
                                         : null,
                                   ),
-                                  const SizedBox(width: 14),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
                                       '$label. $text',
                                       style: const TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         height: 1.35,
                                         color: Colors.black,
                                       ),
@@ -482,7 +540,9 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              explanation.isEmpty ? 'Chưa có lời giải cho câu này.' : explanation,
+                              explanation.isEmpty
+                                  ? 'Chưa có lời giải cho câu này.'
+                                  : explanation,
                               style: const TextStyle(
                                 fontSize: 16,
                                 height: 1.4,
@@ -502,8 +562,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
           ],
         ),
       ),
-
-      // Bottom bar
       bottomNavigationBar: Container(
         height: 72,
         color: AppColors.primary,
@@ -511,23 +569,16 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Visibility(
-                visible: !isFirstQuestion,
-                maintainState: true,
-                maintainAnimation: true,
-                maintainSize: true, // giữ layout cân đối
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white
-                  ),
-                  onPressed: () => setState(() => currentIndex -= 1),
-                  icon: const Icon(Icons.chevron_left),
-                  iconAlignment: IconAlignment.start,
-                  label: const Text(
-                    'CÂU TRƯỚC',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                )
+              child: isFirstQuestion
+                  ? const SizedBox()
+                  : TextButton.icon(
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                onPressed: () => _setCurrentIndex(currentIndex - 1),
+                icon: const Icon(Icons.chevron_left),
+                label: const Text(
+                  'CÂU TRƯỚC',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             IconButton(
@@ -535,31 +586,28 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
               icon: const Icon(
                 Icons.keyboard_double_arrow_up,
                 color: Colors.white,
-                size: 36,
+                size: 34,
               ),
             ),
-
             Expanded(
-              child: Visibility(
-                visible: !isLastQuestion,
-                maintainState: true,
-                maintainAnimation: true,
-                maintainSize: true, // giữ layout cân đối
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () => setState(() => currentIndex += 1),
-                  iconAlignment: IconAlignment.end,
-                  icon: const Icon(Icons.chevron_right),
-                  label: const Text(
-                    'CÂU SAU',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+              child: isLastQuestion
+                  ? const SizedBox()
+                  : TextButton(
+                style: TextButton.styleFrom(foregroundColor: Colors.white),
+                onPressed: () => _setCurrentIndex(currentIndex + 1),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'CÂU SAU',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(Icons.chevron_right),
+                  ],
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -578,17 +626,19 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
             children: [
               Container(
                 color: AppColors.primary,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: const Row(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
                   children: [
-                    Icon(Icons.close, color: Colors.white, size: 30),
-                    SizedBox(width: 16),
-                    Text(
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
                       'Danh sách câu hỏi',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -600,12 +650,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                   itemCount: questions.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (_, i) {
-                    final q = questions[i].question;
+                    final q = questions[i];
                     final opts = _optionsOf(q);
                     return ListTile(
                       onTap: () {
                         Navigator.pop(context);
-                        setState(() => currentIndex = i);
+                        _setCurrentIndex(i);
                       },
                       title: Text(
                         'Câu ${i + 1}',
@@ -626,15 +676,15 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                           final label = opts[idx].key;
                           final chosen = selectedAnswers[q.id] == label;
                           return CircleAvatar(
-                            radius: 16,
-                            backgroundColor: chosen
-                                ? AppColors.primary
-                                : const Color(0xFFEFEFEF),
+                            radius: 14,
+                            backgroundColor:
+                            chosen ? AppColors.primary : const Color(0xFFEFEFEF),
                             child: Text(
                               label,
                               style: TextStyle(
                                 color: chosen ? Colors.white : Colors.black,
                                 fontWeight: FontWeight.w700,
+                                fontSize: 12,
                               ),
                             ),
                           );

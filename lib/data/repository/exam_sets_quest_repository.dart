@@ -9,4 +9,18 @@ class ExamSetsQuestRepository {
   Future<List<ExamQuestionView>> getQuestionsByExamSet(int examSetId) {
     return dao.getExamQuestions(examSetId);
   }
+
+  // Lấy tất cả câu hỏi dựa trên topicId (từ DB)
+  // Future<List<ExamQuestionView>> getQuestionsByTopic(int topicId) {
+  //   return dao.getExamQuestionsByTopic(topicId);
+  // }
+  Future<List<Question>> getQuestionsByTopic(int topicId) {
+    return dao.getQuestionsByTopic(topicId);
+  }
+
+
+  // Lấy thông tin của topic dựa trên topicId (từ DB)
+  Future<Topic?> getTopicInfo(int topicId) {
+    return dao.getTopicById(topicId);
+  }
 }

@@ -9,6 +9,7 @@ class TopicCard extends StatelessWidget {
   final int total;
   final int correct;
   final int wrong;
+  final VoidCallback? onPress;
 
   const TopicCard({
     super.key,
@@ -17,26 +18,40 @@ class TopicCard extends StatelessWidget {
     required this.total,
     required this.correct,
     required this.wrong,
+    this.onPress,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cardColor = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.cardDark
+        : AppColors.cardLight;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight,
+      child: Material(
+        color: cardColor,
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(value: done / total),
-          const SizedBox(height: 6),
-          Text('$done/$total câu hỏi - $correct đúng, $wrong sai'),
-        ],
+        child: InkWell(
+          onTap: onPress,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                LinearProgressIndicator(value: done / total),
+                const SizedBox(height: 6),
+                Text('$done/$total câu hỏi - $correct đúng, $wrong sai'),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
