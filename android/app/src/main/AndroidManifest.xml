@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Thêm dòng này trước thẻ <application> -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Ôn luyện 600 câu GPLX (2026)"
         android:name="${applicationName}"
