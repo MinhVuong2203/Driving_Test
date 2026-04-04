@@ -30,6 +30,14 @@ dependencies:
   path_provider: ^2.1.2
   path: ^1.8.3
 
+  # Bản đồ OSM
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  firebase_core: ^4.6.0
+  firebase_auth: ^6.3.0
+  cloud_firestore: ^6.2.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
