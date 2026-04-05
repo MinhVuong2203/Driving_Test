@@ -18,6 +18,10 @@ dependencies:
   # Network
   http: ^1.2.0
 
+  # hình ảnh
+  image_picker: ^1.0.4
+  image: ^4.1.3
+
   # Auth
   google_sign_in: ^6.2.1
 

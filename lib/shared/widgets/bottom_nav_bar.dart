@@ -1,5 +1,6 @@
 import 'package:driving_test_prep/features/driving_centers/screens/center_list_screen.dart';
 import 'package:driving_test_prep/features/home/screens/home_screen.dart';
+import 'package:driving_test_prep/features/recognition_ai/screens/recognition_home_screen.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -10,23 +11,29 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int currentIndex = 0;
+  int currentIndex = 2;
 
   final List<Widget> screens = [
-    HomeScreen(),
     const CenterListScreen(),
+    RecognitionHomeScreen(),
+    HomeScreen(),
+    const Center(child: Text('Mạng xã hội', style: TextStyle(fontSize: 20))),
     const Center(child: Text('Thông tin', style: TextStyle(fontSize: 20))),
   ];
 
   final List<IconData> _icons = const [
-    Icons.menu_book,
     Icons.directions_car,
+    Icons.qr_code_scanner,
+    Icons.menu_book,
+    Icons.window,
     Icons.info,
   ];
 
   final List<String> _labels = const [
-    'Ôn thi GPLX',
-    'Đào tạo lái xe',
+    'Đào tạo',
+    'Quét',
+    'Ôn thi',
+    'Cửa sổ',
     'Thông tin',
   ];
 

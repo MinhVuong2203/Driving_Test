@@ -1,5 +1,6 @@
 import 'package:driving_test_prep/UserListPage.dart';
 import 'package:driving_test_prep/apps/app.dart';
+import 'package:driving_test_prep/apps/app_test.dart';
 import 'package:driving_test_prep/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +12,18 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  //Luồng chính
+  runApp(const MyApp());
+
+  // Để test UserListPage
   // runApp(
   //   const MaterialApp(
   //     home: UserListPage(),
   //   ),
   // );
 
-  runApp(const MyApp());
+
+
+  //runApp(const MyAppTest());
 
 }
