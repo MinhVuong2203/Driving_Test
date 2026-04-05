@@ -9,7 +9,6 @@ class ExamTopicQuetsScreen extends StatefulWidget {
   final int topicId;
   final int mode; // 0: full, 1: random 20, 2: critical only
   final bool gradeInstantly;
-  final int durationMinutes; // giu de tuong thich voi cho goi cu, khong su dung
   final String? topicTitle;
 
   const ExamTopicQuetsScreen({
@@ -17,7 +16,6 @@ class ExamTopicQuetsScreen extends StatefulWidget {
     required this.topicId,
     this.mode = 0,
     this.gradeInstantly = false,
-    this.durationMinutes = 0,
     this.topicTitle,
   });
 

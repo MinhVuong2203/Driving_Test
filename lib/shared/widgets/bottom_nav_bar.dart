@@ -3,6 +3,8 @@ import 'package:driving_test_prep/features/home/screens/home_screen.dart';
 import 'package:driving_test_prep/features/recognition_ai/screens/recognition_home_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../../features/social_network/screens/email_login_screen.dart';
+
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
@@ -17,7 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     const CenterListScreen(),
     RecognitionHomeScreen(),
     HomeScreen(),
-    const Center(child: Text('Mạng xã hội', style: TextStyle(fontSize: 20))),
+    EmailLoginScreen(),
     const Center(child: Text('Thông tin', style: TextStyle(fontSize: 20))),
   ];
 
@@ -25,7 +27,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     Icons.directions_car,
     Icons.qr_code_scanner,
     Icons.menu_book,
-    Icons.window,
+    Icons.facebook,
     Icons.info,
   ];
 
@@ -33,7 +35,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     'Đào tạo',
     'Quét',
     'Ôn thi',
-    'Cửa sổ',
+    'Mạng xã hội',
     'Thông tin',
   ];
 
