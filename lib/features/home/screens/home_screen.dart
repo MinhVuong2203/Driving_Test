@@ -15,21 +15,27 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 70,
-        leading: TextButton(
+        leading: IconButton(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const SettingsScreen()),
             );
           },
-           child: const Text('Cài đặt', style: TextStyle(color: Colors.blue)),
+          icon: Icon(
+              Icons.settings,
+              color: Colors.blue,
+          ),
         ),
         title: const Text('Ôn luyện GPLX'),
         centerTitle: true,
         actions: [
-          TextButton(
+          IconButton(
             onPressed: () {},
-            child: const Text('Tìm kiếm', style: TextStyle(color: Colors.blue)),
+            icon: const Icon(
+              Icons.search,
+              color: Colors.blue,
+            ),
           )
         ],
       ),
