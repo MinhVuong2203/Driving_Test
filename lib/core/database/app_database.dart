@@ -9,6 +9,7 @@ import 'package:driving_test_prep/core/database/seeds/seed_ranks.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_setting.dart';
 import 'package:driving_test_prep/core/database/seeds/seed_traffic_signs.dart';
 import 'package:driving_test_prep/core/database/seeds/seeds_topics.dart';
+import 'package:driving_test_prep/core/database/tables/recognition_history_table.dart';
 import 'package:driving_test_prep/core/database/tables/setting_table.dart';
 import 'package:driving_test_prep/core/database/tables/traffic_signs_table.dart';
 
@@ -32,7 +33,8 @@ part 'app_database.g.dart';
 @DriftDatabase(tables: [
   Topics, Questions, ExamGroups, Ranks, ExamSets,
   ExamSetQuestions, PracticeSessions, UserAnswers,
-  WrongQuestions, ExamHistory, TrafficSigns, Setting
+  WrongQuestions, ExamHistory, TrafficSigns, Setting,
+  RecognitionHistoryTable
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection()){
@@ -62,18 +64,16 @@ class AppDatabase extends _$AppDatabase {
   );
 }
 
-
-
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dir = await getApplicationDocumentsDirectory();
     final file = File(p.join(dir.path, 'gplx_app.db'));
 
-    // Xóa db cũ mỗi lần mở app — CHỈ DÙNG KHI DEV
-    if (await file.exists()) {
-      await file.delete();
-      print('✅ Đã xóa DB cũ');
-    }
+    // // Xóa db cũ mỗi lần mở app — CHỈ DÙNG KHI DEV
+    // if (await file.exists()) {
+    //   await file.delete();
+    //   print('✅ Đã xóa DB cũ');
+    // }
 
 
     return NativeDatabase.createInBackground(file);

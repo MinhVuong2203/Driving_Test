@@ -1,11 +1,17 @@
 import 'dart:io';
+import 'package:driving_test_prep/core/database/DBProvider.dart';
+import 'package:driving_test_prep/core/database/app_database.dart';
+import 'package:driving_test_prep/core/database/daos/recognition_history_dao.dart';
 import 'package:driving_test_prep/data/datasource/external/gemini_service.dart';
+import 'package:driving_test_prep/data/repository/recognition_history_repository.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/action_button.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/glass_card.dart';
+import 'package:driving_test_prep/features/recognition_ai/widget/history_sidebar.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/result_card.dart';
 import 'package:driving_test_prep/shared/utils/constants/img_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 
 class RecognitionHomeScreen extends StatefulWidget {
   const RecognitionHomeScreen({super.key});
@@ -19,9 +25,16 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
   File? _image;
   String result = "";
   bool isLoading = false;
+  bool showSidebar = true;
 
   final picker = ImagePicker();
   final geminiService = GeminiService();
+
+  late final RecognitionHistoryRepository historyRepo;
+
+  // History
+  List<RecognitionHistoryData> historyList = [];
+  RecognitionHistoryData? selectedHistory;
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -30,6 +43,15 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
   @override
   void initState() {
     super.initState();
+
+    final db = DBProvider().db;
+    final dao = RecognitionHistoryDao(db);
+    historyRepo = RecognitionHistoryRepository(dao);
+
+    // Load history
+    _loadHistory();
+
+    // Animation setup
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -61,6 +83,15 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
     super.dispose();
   }
 
+  /// Load history from database
+  Future<void> _loadHistory() async {
+    final history = await historyRepo.getAllHistory();
+    setState(() {
+      historyList = history;
+    });
+  }
+
+  /// Pick image from camera or gallery
   Future<void> _pickImage(ImageSource source) async {
     if (isLoading) return;
 
@@ -74,6 +105,7 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
         _image = File(pickedFile.path);
         isLoading = true;
         result = "";
+        selectedHistory = null; // Clear selected history
       });
 
       await _recognizeImage(_image!);
@@ -84,6 +116,7 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
     }
   }
 
+  /// Recognize image using Gemini API
   Future<void> _recognizeImage(File imageFile) async {
     try {
       // Process image
@@ -95,9 +128,87 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
       setState(() {
         result = response;
       });
+
+      // Save to database (only if recognition successful)
+      if (response.isNotEmpty && !response.contains('Lỗi')) {
+        await _saveToHistory(imageFile.path, response);
+      }
     } catch (e) {
       setState(() {
         result = "Lỗi: ${e.toString()}";
+      });
+    }
+  }
+
+  /// Save recognition result to database
+  Future<void> _saveToHistory(String imagePath, String result) async {
+    try {
+      // Parse result to extract sign name and type (optional)
+      String? signName;
+      String? signType;
+
+      // Simple parsing (you can enhance this)
+      final lines = result.split('\n');
+      for (var line in lines) {
+        if (line.toUpperCase().contains('TÊN BIỂN BÁO')) {
+          signName = line.replaceAll(RegExp(r'TÊN BIỂN BÁO:?', caseSensitive: false), '').trim();
+        } else if (line.toUpperCase().contains('LOẠI BIỂN BÁO')) {
+          signType = line.replaceAll(RegExp(r'LOẠI BIỂN BÁO:?', caseSensitive: false), '').trim();
+        }
+      }
+
+      await historyRepo.saveRecognition(
+        imagePath: imagePath,
+        result: result,
+        signName: signName,
+        signType: signType,
+      );
+
+      // Reload history
+      await _loadHistory();
+    } catch (e) {
+      debugPrint('Error saving history: $e');
+    }
+  }
+
+  /// Handle history item tap
+  void _onHistoryTap(RecognitionHistoryData history) {
+    setState(() {
+      selectedHistory = history;
+      _image = File(history.imagePath);
+      result = history.result;
+    });
+  }
+
+  /// Delete all history
+  Future<void> _onDeleteAll() async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Xóa tất cả lịch sử?'),
+        content: const Text('Bạn có chắc chắn muốn xóa toàn bộ lịch sử nhận diện?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Xóa'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await historyRepo.deleteAllHistory();
+      await _loadHistory();
+      setState(() {
+        selectedHistory = null;
+        _image = null;
+        result = "";
       });
     }
   }
@@ -106,128 +217,132 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
     setState(() {
       _image = null;
       result = "";
+      selectedHistory = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Gradient Background
-          // const GradientBackground(),
-
-          // Main Content
-          SafeArea(
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: Column(
-                  children: [
-                    // App Bar
-                    _buildAppBar(),
-
-                    // Scrollable Content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          children: [
-                            // Image Preview Card
-                            _buildImagePreview(),
-
-                            const SizedBox(height: 24),
-
-                            // Result Card
-                            if (result.isNotEmpty || isLoading)
-                              ResultCard(
-                                result: result,
-                                isLoading: isLoading,
-                              ),
-
-                            const SizedBox(height: 32),
-
-                            // Action Buttons
-                            _buildActionButtons(),
-
-                            const SizedBox(height: 24),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFFF6B6B), Color(0xFFFFE66D)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: Text('Nhận diện biển báo',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black26,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(onPressed: (){
+            setState(() {
+              showSidebar = !showSidebar;
+            });
+        }, icon: const Icon(Icons.menu)),
+        actions: [
+          if (_image != null)
+            IconButton(
+              onPressed: _clearImage,
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                child: const Icon(
+                  Icons.refresh,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+            ),
+        ],
+
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(12), // giảm padding
+              child: Column(
+                children: [
+                  // ROW: Sidebar + Image
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Sidebar
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(-1, 0), // trượt từ trái
+                              end: Offset.zero,
+                            ).animate(animation),
+                            child: FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: showSidebar
+                            ? Row(
+                          key: const ValueKey(1),
+                          children: [
+                            HistorySidebar(
+                              historyList: historyList,
+                              selectedHistory: selectedHistory,
+                              onHistoryTap: _onHistoryTap,
+                              onDeleteAll: _onDeleteAll,
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                        )
+                            : const SizedBox(key: ValueKey(2)),
+                      ),
+
+
+
+                      Expanded(
+                        child: _buildImagePreview(),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // RESULT FULL WIDTH
+                  if (result.isNotEmpty || isLoading)
+                    ResultCard(
+                      result: result,
+                      isLoading: isLoading,
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  _buildActionButtons(),
+
+                  const SizedBox(height: 50),
+                ],
               ),
             ),
           ),
         ],
-      ),
+      )
     );
   }
 
-  Widget _buildAppBar() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFF6B6B), Color(0xFFFFE66D)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Biển báo Việt Nam',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    'Nhận diện biển báo thông minh',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (_image != null)
-              IconButton(
-                onPressed: _clearImage,
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.refresh,
-                    color: Colors.pinkAccent,
-                    size: 24,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildImagePreview() {
     return GlassCard(
@@ -236,19 +351,24 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Image.file(
-              _image!,
-              height: 320,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.file(
+                  _image!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              ),
             ),
           ),
           if (isLoading) ...[
             const SizedBox(height: 20),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Text(
                   'Đang phân tích biển báo...',
                   style: TextStyle(
@@ -263,7 +383,7 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
         ],
       )
           : Container(
-        height: 320,
+        height: 258,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -285,13 +405,13 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
                 ),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.add_photo_alternate_outlined,
                 size: 64,
               ),
             ),
             const SizedBox(height: 24),
-            Text(
+            const Text(
               'Chưa có ảnh biển báo',
               style: TextStyle(
                 fontSize: 18,
@@ -299,7 +419,7 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
               ),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Chụp ảnh hoặc chọn từ thư viện',
               style: TextStyle(
                 fontSize: 14,
