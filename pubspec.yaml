@@ -42,6 +42,7 @@ dependencies:
   cloud_firestore: ^6.2.0
   app_links: ^7.0.0
   shared_preferences: ^2.5.5
+  mailer: ^6.1.0
 
 
 dev_dependencies:
