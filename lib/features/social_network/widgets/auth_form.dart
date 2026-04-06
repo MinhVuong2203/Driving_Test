@@ -4,7 +4,7 @@ class AuthFormWidget extends StatefulWidget {
   final bool isLoading;
   final String? errorText;
   final Future<void> Function(String email, String password) onSignIn;
-  final Future<void> Function(String email, String password) onRegister;
+  final Future<void> Function() onRegister;
   final Future<void> Function(String email) onSendEmailLink;
 
   const AuthFormWidget({
@@ -38,9 +38,9 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
   }
 
   Future<void> _submitRegister() async {
-    if (!_formKey.currentState!.validate()) return;
-    await widget.onRegister(_emailCtrl.text, _passCtrl.text);
+    await widget.onRegister();
   }
+
 
   Future<void> _submitEmailLink() async {
     final String email = _emailCtrl.text.trim();
@@ -51,6 +51,7 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       key: _formKey,
       child: Column(
         children: <Widget>[
