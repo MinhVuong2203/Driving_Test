@@ -231,7 +231,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                 ),
                 onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
               ),
-              validator: AuthValidators.email,
+              validator: AuthValidators.password,
               navy: _kNavy,
               grey: _kGrey,
               inputBg: _kInputBg,
