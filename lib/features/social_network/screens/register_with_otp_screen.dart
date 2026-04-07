@@ -1,7 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import '../service/otp_email_service.dart';
+import '../utils/auth_validators.dart';
+
+import '../widgets/otp_section.dart';
+import '../widgets/register_text_field.dart';
+import '../widgets/register_header.dart';
+import '../widgets/error_box.dart';
+import '../widgets/register_submit_button.dart';
 
 class RegisterWithOtpScreen extends StatefulWidget {
   const RegisterWithOtpScreen({
@@ -23,20 +31,23 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
   final TextEditingController _displayNameCtrl = TextEditingController();
   late final TextEditingController _emailCtrl;
   late final TextEditingController _passwordCtrl;
+  final TextEditingController _confirmPasswordCtrl = TextEditingController();
   final TextEditingController _otpCtrl = TextEditingController();
 
   bool _isLoading = false;
   bool _otpSent = false;
-  String? _sentOtp;       // Lưu OTP đã gửi để so sánh
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  String? _sentOtp;
   String? _error;
 
-  bool get _hasFixedEmail => widget.initialEmail.trim().isNotEmpty;
+  bool get _hasFixedEmail    => widget.initialEmail.trim().isNotEmpty;
   bool get _hasFixedPassword => widget.initialPassword.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    _emailCtrl = TextEditingController(text: widget.initialEmail);
+    _emailCtrl    = TextEditingController(text: widget.initialEmail);
     _passwordCtrl = TextEditingController(text: widget.initialPassword);
   }
 
@@ -49,31 +60,12 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
     super.dispose();
   }
 
-  // ─── Validators ──────────────────────────────────────────────────────────────
-
-  String? _validateEmail(String? v) {
-    final String value = (v ?? '').trim();
-    if (value.isEmpty) return 'Nhập email';
-    if (!value.contains('@') || !value.contains('.')) return 'Email không hợp lệ';
-    return null;
-  }
-
-  String? _validatePassword(String? v) {
-    final String value = v ?? '';
-    if (value.isEmpty) return 'Nhập mật khẩu';
-    if (value.length < 6) return 'Mật khẩu tối thiểu 6 ký tự';
-    return null;
-  }
-
-  // ─── Gửi OTP ─────────────────────────────────────────────────────────────────
-
   Future<void> _sendOtp() async {
-    final String email = _emailCtrl.text.trim();
+    final String email       = _emailCtrl.text.trim();
     final String displayName = _displayNameCtrl.text.trim();
-    final String password = _passwordCtrl.text;
+    final String password    = _passwordCtrl.text;
 
-    // Validate trước khi gửi
-    if (_validateEmail(email) != null) {
+    if (AuthValidators.email(email) != null) {
       setState(() => _error = 'Email không hợp lệ.');
       return;
     }
@@ -81,18 +73,14 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       setState(() => _error = 'Vui lòng nhập tên hiển thị.');
       return;
     }
-    if (_validatePassword(password) != null) {
+    if (AuthValidators.password(password) != null) {
       setState(() => _error = 'Mật khẩu tối thiểu 6 ký tự.');
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    setState(() { _isLoading = true; _error = null; });
 
     try {
-      // Gửi OTP qua Gmail SMTP, nhận lại mã để lưu so sánh
       final String otp = await OtpEmailService.sendOtp(
         recipientEmail: email,
         subject: 'Mã OTP xác nhận đăng ký tài khoản',
@@ -100,23 +88,28 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       );
 
       if (!mounted) return;
-
-      setState(() {
-        _sentOtp = otp;
-        _otpSent = true;
-      });
+      setState(() { _sentOtp = otp; _otpSent = true; });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã gửi OTP về email.')),
+        SnackBar(
+          content: const Row(
+            children: <Widget>[
+              Icon(Icons.mark_email_read_rounded, color: Colors.white, size: 18),
+              SizedBox(width: 8),
+              Text('Đã gửi OTP về email của bạn.'),
+            ],
+          ),
+          backgroundColor: const Color(0xFF1DB954),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
     } catch (e) {
-      setState(() => _error = 'Gửi OTP thất bại: ${e.toString()}');
+      setState(() => _error = 'Gửi OTP thất bại: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-  // ─── Xác thực OTP & Đăng ký ──────────────────────────────────────────────────
 
   Future<void> _verifyOtpAndRegister() async {
     if (!_formKey.currentState!.validate()) return;
@@ -126,24 +119,19 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       return;
     }
 
-    final String email = _emailCtrl.text.trim();
-    final String password = _passwordCtrl.text;
     final String otp = _otpCtrl.text.trim();
-    final String displayName = _displayNameCtrl.text.trim();
-
-    // So sánh OTP
     if (otp != _sentOtp) {
       setState(() => _error = 'OTP không đúng hoặc đã hết hạn.');
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    final String email       = _emailCtrl.text.trim();
+    final String password    = _passwordCtrl.text;
+    final String displayName = _displayNameCtrl.text.trim();
+
+    setState(() { _isLoading = true; _error = null; });
 
     try {
-      // Tạo tài khoản Firebase
       final UserCredential credential =
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -158,7 +146,6 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
 
       await user.updateDisplayName(displayName);
 
-      // Lưu thông tin user lên Firestore
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'email': email,
@@ -171,150 +158,206 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đăng ký thành công!')),
+        SnackBar(
+          content: const Row(
+            children: <Widget>[
+              Icon(Icons.check_circle_rounded, color: Colors.white, size: 18),
+              SizedBox(width: 8),
+              Text('Đăng ký thành công! Chào mừng bạn 🎉'),
+            ],
+          ),
+          backgroundColor: const Color(0xFF1DB954),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       );
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       setState(() {
         _error = switch (e.code) {
           'email-already-in-use' => 'Email đã được sử dụng.',
-          'weak-password' => 'Mật khẩu quá yếu.',
-          'invalid-email' => 'Email không hợp lệ.',
+          'weak-password'        => 'Mật khẩu quá yếu.',
+          'invalid-email'        => 'Email không hợp lệ.',
           _ => 'Đăng ký thất bại: ${e.message ?? e.code}',
         };
       });
     } on FirebaseException catch (e) {
-      setState(() => _error = 'Lưu user Firestore thất bại: ${e.message ?? e.code}');
-    } catch (e) {
+      setState(() => _error = 'Lưu user thất bại: ${e.message ?? e.code}');
+    } catch (_) {
       setState(() => _error = 'Đăng ký thất bại, vui lòng thử lại.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  // ─── Build ────────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Đăng ký')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: <Widget>[
-              // Tên hiển thị
-              TextFormField(
-                controller: _displayNameCtrl,
-                decoration: const InputDecoration(labelText: 'Tên hiển thị'),
-                validator: (String? v) {
-                  if (v == null || v.trim().isEmpty) return 'Nhập tên hiển thị';
-                  return null;
-                },
+      backgroundColor: kNavy,
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            // Back button
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: kWhite, size: 20),
+                padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
               ),
-              const SizedBox(height: 12),
+            ),
 
-              // Email
-              if (!_hasFixedEmail)
-                TextFormField(
-                  controller: _emailCtrl,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: _validateEmail,
-                )
-              else
-                InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
-                  ),
-                  child: Text(_emailCtrl.text.trim()),
+            // Header
+            const RegisterHeader(),
+
+            // Card trắng
+            Expanded(
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: kWhite,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                 ),
-              const SizedBox(height: 12),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(28, 32, 28, 40),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        // Step indicator
+                        // RegisterStepIndicator(otpSent: _otpSent),
+                        const SizedBox(height: 28),
 
-              // Mật khẩu
-              if (!_hasFixedPassword)
-                TextFormField(
-                  controller: _passwordCtrl,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Mật khẩu'),
-                  validator: _validatePassword,
-                )
-              else
-                const InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Mật khẩu',
-                    border: OutlineInputBorder(),
+                        RegisterTextField(
+                          controller: _displayNameCtrl,
+                          label: 'User name',
+                          hint: 'Nguyễn Văn A',
+                          icon: Icons.person_outline_rounded,
+                          validator: AuthValidators.displayName,
+                        ),
+                        const SizedBox(height: 18),
+
+                        if (!_hasFixedEmail)
+                          RegisterTextField(
+                            controller: _emailCtrl,
+                            label: 'Email',
+                            hint: 'example@gmail.com',
+                            icon: Icons.email_outlined,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: AuthValidators.email,
+                          )
+                        else
+                          RegisterTextField(
+                            controller: _emailCtrl,
+                            label: 'Email',
+                            hint: '',
+                            icon: Icons.email_outlined,
+                            readOnly: true,
+                          ),
+                        const SizedBox(height: 18),
+
+                        if (!_hasFixedPassword)
+                          RegisterTextField(
+                            controller: _passwordCtrl,
+                            label: 'Mật khẩu',
+                            hint: '••••••••',
+                            icon: Icons.lock_outline_rounded,
+                            obscureText: _obscurePassword,
+                            validator: AuthValidators.password,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                                color: kGrey,
+                                size: 20,
+                              ),
+                              onPressed: () =>
+                                  setState(() => _obscurePassword = !_obscurePassword),
+                            ),
+                          )
+                        else
+                          RegisterTextField(
+                            controller: _passwordCtrl,
+                            label: 'Mật khẩu',
+                            hint: '',
+                            icon: Icons.lock_outline_rounded,
+                            readOnly: true,
+                          ),
+                        const SizedBox(height: 24),
+                        //Confirm password
+                        RegisterTextField(
+                          controller: _confirmPasswordCtrl,
+                          label: 'Xác nhận mật khẩu',
+                          hint: '••••••••',
+                          icon: Icons.lock_reset_rounded,
+                          obscureText: _obscureConfirmPassword,
+                          validator: (String? v) =>
+                              AuthValidators.confirmPassword(v, _passwordCtrl.text),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: kGrey,
+                              size: 20,
+                            ),
+                            onPressed: () =>
+                                setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Divider
+                        Divider(color: kGrey.withOpacity(0.18)),
+                        const SizedBox(height: 20),
+
+                        OtpSection(
+                          otpController: _otpCtrl,
+                          otpSent: _otpSent,
+                          isLoading: _isLoading,
+                          onSendOtp: _sendOtp,
+                          validator: (String? v) {
+                            final String value = (v ?? '').trim();
+                            if (value.isEmpty) return 'Nhập OTP';
+                            if (value.length < 6) return 'OTP phải đủ 6 chữ số';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        if (_error != null) ...<Widget>[
+                          ErrorBox(message: _error!),
+                          const SizedBox(height: 16),
+                        ],
+
+                        RegisterSubmitButton(
+                          label: 'Xác thực OTP & Đăng ký',
+                          isLoading: _isLoading,
+                          onPressed: _verifyOtpAndRegister,
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Điều khoản
+                        Center(
+                          child: Text(
+                            'Bằng cách đăng ký, bạn đồng ý với\nChính sách & Điều khoản sử dụng.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: kGrey.withOpacity(0.7),
+                              fontSize: 11,
+                              height: 1.6,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Text('Đã nhập từ màn hình trước'),
-                ),
-              const SizedBox(height: 16),
-
-              // Nút gửi OTP
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: _isLoading ? null : _sendOtp,
-                  icon: const Icon(Icons.email_outlined),
-                  label: Text(_otpSent ? 'Gửi lại OTP' : 'Gửi OTP'),
                 ),
               ),
-              const SizedBox(height: 12),
-
-              // Nhập OTP
-              TextFormField(
-                controller: _otpCtrl,
-                keyboardType: TextInputType.number,
-                maxLength: 6,
-                decoration: InputDecoration(
-                  labelText: 'Mã OTP',
-                  hintText: 'Nhập mã 6 chữ số',
-                  suffixIcon: _otpSent
-                      ? const Icon(Icons.check_circle, color: Colors.green)
-                      : null,
-                ),
-                validator: (String? v) {
-                  final String value = (v ?? '').trim();
-                  if (value.isEmpty) return 'Nhập OTP';
-                  if (value.length < 6) return 'OTP phải đủ 6 chữ số';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 8),
-
-              // Thông báo lỗi
-              if (_error != null)
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red.shade200),
-                  ),
-                  child: Text(
-                    _error!,
-                    style: TextStyle(color: Colors.red.shade700),
-                  ),
-                ),
-              const SizedBox(height: 16),
-
-              // Nút đăng ký
-              ElevatedButton(
-                onPressed: _isLoading ? null : _verifyOtpAndRegister,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-                    : const Text('Xác thực OTP & Đăng ký'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

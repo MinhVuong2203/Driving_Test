@@ -11,6 +11,9 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../service/google_auth_service.dart';
+import '../widgets/other_login_method.dart';
+
 const Color _kNavy = Color(0xFF0D1B3E);
 const Color _kAmber = Color(0xFFF5A623);
 const Color _kWhite = Color(0xFFFFFFFF);
@@ -29,10 +32,11 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
+  late final Stream<User?> _authStateStream;
 
   bool _isLoading = false;
   bool _isSigningOut = false;
-  bool _obscurePassword = true;
+  final ValueNotifier<bool> _obscurePassword = ValueNotifier<bool>(true);
   String? _error;
 
   late final AppLinks _appLinks;
@@ -41,17 +45,21 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   @override
   void initState() {
     super.initState();
+    _authStateStream = FirebaseAuth.instance.authStateChanges();
     _appLinks = AppLinks();
     _linkSubscription = _appLinks.uriLinkStream.listen((_) {});
   }
+
 
   @override
   void dispose() {
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
+    _obscurePassword.dispose();
     _linkSubscription?.cancel();
     super.dispose();
   }
+
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -100,7 +108,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   Future<void> _signOut() async {
     setState(() => _isSigningOut = true);
     try {
-      await FirebaseAuth.instance.signOut();
+      await GoogleAuthService.signOut();
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -131,10 +139,44 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     }, SetOptions(merge: true));
   }
 
+  void googleSignIn() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final credential = await GoogleAuthService.signInWithGoogle();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            credential.additionalUserInfo?.isNewUser == true
+                ? 'Tạo tài khoản Google thành công'
+                : 'Đăng nhập Google thành công',
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message ?? 'Đăng nhập Google thất bại.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+      stream: _authStateStream,
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -216,28 +258,34 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
             const SizedBox(height: 20),
             const SectionLabel(text: 'Mật khẩu', color: _kNavy),
             const SizedBox(height: 6),
-            LoginTextField(
-              controller: _passwordCtrl,
-              hint: '••••••••',
-              icon: Icons.lock_outline_rounded,
-              obscureText: _obscurePassword,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: _kGrey,
-                  size: 20,
-                ),
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-              ),
-              validator: AuthValidators.password,
-              navy: _kNavy,
-              grey: _kGrey,
-              inputBg: _kInputBg,
-              amber: _kAmber,
-              error: _kError,
+            ValueListenableBuilder<bool>(
+              valueListenable: _obscurePassword,
+              builder: (_, bool isObscured, __) {
+                return LoginTextField(
+                  controller: _passwordCtrl,
+                  hint: '••••••••',
+                  icon: Icons.lock_outline_rounded,
+                  obscureText: isObscured,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isObscured
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: _kGrey,
+                      size: 20,
+                    ),
+                    onPressed: () => _obscurePassword.value = !isObscured,
+                  ),
+                  validator: AuthValidators.password,
+                  navy: _kNavy,
+                  grey: _kGrey,
+                  inputBg: _kInputBg,
+                  amber: _kAmber,
+                  error: _kError,
+                );
+              },
             ),
+
             const SizedBox(height: 12),
             if (_error != null) ...<Widget>[
               LoginErrorBox(message: _error!, errorColor: _kError),
@@ -251,6 +299,9 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
               navy: _kNavy,
             ),
             const SizedBox(height: 16),
+            OtherLoginMethod(
+              onGoogleTap: googleSignIn,
+            ),
             const OrDivider(grey: _kGrey),
             const SizedBox(height: 16),
             SecondaryActionButton(
