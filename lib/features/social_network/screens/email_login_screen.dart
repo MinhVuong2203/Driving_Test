@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driving_test_prep/features/social_network/screens/home_feed_screen.dart';
 import 'package:driving_test_prep/features/social_network/screens/register_with_otp_screen.dart';
-import 'package:driving_test_prep/features/social_network/widgets/authenticated_user.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_action_buttons.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_text_field.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_ui_parts.dart';
@@ -11,7 +11,7 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../service/google_auth_service.dart';
+import '../services/google_auth_service.dart';
 import '../widgets/other_login_method.dart';
 
 const Color _kNavy = Color(0xFF0D1B3E);
@@ -35,7 +35,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   late final Stream<User?> _authStateStream;
 
   bool _isLoading = false;
-  bool _isSigningOut = false;
+  // bool _isSigningOut = false;
   final ValueNotifier<bool> _obscurePassword = ValueNotifier<bool>(true);
   String? _error;
 
@@ -79,8 +79,10 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       );
 
       final User? user = credential.user;
-      if (user != null) {
-        await _upsertUserProfile(user: user, email: email);
+      if (user != null && mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeFeedScreen()),
+        );
       }
     } on FirebaseAuthException catch (e) {
       setState(() {
@@ -99,45 +101,46 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     }
   }
 
+
   Future<void> _register() async {
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const RegisterWithOtpScreen()),
     );
   }
 
-  Future<void> _signOut() async {
-    setState(() => _isSigningOut = true);
-    try {
-      await GoogleAuthService.signOut();
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đăng xuất thất bại, thử lại nhé.')),
-      );
-    } finally {
-      if (mounted) setState(() => _isSigningOut = false);
-    }
-  }
+  // Future<void> _signOut() async {
+  //   setState(() => _isSigningOut = true);
+  //   try {
+  //     await GoogleAuthService.signOut();
+  //   } catch (_) {
+  //     if (!mounted) return;
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Đăng xuất thất bại, thử lại nhé.')),
+  //     );
+  //   } finally {
+  //     if (mounted) setState(() => _isSigningOut = false);
+  //   }
+  // }
 
-  Future<void> _upsertUserProfile({
-    required User user,
-    required String email,
-  }) async {
-    final String displayName =
-    user.displayName?.isNotEmpty == true ? user.displayName! : email.split('@').first;
-
-    final DocumentReference<Map<String, dynamic>> docRef =
-    FirebaseFirestore.instance.collection('users').doc(user.uid);
-
-    await docRef.set({
-      'uid': user.uid,
-      'email': email,
-      'displayName': displayName,
-      'role': 'user',
-      'status': 'active',
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-  }
+  // Future<void> _upsertUserProfile({
+  //   required User user,
+  //   required String email,
+  // }) async {
+  //   final String displayName =
+  //   user.displayName?.isNotEmpty == true ? user.displayName! : email.split('@').first;
+  //
+  //   final DocumentReference<Map<String, dynamic>> docRef =
+  //   FirebaseFirestore.instance.collection('users').doc(user.uid);
+  //
+  //   await docRef.set({
+  //     'uid': user.uid,
+  //     'email': email,
+  //     'displayName': displayName,
+  //     'role': 'user',
+  //     'status': 'active',
+  //     'updatedAt': FieldValue.serverTimestamp(),
+  //   }, SetOptions(merge: true));
+  // }
 
   void googleSignIn() async {
     if (_isLoading) return;
@@ -149,18 +152,13 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
     try {
       final credential = await GoogleAuthService.signInWithGoogle();
-
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            credential.additionalUserInfo?.isNewUser == true
-                ? 'Tạo tài khoản Google thành công'
-                : 'Đăng nhập Google thành công',
-          ),
-        ),
-      );
+      if (credential.user != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeFeedScreen()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       setState(() {
@@ -172,6 +170,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -187,11 +186,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
         final User? user = snapshot.data;
         if (user != null) {
-          return AuthenticatedUserWidget(
-            user: user,
-            isSigningOut: _isSigningOut,
-            onSignOut: _signOut,
-          );
+          return const HomeFeedScreen();
         }
 
         return Scaffold(
