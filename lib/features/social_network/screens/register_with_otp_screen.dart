@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../service/otp_email_service.dart';
+import '../services/otp_email_service.dart';
 import '../utils/auth_validators.dart';
 
 import '../widgets/otp_section.dart';
