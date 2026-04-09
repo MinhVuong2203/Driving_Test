@@ -18,12 +18,12 @@ class _CenterListScreenState extends State<CenterListScreen> {
   @override
   void initState() {
     super.initState();
-    _centersFuture = DrivingCenterService.fetchCenters();
+    _centersFuture = DrivingCenterService.fakeData();
   }
 
   void _reload() {
     setState(() {
-      _centersFuture = DrivingCenterService.fetchCenters();
+      _centersFuture = DrivingCenterService.fakeData();
     });
   }
 
