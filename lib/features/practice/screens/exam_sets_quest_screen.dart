@@ -337,7 +337,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         Text(
                           'Câu ${currentIndex + 1}',
                           style: const TextStyle(
-                            fontSize: 42,
+                            fontSize: 30,
                             fontWeight: FontWeight.w400,
                             color: Colors.black,
                           ),
@@ -366,7 +366,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                     Text(
                       q.question,
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
                         color: Colors.black,
@@ -412,25 +412,28 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    width: 44,
-                                    height: 44,
+                                    width: 20,
+                                    height: 20,
+                                    alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: borderColor,
-                                        width: 2.2,
+                                        width: 2.1,
                                       ),
                                     ),
-                                    child: stateIcon != null
-                                        ? Icon(stateIcon, color: iconColor)
-                                        : null,
+                                    child: stateIcon != null ? Icon(
+                                      stateIcon,
+                                      color: iconColor,
+                                      size: 12,
+                                    ) : null,
                                   ),
                                   const SizedBox(width: 14),
                                   Expanded(
                                     child: Text(
                                       '$label. $text',
                                       style: const TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         height: 1.35,
                                         color: Colors.black,
                                       ),
