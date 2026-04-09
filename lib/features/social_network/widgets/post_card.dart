@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../models/post_model.dart';
@@ -31,6 +32,26 @@ class PostCard extends StatelessWidget {
     if (diff.inHours < 24) return '${diff.inHours} giờ trước';
     if (diff.inDays < 7) return '${diff.inDays} ngày trước';
     return '${time.day}/${time.month}/${time.year}';
+  }
+
+  Stream<int> _likeCountStream(String postId) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('likes')
+        .snapshots()
+        .map((snapshot) => snapshot.size);
+  }
+
+  Stream<int> _commentCountStream(String postId) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .where('isDeleted', isEqualTo: false)
+        .where('status', isEqualTo: true)
+        .snapshots()
+        .map((snapshot) => snapshot.size);
   }
 
   void _showMoreMenu(BuildContext context) {
@@ -100,9 +121,8 @@ class PostCard extends StatelessWidget {
               CircleAvatar(
                 radius: 22,
                 backgroundColor: kAmberLight,
-                backgroundImage: post.authorAvatar.isNotEmpty
-                    ? NetworkImage(post.authorAvatar)
-                    : null,
+                backgroundImage:
+                post.authorAvatar.isNotEmpty ? NetworkImage(post.authorAvatar) : null,
                 child: post.authorAvatar.isEmpty
                     ? const Icon(Icons.person, color: kNavy)
                     : null,
@@ -167,6 +187,8 @@ class PostCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 12),
+
+          // Realtime stats
           Row(
             children: <Widget>[
               Row(
@@ -185,25 +207,38 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Text(
-                    '${post.likeCount} lượt thích',
-                    style: const TextStyle(
-                      color: kGrey,
-                      fontSize: 13,
-                    ),
+                  StreamBuilder<int>(
+                    stream: _likeCountStream(post.postId),
+                    builder: (context, snapshot) {
+                      final likeCount = snapshot.data ?? post.likeCount;
+                      return Text(
+                        '$likeCount lượt thích',
+                        style: const TextStyle(
+                          color: kGrey,
+                          fontSize: 13,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
               const Spacer(),
-              Text(
-                '${post.commentCount} bình luận',
-                style: const TextStyle(
-                  color: kGrey,
-                  fontSize: 13,
-                ),
+              StreamBuilder<int>(
+                stream: _commentCountStream(post.postId),
+                builder: (context, snapshot) {
+                  final commentCount = snapshot.data ?? post.commentCount;
+                  return Text(
+                    '$commentCount bình luận',
+                    style: const TextStyle(
+                      color: kGrey,
+                      fontSize: 13,
+                    ),
+                  );
+                },
               ),
             ],
           ),
+
           const Divider(height: 24),
           Row(
             children: <Widget>[
