@@ -4,9 +4,8 @@ import 'package:mailer/smtp_server/gmail.dart';
 
 /// Service gửi OTP qua email dùng Gmail SMTP (App Password)
 class OtpEmailService {
-  // ⚠️ Thay bằng email và App Password của bạn (tạo tại myaccount.google.com > Bảo mật > Mật khẩu ứng dụng)
   static const String _senderEmail = 'tailscaleedu123@gmail.com';
-  static const String _appPassword = 'eqbz eswr pxoi rpom'; // App Password 16 ký tự
+  static const String _appPassword = 'eqbz eswr pxoi rpom';
 
   /// Sinh mã OTP ngẫu nhiên [digits] chữ số (mặc định 6)
   static String generateOtp({int digits = 6}) {
@@ -15,17 +14,6 @@ class OtpEmailService {
     return otp;
   }
 
-  /// Gửi OTP đến [recipientEmail] với [subject] và [body] tuỳ chỉnh.
-  ///
-  /// Trả về mã OTP đã gửi nếu thành công, ném Exception nếu thất bại.
-  ///
-  /// Ví dụ:
-  /// ```dart
-  /// final otp = await OtpEmailService.sendOtp(
-  ///   recipientEmail: 'user@example.com',
-  ///   subject: 'Mã xác nhận đăng ký tài khoản',
-  /// );
-  /// ```
   static Future<String> sendOtp({
     required String recipientEmail,
     String subject = 'Mã OTP xác nhận đăng ký tài khoản',
