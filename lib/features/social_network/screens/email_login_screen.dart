@@ -190,6 +190,16 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
         }
 
         return Scaffold(
+          appBar: AppBar(
+            backgroundColor: _kNavy,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: _kWhite),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
           backgroundColor: _kNavy,
           body: SafeArea(
             child: SingleChildScrollView(

@@ -5,6 +5,7 @@ import 'package:driving_test_prep/data/repository/ranks_repository.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_sets_quest_screen.dart';
 import 'package:driving_test_prep/features/practice/widgets/start_button.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
+import 'package:driving_test_prep/shared/widgets/car_animated_button.dart';
 import 'package:flutter/material.dart';
 
 class ExamDetailScreen extends StatefulWidget {
@@ -201,20 +202,29 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
 
             const Spacer(),
 
-            StartButton(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ExamSetsQuestScreen(
-                      examSetId: widget.exam.id,
-                      durationMinutes: rank?.time ?? 20,
-                      gradeInstantly: isChecked2,
-                      passScore: rank?.totalPass ?? 0,
-                    ),
-                  ),
-                );
-              },
+            // StartButton(
+            //   onTap: ()
+            // ),
+
+            Center(
+              child: CarAnimatedButton(
+                  text: 'BẮT ĐẦU LÀM BÀI',
+                  width: 360,
+                  time: 500,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ExamSetsQuestScreen(
+                          examSetId: widget.exam.id,
+                          durationMinutes: rank?.time ?? 20,
+                          gradeInstantly: isChecked2,
+                          passScore: rank?.totalPass ?? 0,
+                        ),
+                      ),
+                    );
+                  },
+              ),
             ),
 
             SizedBox(height: 20),

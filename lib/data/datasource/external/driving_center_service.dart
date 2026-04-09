@@ -32,9 +32,8 @@ class DrivingCenterService {
     }
   }
 
-  static List<DrivingCenter> fakeData(){
+  static Future<List<DrivingCenter>> fakeData() async {
     return [
-
       DrivingCenter(
         "Trung tâm đào tạo lái xe Thủ Đức",
         "+84901234501",
