@@ -158,4 +158,21 @@ class PostService {
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
+
+  Stream<int> likeCountStream(String postId) {
+    return _postsRef
+        .doc(postId)
+        .collection('likes')
+        .snapshots()
+        .map((snapshot) => snapshot.size);
+  }
+
+  Stream<int> commentCountStream(String postId) {
+    return _postsRef
+        .doc(postId)
+        .collection('comments')
+        .snapshots()
+        .map((snapshot) => snapshot.size);
+  }
+
 }
