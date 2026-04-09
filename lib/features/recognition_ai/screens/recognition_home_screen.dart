@@ -4,11 +4,11 @@ import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/recognition_history_dao.dart';
 import 'package:driving_test_prep/data/datasource/external/gemini_service.dart';
 import 'package:driving_test_prep/data/repository/recognition_history_repository.dart';
-import 'package:driving_test_prep/features/recognition_ai/widget/action_button.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/glass_card.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/history_sidebar.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/result_card.dart';
 import 'package:driving_test_prep/shared/utils/constants/img_processor.dart';
+import 'package:driving_test_prep/shared/widgets/car_animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -435,25 +435,50 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
   Widget _buildActionButtons() {
     return Column(
       children: [
-        ActionButton(
-          icon: Icons.camera_alt,
-          label: 'Chụp ảnh',
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
-          ),
-          onPressed: () => _pickImage(ImageSource.camera),
-          isEnabled: !isLoading,
+        // ActionButton(
+        //   icon: Icons.camera_alt,
+        //   label: 'Chụp ảnh',
+        //   gradient: const LinearGradient(
+        //     colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
+        //   ),
+        //   onPressed: () => _pickImage(ImageSource.camera),
+        //   isEnabled: !isLoading,
+        // ),
+
+        CarAnimatedButton(
+            text: 'Chụp ảnh',
+            width: 390,
+            height: 80,
+            onPressed: () => _pickImage(ImageSource.camera),
+            primaryColor: Color(0xFFFF6B6B),
+            secondaryColor: Color(0xFFFF8E53),
+            isEnabled: !isLoading,
+            icon: Icon(Icons.camera_alt, color: Colors.white),
         ),
+
         const SizedBox(height: 16),
-        ActionButton(
-          icon: Icons.photo_library,
-          label: 'Chọn từ thư viện',
-          gradient: const LinearGradient(
-            colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
-          ),
+        // ActionButton(
+        //   icon: Icons.photo_library,
+        //   label: 'Chọn từ thư viện',
+        //   gradient: const LinearGradient(
+        //     colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
+        //   ),
+        //   onPressed: () => _pickImage(ImageSource.gallery),
+        //   isEnabled: !isLoading,
+        // ),
+
+        CarAnimatedButton(
+          text: 'Chon từ thư viện',
+          width: 390,
+          height: 80,
           onPressed: () => _pickImage(ImageSource.gallery),
+          primaryColor: Color(0xFF4ECDC4),
+          secondaryColor: Color(0xFF44A08D),
           isEnabled: !isLoading,
+          icon: Icon(Icons.photo_library, color: Colors.white),
         ),
+
+
       ],
     );
   }

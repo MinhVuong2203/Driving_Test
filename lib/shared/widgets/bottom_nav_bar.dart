@@ -1,4 +1,5 @@
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_list_screen.dart';
 import 'package:driving_test_prep/features/home/screens/home_screen.dart';
@@ -39,7 +40,27 @@ class _BottomNavBarState extends State<BottomNavBar> {
     'Thông tin',
   ];
 
-  void _onItemTapped(int index) {
+  Future<void> _onItemTapped(int index) async {
+
+    // index = 1 là Recognition (theo code của bạn),
+    // index =3 là network_social
+    // nếu muốn màn hình nào cần login thì check ở đây
+    if (index == 1) {
+      final user = FirebaseAuth.instance.currentUser;
+      print('✅ Đã đăng nhập với email: ${user?.email}\n${user?.displayName}\n${user?.uid}'); // Debug xem user info
+
+      if (user == null) {
+        // chưa login → chuyển sang màn login
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EmailLoginScreen()),
+        );
+        // Sau khi login xong → check lại
+        final userAfter = FirebaseAuth.instance.currentUser;
+        if (userAfter == null) return; // vẫn chưa login thì không cho vào
+      }
+    }
+
     if (index == currentIndex) return;
     setState(() {
       currentIndex = index;
