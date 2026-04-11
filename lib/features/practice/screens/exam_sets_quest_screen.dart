@@ -35,11 +35,11 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   Duration remaining = Duration.zero;
   Timer? timer;
 
-  // Lưu đáp án theo nhãn A/B/C/D
+  // Luu dap an theo nhan A/B/C/D
   final Map<int, String> selectedAnswers = {};
   final Set<int> bookmarkedQuestionIds = {};
 
-  // Dùng cho chế độ chấm nhanh: câu nào đã chấm thì khóa chọn lại
+  // Dung cho che do cham nhanh: cau nao da cham thi khoa chon lai
   final Set<int> judgedQuestionIds = {};
 
   bool _isSubmitting = false;
@@ -128,6 +128,41 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     return correct;
   }
 
+  Widget _buildQuestionImage(String rawPath) {
+    final path = rawPath.trim();
+    if (path.isEmpty) return const SizedBox.shrink();
+
+    final isRemote = path.startsWith('http://') || path.startsWith('https://');
+    final assetPath = path.startsWith('assets/')
+        ? path
+        : 'assets/images/questions/$path';
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 260),
+        child: isRemote
+            ? Image.network(
+          path,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
+            return const SizedBox(
+              height: 140,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          },
+          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        )
+            : Image.asset(
+          assetPath,
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
+
   Future<void> _submitExam({bool autoSubmit = false}) async {
     if (_isSubmitting) return;
     _isSubmitting = true;
@@ -193,14 +228,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
           duration: const Duration(milliseconds: 650),
         ),
       );
-      //
-      // // Tự qua câu tiếp theo cho mượt khi chấm nhanh
-      // if (currentIndex < questions.length - 1) {
-      //   Future.delayed(const Duration(milliseconds: 180), () {
-      //     if (!mounted) return;
-      //     setState(() => currentIndex += 1);
-      //   });
-      // }
     }
   }
 
@@ -214,6 +241,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
     final item = questions[currentIndex];
     final q = item.question;
+    final image = item.question.imageUrl;
     final opts = _optionsOf(q);
     final qId = q.id;
     final selected = selectedAnswers[qId];
@@ -228,13 +256,11 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final isLastQuestion = currentIndex == questions.length - 1;
     final isFirstQuestion = currentIndex == 0;
 
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
               child: Row(
@@ -281,8 +307,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 ],
               ),
             ),
-
-            // Number grid
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Wrap(
@@ -290,8 +314,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 runSpacing: 6,
                 children: List.generate(questions.length, (i) {
                   final active = i == currentIndex;
-                  final hasAnswer =
-                  selectedAnswers.containsKey(questions[i].question.id);
+                  final hasAnswer = selectedAnswers.containsKey(questions[i].question.id);
                   return GestureDetector(
                     onTap: () => setState(() => currentIndex = i),
                     child: Container(
@@ -302,9 +325,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         borderRadius: BorderRadius.circular(6),
                         color: active
                             ? Colors.white
-                            : (hasAnswer
-                            ? const Color(0xFFEAF3FF)
-                            : const Color(0xFFF0F0F0)),
+                            : (hasAnswer ? const Color(0xFFEAF3FF) : const Color(0xFFF0F0F0)),
                         border: Border.all(
                           color: active ? AppColors.primary : Colors.transparent,
                           width: 2,
@@ -322,10 +343,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 }),
               ),
             ),
-
             const SizedBox(height: 12),
-
-            // Content
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -354,9 +372,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             });
                           },
                           icon: Icon(
-                            isBookmarked
-                                ? Icons.bookmark
-                                : Icons.bookmark_border,
+                            isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                             color: const Color(0xFF9E9E9E),
                           ),
                         ),
@@ -372,8 +388,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         color: Colors.black,
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    if (image != null && image.trim().isNotEmpty) ...[
+                      _buildQuestionImage(image),
+                      const SizedBox(height: 12),
+                    ],
                     const Divider(height: 26),
-
                     ...List.generate(opts.length, (i) {
                       final label = opts[i].key;
                       final text = opts[i].value;
@@ -401,7 +421,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         iconColor = AppColors.primary;
                       }
 
-
                       return Column(
                         children: [
                           InkWell(
@@ -422,11 +441,13 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                                         width: 2.1,
                                       ),
                                     ),
-                                    child: stateIcon != null ? Icon(
+                                    child: stateIcon != null
+                                        ? Icon(
                                       stateIcon,
                                       color: iconColor,
                                       size: 12,
-                                    ) : null,
+                                    )
+                                        : null,
                                   ),
                                   const SizedBox(width: 14),
                                   Expanded(
@@ -447,7 +468,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         ],
                       );
                     }),
-
                     if (showInstantReview) ...[
                       const SizedBox(height: 12),
                       Container(
@@ -496,7 +516,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         ),
                       ),
                     ],
-
                     const SizedBox(height: 90),
                   ],
                 ),
@@ -505,8 +524,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
           ],
         ),
       ),
-
-      // Bottom bar
       bottomNavigationBar: Container(
         height: 72,
         color: AppColors.primary,
@@ -518,11 +535,9 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 visible: !isFirstQuestion,
                 maintainState: true,
                 maintainAnimation: true,
-                maintainSize: true, // giữ layout cân đối
+                maintainSize: true,
                 child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white
-                  ),
+                  style: TextButton.styleFrom(foregroundColor: Colors.white),
                   onPressed: () => setState(() => currentIndex -= 1),
                   icon: const Icon(Icons.chevron_left),
                   iconAlignment: IconAlignment.start,
@@ -530,7 +545,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                     'CÂU TRƯỚC',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                )
+                ),
               ),
             ),
             IconButton(
@@ -541,13 +556,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 size: 36,
               ),
             ),
-
             Expanded(
               child: Visibility(
                 visible: !isLastQuestion,
                 maintainState: true,
                 maintainAnimation: true,
-                maintainSize: true, // giữ layout cân đối
+                maintainSize: true,
                 child: TextButton.icon(
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -562,7 +576,6 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -581,8 +594,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
             children: [
               Container(
                 color: AppColors.primary,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: const Row(
                   children: [
                     Icon(Icons.close, color: Colors.white, size: 30),
