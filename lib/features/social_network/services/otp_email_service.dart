@@ -4,9 +4,6 @@ import 'package:mailer/smtp_server/gmail.dart';
 
 /// Service gửi OTP qua email dùng Gmail SMTP (App Password)
 class OtpEmailService {
-  // static const String _senderEmail = 'tailscaleedu123@gmail.com';
-  // static const String _appPassword = 'eqbz eswr pxoi rpom';
-
   static const String _senderEmail = String.fromEnvironment('SENDER_EMAIL');
   static const String _appPassword = String.fromEnvironment('APP_PASSWORD');
 
