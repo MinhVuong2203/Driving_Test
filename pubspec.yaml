@@ -68,6 +68,7 @@ flutter:
   assets:
     - assets/icon/
     - assets/images/
+    - assets/images/questions/
     - assets/json/questions/
     - assets/json/ranks/
     - assets/json/topics/
