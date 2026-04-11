@@ -1,0 +1,7 @@
+class VipFirebaseService {
+
+  void getAllVip(){
+    ///
+  }
+
+}

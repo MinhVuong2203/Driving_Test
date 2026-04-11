@@ -38,7 +38,6 @@ part 'app_database.g.dart';
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection()){
-    // print("✅ AppDatabase CREATED: ${identityHashCode(Sthis)}");
   }
 
   @override

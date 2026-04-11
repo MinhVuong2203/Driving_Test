@@ -45,7 +45,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     // index = 1 là Recognition (theo code của bạn),
     // index =3 là network_social
     // nếu muốn màn hình nào cần login thì check ở đây
-    if (index == 1) {
+    if (index == 1 || index == 3) {
       final user = FirebaseAuth.instance.currentUser;
       print('✅ Đã đăng nhập với email: ${user?.email}\n${user?.displayName}\n${user?.uid}'); // Debug xem user info
 
@@ -77,12 +77,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
         width: 70, // 👈 FIX CỐ ĐỊNH WIDTH (QUAN TRỌNG)
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
               duration: const Duration(milliseconds: 200),
-              scale: isSelected ? 1.2 : 1.0,
+              scale: isSelected ? 1.1 : 1.0,
               child: Icon(
                 _icons[index],
+                size: 22,
                 color: isSelected ? Colors.blue : Theme.of(context).brightness == Brightness.dark ? AppColors.iconDark : AppColors.iconLight,
               ),
             ),
@@ -124,51 +126,50 @@ class _BottomNavBarState extends State<BottomNavBar> {
           elevation: 6,
           child: const Icon(
               Icons.menu_book,
-              size: 24,
               color: AppColors.iconDark,
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // 👇 Bottom bar có lõm
-      bottomNavigationBar: MediaQuery.removePadding(
-        context: context,
-        removeBottom: true,
-        removeTop: true,
+      bottomNavigationBar: SafeArea(
+        bottom: false,
         child: BottomAppBar(
-          color: Theme.of(context).brightness == Brightness.dark ? AppColors.navigationBarDark : AppColors.navigationBarLight,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.navigationBarDark
+              : AppColors.navigationBarLight,
           shape: const CircularNotchedRectangle(),
           notchMargin: 10,
           elevation: 10,
-          child: SizedBox(
-            height: 70,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 2),
+          height: 52,
+          padding: EdgeInsets.only(top: 12),
+          child: OverflowBox(
+            maxHeight: double.infinity,
+            child: SizedBox(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildItem(0),
-                  _buildItem(1),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, left: 10, right: 10),
-                    child: Text(
-                      'Ôn luyện',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: currentIndex == 2 ? Colors.blue : Colors.grey,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildItem(0),
+                      _buildItem(1),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 14, left: 10, right: 10),
+                        child: Text(
+                          'Ôn luyện',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: currentIndex == 2 ? Colors.blue : Colors.grey,
+                          ),
+                        ),
                       ),
-                    ),
+                      _buildItem(3),
+                      _buildItem(4),
+                    ],
                   ),
-                  _buildItem(3),
-                  _buildItem(4),
-                ],
               ),
-            ),
+          ),
           ),
         ),
-      ),
     );
   }
 }
