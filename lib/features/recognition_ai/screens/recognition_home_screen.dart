@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/recognition_history_dao.dart';
-import 'package:driving_test_prep/data/datasource/external/gemini_service.dart';
+import 'package:driving_test_prep/data/datasource/external/service/gemini_service.dart';
+import 'package:driving_test_prep/data/datasource/firebase/service/usage_service.dart';
 import 'package:driving_test_prep/data/repository/recognition_history_repository.dart';
+import 'package:driving_test_prep/data/repository/usage_reponsitory.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/glass_card.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/history_sidebar.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/result_card.dart';
@@ -27,10 +29,14 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
   bool isLoading = false;
   bool showSidebar = true;
 
+  int remaining = 0;
+  bool isVip = false;
+
   final picker = ImagePicker();
   final geminiService = GeminiService();
 
   late final RecognitionHistoryRepository historyRepo;
+  late final UsageRepository usageRepo;
 
   // History
   List<RecognitionHistoryData> historyList = [];
@@ -48,8 +54,13 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
     final dao = RecognitionHistoryDao(db);
     historyRepo = RecognitionHistoryRepository(dao);
 
+    final userService = UsageService();
+    usageRepo = UsageRepository(userService);
+
     // Load history
     _loadHistory();
+
+    _loadUsage();
 
     // Animation setup
     _animationController = AnimationController(
@@ -82,6 +93,16 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
     _animationController.dispose();
     super.dispose();
   }
+
+  Future<void> _loadUsage() async {
+    final remain = await usageRepo.getRemainingRecognition();
+
+    setState(() {
+      remaining = remain;
+      isVip = remain == -1;
+    });
+  }
+
 
   /// Load history from database
   Future<void> _loadHistory() async {
@@ -119,6 +140,17 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
   /// Recognize image using Gemini API
   Future<void> _recognizeImage(File imageFile) async {
     try {
+      final canUse = await usageRepo.canUseRecognition();
+
+      if (!canUse) {
+        setState(() {
+          result = "🚫 Bạn đã dùng hết 3 lần hôm nay";
+          isLoading = false;
+        });
+        return;
+      }
+      await _loadUsage();
+
       // Process image
       String base64Image = ImageProcessor.processImage(imageFile);
 
@@ -435,15 +467,38 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
   Widget _buildActionButtons() {
     return Column(
       children: [
-        // ActionButton(
-        //   icon: Icons.camera_alt,
-        //   label: 'Chụp ảnh',
-        //   gradient: const LinearGradient(
-        //     colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
-        //   ),
-        //   onPressed: () => _pickImage(ImageSource.camera),
-        //   isEnabled: !isLoading,
-        // ),
+
+        const SizedBox(height: 10),
+
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isVip ? Icons.workspace_premium : Icons.bolt,
+                color: isVip ? Colors.amber : Colors.white,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                isVip
+                    ? "Gói VIP"
+                    : "Còn $remaining lượt hôm nay",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: isVip ? Colors.amber : Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 10),
 
         CarAnimatedButton(
             text: 'Chụp ảnh',
@@ -457,15 +512,6 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen>
         ),
 
         const SizedBox(height: 16),
-        // ActionButton(
-        //   icon: Icons.photo_library,
-        //   label: 'Chọn từ thư viện',
-        //   gradient: const LinearGradient(
-        //     colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
-        //   ),
-        //   onPressed: () => _pickImage(ImageSource.gallery),
-        //   isEnabled: !isLoading,
-        // ),
 
         CarAnimatedButton(
           text: 'Chon từ thư viện',
