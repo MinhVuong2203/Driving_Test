@@ -12,8 +12,8 @@ class DrivingCenterService {
     final response = await http.get(
       url,
       headers: {
-        "x-rapidapi-host": "local-business-data.p.rapidapi.com",
-        "x-rapidapi-key": "c650225b52mshe6c794796fccaf3p1b1b51jsn4ae5eeb85b1b"
+        "x-rapidapi-host": String.fromEnvironment('DRIVING_CENTER_HOST'),
+        "x-rapidapi-key": String.fromEnvironment('DRIVING_CENTER_KEY'),
       },
     );
 
