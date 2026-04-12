@@ -11,8 +11,9 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../services/google_auth_service.dart';
-import '../widgets/other_login_method.dart';
+import '../../features/social_network/services/google_auth_service.dart';
+import '../../features/social_network/widgets/other_login_method.dart';
+
 
 const Color _kNavy = Color(0xFF0D1B3E);
 const Color _kAmber = Color(0xFFF5A623);
@@ -21,14 +22,23 @@ const Color _kGrey = Color(0xFF8A9BB0);
 const Color _kInputBg = Color(0xFFF0F3F8);
 const Color _kError = Color(0xFFD93025);
 
-class EmailLoginScreen extends StatefulWidget {
-  const EmailLoginScreen({super.key});
+typedef LoginSuccessCallback = Future<void> Function(User user);
+
+class LoginScreen extends StatefulWidget {
+  final LoginSuccessCallback? onLoginSuccess;
+  final Widget fallbackSuccessScreen;
+
+  const LoginScreen({
+    super.key,
+    this.onLoginSuccess,
+    this.fallbackSuccessScreen = const HomeFeedScreen(),
+  });
 
   @override
-  State<EmailLoginScreen> createState() => _EmailLoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _EmailLoginScreenState extends State<EmailLoginScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
@@ -60,6 +70,12 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     super.dispose();
   }
 
+  Future<void> _handleLoginSuccess(User user) async {
+    if (widget.onLoginSuccess != null) {
+      await widget.onLoginSuccess!(user); // caller tự điều hướng
+    }
+  }
+
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -80,6 +96,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
       final User? user = credential.user;
       if (user != null) {
+        await _handleLoginSuccess(user);
         return;
       }
     } on FirebaseAuthException catch (e) {
@@ -152,7 +169,9 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       final credential = await GoogleAuthService.signInWithGoogle();
       if (!mounted) return;
 
-      if (credential.user != null) {
+      final user = credential.user;
+      if (user != null) {
+        await _handleLoginSuccess(user);
         return;
       }
     } on FirebaseAuthException catch (e) {
@@ -182,7 +201,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
         final User? user = snapshot.data;
         if (user != null) {
-          return const HomeFeedScreen();
+          return widget.fallbackSuccessScreen;
         }
 
         return Scaffold(

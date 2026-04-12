@@ -228,10 +228,10 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
     if (!mounted) return;
 
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const EmailLoginScreen()),
-          (route) => false,
-    );
+    // Navigator.of(context).pushAndRemoveUntil(
+    //   MaterialPageRoute(builder: (_) => const EmailLoginScreen()),
+    //       (route) => false,
+    // );
   }
 
 
