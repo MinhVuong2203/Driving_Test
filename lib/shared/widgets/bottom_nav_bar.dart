@@ -5,6 +5,7 @@ import 'package:driving_test_prep/features/driving_centers/screens/center_list_s
 import 'package:driving_test_prep/features/home/screens/home_screen.dart';
 import 'package:driving_test_prep/features/recognition_ai/screens/recognition_home_screen.dart';
 import '../../features/social_network/screens/email_login_screen.dart';
+import '../screen/login_view.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -16,13 +17,21 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 2;
 
-  final List<Widget> screens = [
+  List<Widget> get screens => [
     const CenterListScreen(),
-    RecognitionHomeScreen(),
+    FirebaseAuth.instance.currentUser == null
+        ? LoginScreen(
+      onLoginSuccess: (_) async {
+        if (!mounted) return;
+        setState(() {}); // login xong -> rebuild để hiện RecognitionHomeScreen
+      },
+      fallbackSuccessScreen: const SizedBox.shrink(),
+    ) : RecognitionHomeScreen(),
     HomeScreen(),
     EmailLoginScreen(),
     const Center(child: Text('Thông tin', style: TextStyle(fontSize: 20))),
   ];
+
 
   final List<IconData> _icons = const [
     Icons.directions_car,
@@ -41,26 +50,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   ];
 
   Future<void> _onItemTapped(int index) async {
-
-    // index = 1 là Recognition (theo code của bạn),
-    // index =3 là network_social
-    // nếu muốn màn hình nào cần login thì check ở đây
-    if (index == 1 || index == 3) {
-      final user = FirebaseAuth.instance.currentUser;
-      print('✅ Đã đăng nhập với email: ${user?.email}\n${user?.displayName}\n${user?.uid}'); // Debug xem user info
-
-      if (user == null) {
-        // chưa login → chuyển sang màn login
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const EmailLoginScreen()),
-        );
-        // Sau khi login xong → check lại
-        final userAfter = FirebaseAuth.instance.currentUser;
-        if (userAfter == null) return; // vẫn chưa login thì không cho vào
-      }
-    }
-
     if (index == currentIndex) return;
     setState(() {
       currentIndex = index;
