@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../data/repository/post_repository.dart';
+import '../../../data/repository/comment_repository.dart';
 import '../controller/signout.dart';
 import '../models/post_model.dart';
-import '../services/comment_service.dart';
-import '../services/post_service.dart';
 import '../widgets/create_post_box.dart';
 import '../widgets/post_card.dart';
 import '../widgets/social_colors.dart';
-import 'email_login_screen.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({super.key});
@@ -18,8 +17,8 @@ class HomeFeedScreen extends StatefulWidget {
 }
 
 class _HomeFeedScreenState extends State<HomeFeedScreen> {
-  final PostService _postService = PostService.instance;
-  final CommentService _commentService = CommentService.instance;
+  final PostRepository _postRepo = PostRepository.instance;
+  final CommentRepository _commentRepo = CommentRepository.instance;
 
   final bool _isAdmin = true;
 
@@ -66,7 +65,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                 if (content.isEmpty) return;
 
-                await _postService.createPost(
+                await _postRepo.createPost(
                   content: content,
                   imageUrl: imageUrl,
                 );
@@ -115,7 +114,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                 const SizedBox(height: 12),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: _commentService.getCommentsStream(post.postId),
+                    stream: _commentRepo.getCommentsStream(post.postId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -187,7 +186,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         final text = commentController.text.trim();
                         if (text.isEmpty) return;
 
-                        await _commentService.addComment(
+                        await _commentRepo.addComment(
                           postId: post.postId,
                           content: text,
                         );
@@ -207,7 +206,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   }
 
   Future<void> _deletePost(String postId) async {
-    await _postService.softDeletePost(postId);
+    await _postRepo.softDeletePost(postId);
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -262,7 +261,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         ],
       ),
       body: StreamBuilder<List<PostModel>>(
-        stream: _postService.getPostsStream(),
+        stream: _postRepo.getPostsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -303,7 +302,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                 ),
               ...posts.map(
                     (post) => StreamBuilder<bool>(
-                  stream: _postService.isPostLikedStream(post.postId),
+                  stream: _postRepo.isPostLikedStream(post.postId),
                   builder: (context, likedSnapshot) {
                     final isLiked = likedSnapshot.data ?? false;
 
@@ -311,7 +310,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       post: post,
                       isLiked: isLiked,
                       isAdmin: _isAdmin,
-                      onLike: () => _postService.toggleLike(post.postId),
+                      onLike: () => _postRepo.toggleLike(post.postId),
                       onComment: () => _showCommentDialog(post),
                       onDelete: () => _deletePost(post.postId),
                     );

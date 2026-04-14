@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/post_model.dart';
+import '../../../../features/social_network/models/post_model.dart';
 
 class PostService {
   PostService._();
