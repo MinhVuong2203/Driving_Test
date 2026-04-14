@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../services/otp_email_service.dart';
+import '../../../data/repository/otp_email_repository.dart';
 import '../utils/auth_validators.dart';
 
 import '../widgets/otp_section.dart';
@@ -27,6 +27,7 @@ class RegisterWithOtpScreen extends StatefulWidget {
 
 class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final OtpEmailRepository _otpRepo = OtpEmailRepository.instance;
 
   final TextEditingController _displayNameCtrl = TextEditingController();
   late final TextEditingController _emailCtrl;
@@ -41,13 +42,13 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
   String? _sentOtp;
   String? _error;
 
-  bool get _hasFixedEmail    => widget.initialEmail.trim().isNotEmpty;
+  bool get _hasFixedEmail => widget.initialEmail.trim().isNotEmpty;
   bool get _hasFixedPassword => widget.initialPassword.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    _emailCtrl    = TextEditingController(text: widget.initialEmail);
+    _emailCtrl = TextEditingController(text: widget.initialEmail);
     _passwordCtrl = TextEditingController(text: widget.initialPassword);
   }
 
@@ -56,14 +57,15 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
     _displayNameCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
+    _confirmPasswordCtrl.dispose();
     _otpCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _sendOtp() async {
-    final String email       = _emailCtrl.text.trim();
+    final String email = _emailCtrl.text.trim();
     final String displayName = _displayNameCtrl.text.trim();
-    final String password    = _passwordCtrl.text;
+    final String password = _passwordCtrl.text;
 
     if (AuthValidators.email(email) != null) {
       setState(() => _error = 'Email không hợp lệ.');
@@ -78,17 +80,23 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       return;
     }
 
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     try {
-      final String otp = await OtpEmailService.sendOtp(
+      final String otp = await _otpRepo.sendOtp(
         recipientEmail: email,
         subject: 'Mã OTP xác nhận đăng ký tài khoản',
         expiryMinutes: 5,
       );
 
       if (!mounted) return;
-      setState(() { _sentOtp = otp; _otpSent = true; });
+      setState(() {
+        _sentOtp = otp;
+        _otpSent = true;
+      });
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -125,11 +133,14 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       return;
     }
 
-    final String email       = _emailCtrl.text.trim();
-    final String password    = _passwordCtrl.text;
+    final String email = _emailCtrl.text.trim();
+    final String password = _passwordCtrl.text;
     final String displayName = _displayNameCtrl.text.trim();
 
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     try {
       final UserCredential credential =
@@ -176,8 +187,8 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       setState(() {
         _error = switch (e.code) {
           'email-already-in-use' => 'Email đã được sử dụng.',
-          'weak-password'        => 'Mật khẩu quá yếu.',
-          'invalid-email'        => 'Email không hợp lệ.',
+          'weak-password' => 'Mật khẩu quá yếu.',
+          'invalid-email' => 'Email không hợp lệ.',
           _ => 'Đăng ký thất bại: ${e.message ?? e.code}',
         };
       });
@@ -190,7 +201,6 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,7 +208,6 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            // Back button
             Align(
               alignment: Alignment.centerLeft,
               child: IconButton(
@@ -207,11 +216,7 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
               ),
             ),
-
-            // Header
             const RegisterHeader(),
-
-            // Card trắng
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
@@ -225,10 +230,7 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        // Step indicator
-                        // RegisterStepIndicator(otpSent: _otpSent),
                         const SizedBox(height: 28),
-
                         RegisterTextField(
                           controller: _displayNameCtrl,
                           label: 'User name',
@@ -237,7 +239,6 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                           validator: AuthValidators.displayName,
                         ),
                         const SizedBox(height: 18),
-
                         if (!_hasFixedEmail)
                           RegisterTextField(
                             controller: _emailCtrl,
@@ -256,7 +257,6 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                             readOnly: true,
                           ),
                         const SizedBox(height: 18),
-
                         if (!_hasFixedPassword)
                           RegisterTextField(
                             controller: _passwordCtrl,
@@ -286,7 +286,6 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                             readOnly: true,
                           ),
                         const SizedBox(height: 24),
-                        //Confirm password
                         RegisterTextField(
                           controller: _confirmPasswordCtrl,
                           label: 'Xác nhận mật khẩu',
@@ -303,16 +302,14 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                               color: kGrey,
                               size: 20,
                             ),
-                            onPressed: () =>
-                                setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                            onPressed: () => setState(
+                                  () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
-
-                        // Divider
                         Divider(color: kGrey.withOpacity(0.18)),
                         const SizedBox(height: 20),
-
                         OtpSection(
                           otpController: _otpCtrl,
                           otpSent: _otpSent,
@@ -326,20 +323,16 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-
                         if (_error != null) ...<Widget>[
                           ErrorBox(message: _error!),
                           const SizedBox(height: 16),
                         ],
-
                         RegisterSubmitButton(
                           label: 'Xác thực OTP & Đăng ký',
                           isLoading: _isLoading,
                           onPressed: _verifyOtpAndRegister,
                         ),
                         const SizedBox(height: 20),
-
-                        // Điều khoản
                         Center(
                           child: Text(
                             'Bằng cách đăng ký, bạn đồng ý với\nChính sách & Điều khoản sử dụng.',
