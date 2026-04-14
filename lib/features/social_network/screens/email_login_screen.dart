@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driving_test_prep/features/social_network/screens/home_feed_screen.dart';
 import 'package:driving_test_prep/features/social_network/screens/register_with_otp_screen.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_action_buttons.dart';
@@ -11,7 +10,7 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../services/google_auth_service.dart';
+import '../../../data/repository/google_auth_repository.dart';
 import '../widgets/other_login_method.dart';
 
 const Color _kNavy = Color(0xFF0D1B3E);
@@ -32,10 +31,10 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
+  final GoogleAuthRepository _googleAuthRepo = GoogleAuthRepository.instance;
   late final Stream<User?> _authStateStream;
 
   bool _isLoading = false;
-  // bool _isSigningOut = false;
   final ValueNotifier<bool> _obscurePassword = ValueNotifier<bool>(true);
   String? _error;
 
@@ -50,7 +49,6 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     _linkSubscription = _appLinks.uriLinkStream.listen((_) {});
   }
 
-
   @override
   void dispose() {
     _emailCtrl.dispose();
@@ -59,7 +57,6 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     _linkSubscription?.cancel();
     super.dispose();
   }
-
 
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
@@ -99,46 +96,11 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     }
   }
 
-
   Future<void> _register() async {
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const RegisterWithOtpScreen()),
     );
   }
-
-  // Future<void> _signOut() async {
-  //   setState(() => _isSigningOut = true);
-  //   try {
-  //     await GoogleAuthService.signOut();
-  //   } catch (_) {
-  //     if (!mounted) return;
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Đăng xuất thất bại, thử lại nhé.')),
-  //     );
-  //   } finally {
-  //     if (mounted) setState(() => _isSigningOut = false);
-  //   }
-  // }
-
-  // Future<void> _upsertUserProfile({
-  //   required User user,
-  //   required String email,
-  // }) async {
-  //   final String displayName =
-  //   user.displayName?.isNotEmpty == true ? user.displayName! : email.split('@').first;
-  //
-  //   final DocumentReference<Map<String, dynamic>> docRef =
-  //   FirebaseFirestore.instance.collection('users').doc(user.uid);
-  //
-  //   await docRef.set({
-  //     'uid': user.uid,
-  //     'email': email,
-  //     'displayName': displayName,
-  //     'role': 'user',
-  //     'status': 'active',
-  //     'updatedAt': FieldValue.serverTimestamp(),
-  //   }, SetOptions(merge: true));
-  // }
 
   void googleSignIn() async {
     if (_isLoading) return;
@@ -149,7 +111,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     });
 
     try {
-      final credential = await GoogleAuthService.signInWithGoogle();
+      final credential = await _googleAuthRepo.signInWithGoogle();
       if (!mounted) return;
 
       if (credential.user != null) {
@@ -166,7 +128,6 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -280,7 +241,6 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                 );
               },
             ),
-
             const SizedBox(height: 12),
             if (_error != null) ...<Widget>[
               LoginErrorBox(message: _error!, errorColor: _kError),

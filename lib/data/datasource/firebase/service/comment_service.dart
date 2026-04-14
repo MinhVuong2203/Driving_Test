@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driving_test_prep/data/datasource/firebase/service/post_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'post_service.dart';
+// import '../../../../features/social_network/services/post_service.dart';
 
 class CommentService {
   CommentService._();

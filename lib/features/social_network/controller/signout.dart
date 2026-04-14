@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/google_auth_service.dart';
+
+import '../../../data/repository/google_auth_repository.dart';
 
 class SignOutController {
   static Future<void> signOut({
@@ -9,7 +10,7 @@ class SignOutController {
   }) async {
     setSigningOut(true);
     try {
-      await GoogleAuthService.signOut();
+      await GoogleAuthRepository.instance.signOut();
     } catch (_) {
       if (!isMounted()) return;
       ScaffoldMessenger.of(context).showSnackBar(

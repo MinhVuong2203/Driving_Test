@@ -11,7 +11,7 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../features/social_network/services/google_auth_service.dart';
+import '../../data/datasource/firebase/service/google_auth_service.dart';
 import '../../features/social_network/widgets/other_login_method.dart';
 
 
