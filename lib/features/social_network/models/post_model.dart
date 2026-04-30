@@ -105,4 +105,36 @@ class PostModel {
     if (value is Timestamp) return value.toDate();
     return null;
   }
+
+  factory PostModel.fromJson(Map<String, dynamic> json) {
+    return PostModel(
+      postId: json['postId']?.toString() ?? json['id']?.toString() ?? '',
+      authorId: json['authorId']?.toString() ?? '',
+      authorName: json['authorName']?.toString() ?? '',
+      authorAvatar: json['authorAvatar']?.toString() ?? '',
+      content: json['content']?.toString() ?? '',
+      imageUrl: json['imageUrl']?.toString() ?? '',
+      likeCount: json['likeCount'] is int
+          ? json['likeCount']
+          : int.tryParse('${json['likeCount']}') ?? 0,
+      commentCount: json['commentCount'] is int
+          ? json['commentCount']
+          : int.tryParse('${json['commentCount']}') ?? 0,
+      isDeleted: json['isDeleted'] == true,
+      status: json['status'] == true,
+      createdAt: _parseDate(json['createdAt']),
+      updatedAt: _parseDate(json['updatedAt']),
+    );
+  }
+
+  static DateTime? _parseDate(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return DateTime.tryParse(value);
+    if (value is int) {
+      // nếu backend trả epoch millis
+      return DateTime.fromMillisecondsSinceEpoch(value);
+    }
+    return null;
+  }
+
 }

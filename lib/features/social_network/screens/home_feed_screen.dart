@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-import '../../../data/repository/post_repository.dart';
+import 'package:driving_test_prep/data/repository/post_api_repository.dart';
 import '../../../data/repository/comment_repository.dart';
 import '../controller/signout.dart';
 import '../models/post_model.dart';
@@ -17,14 +19,58 @@ class HomeFeedScreen extends StatefulWidget {
 }
 
 class _HomeFeedScreenState extends State<HomeFeedScreen> {
-  final PostRepository _postRepo = PostRepository.instance;
+  String BACKEND_URL = AppConfig.baseUrl;
+  late final PostApiRepository _postApiRepo = PostApiRepository.instance(BACKEND_URL);
   final CommentRepository _commentRepo = CommentRepository.instance;
 
   final bool _isAdmin = true;
 
+  late Future<List<PostModel>> _postsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _postsFuture = _postApiRepo.fetchPosts();
+  }
+
+  Future<void> _refreshPosts() async {
+    setState(() {
+      _postsFuture = _postApiRepo.fetchPosts();
+    });
+  }
+
+  Future<({String authorId, String authorName, String authorAvatar})>
+  _getAuthorInfo() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('Người dùng chưa đăng nhập');
+    }
+
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final data = snap.data();
+
+    final authorName =
+    (data?['displayName'] ?? user.displayName ?? 'Người dùng').toString();
+
+    // nếu backend bắt buộc authorAvatar không rỗng => dùng default
+    final authorAvatar = (data?['photoURL'] ?? user.photoURL ?? '').toString();
+    const defaultAvatar =
+        'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
+
+    return (
+    authorId: user.uid,
+    authorName: authorName,
+    authorAvatar: authorAvatar.isEmpty ? defaultAvatar : authorAvatar,
+    );
+  }
+
   Future<void> _showCreatePostDialog() async {
-    final TextEditingController contentController = TextEditingController();
-    final TextEditingController imageController = TextEditingController();
+    final contentController = TextEditingController();
+    final imageController = TextEditingController();
 
     await showDialog<void>(
       context: context,
@@ -62,16 +108,24 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               onPressed: () async {
                 final content = contentController.text.trim();
                 final imageUrl = imageController.text.trim();
-
                 if (content.isEmpty) return;
 
-                await _postRepo.createPost(
+                final author = await _getAuthorInfo();
+                final postId =
+                DateTime.now().microsecondsSinceEpoch.toString();
+
+                await _postApiRepo.createPost(
+                  postId: postId,
+                  authorId: author.authorId,
+                  authorName: author.authorName,
+                  authorAvatar: author.authorAvatar,
                   content: content,
                   imageUrl: imageUrl,
                 );
 
                 if (!mounted) return;
                 Navigator.pop(context);
+                await _refreshPosts();
               },
               child: const Text('Đăng'),
             ),
@@ -82,7 +136,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   }
 
   Future<void> _showCommentDialog(PostModel post) async {
-    final TextEditingController commentController = TextEditingController();
+    final commentController = TextEditingController();
 
     await showModalBottomSheet<void>(
       context: context,
@@ -117,15 +171,11 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     stream: _commentRepo.getCommentsStream(post.postId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const Center(child: CircularProgressIndicator());
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
-                          child: Text('Chưa có bình luận nào'),
-                        );
+                        return const Center(child: Text('Chưa có bình luận nào'));
                       }
 
                       final docs = snapshot.data!.docs;
@@ -137,9 +187,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: CircleAvatar(
-                              backgroundImage: (data['authorAvatar'] ?? '')
-                                  .toString()
-                                  .isNotEmpty
+                              backgroundImage:
+                              (data['authorAvatar'] ?? '').toString().isNotEmpty
                                   ? NetworkImage(
                                 (data['authorAvatar'] ?? '').toString(),
                               )
@@ -152,11 +201,11 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             ),
                             title: Text(
                               (data['authorName'] ?? '').toString(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style:
+                              const TextStyle(fontWeight: FontWeight.w700),
                             ),
-                            subtitle: Text((data['content'] ?? '').toString()),
+                            subtitle:
+                            Text((data['content'] ?? '').toString()),
                           );
                         },
                       );
@@ -206,12 +255,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   }
 
   Future<void> _deletePost(String postId) async {
-    await _postRepo.softDeletePost(postId);
+    await _postApiRepo.deletePost(postId);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã xóa bài viết')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Đã xóa bài viết')));
+    await _refreshPosts();
   }
 
   bool _isSigningOut = false;
@@ -219,20 +268,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   Future<void> _handleSignOut() async {
     await SignOutController.signOut(
       context: context,
-      setSigningOut: (bool value) {
+      setSigningOut: (value) {
         if (mounted) setState(() => _isSigningOut = value);
       },
       isMounted: () => mounted,
     );
-
-    if (!mounted) return;
-
-    // Navigator.of(context).pushAndRemoveUntil(
-    //   MaterialPageRoute(builder: (_) => const EmailLoginScreen()),
-    //       (route) => false,
-    // );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -244,10 +285,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         centerTitle: false,
         title: const Text(
           'Bảng tin',
-          style: TextStyle(
-            color: kNavy,
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(color: kNavy, fontWeight: FontWeight.w800),
         ),
         actions: <Widget>[
           IconButton(
@@ -260,8 +298,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
           ),
         ],
       ),
-      body: StreamBuilder<List<PostModel>>(
-        stream: _postRepo.getPostsStream(),
+      body: FutureBuilder<List<PostModel>>(
+        future: _postsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -280,45 +318,38 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
           final posts = snapshot.data ?? <PostModel>[];
 
-          return ListView(
-            children: <Widget>[
-              CreatePostBox(
-                currentUserName: 'Bình Minh',
-                currentUserAvatar: '',
-                onCreatePost: _showCreatePostDialog,
-              ),
-              if (posts.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Center(
-                    child: Text(
-                      'Chưa có bài đăng nào',
-                      style: TextStyle(
-                        color: kGrey,
-                        fontSize: 15,
+          return RefreshIndicator(
+            onRefresh: _refreshPosts,
+            child: ListView(
+              children: <Widget>[
+                CreatePostBox(
+                  currentUserName: 'Bình Minh', // có thể lấy từ user luôn
+                  currentUserAvatar: '',
+                  onCreatePost: _showCreatePostDialog,
+                ),
+                if (posts.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                      child: Text(
+                        'Chưa có bài đăng nào',
+                        style: TextStyle(color: kGrey, fontSize: 15),
                       ),
                     ),
                   ),
+                ...posts.map(
+                      (post) => PostCard(
+                    post: post,
+                    isLiked: false,
+                    isAdmin: _isAdmin,
+                    onLike: () async => _refreshPosts(),
+                    onComment: () => _showCommentDialog(post),
+                    onDelete: () => _deletePost(post.postId),
+                  ),
                 ),
-              ...posts.map(
-                    (post) => StreamBuilder<bool>(
-                  stream: _postRepo.isPostLikedStream(post.postId),
-                  builder: (context, likedSnapshot) {
-                    final isLiked = likedSnapshot.data ?? false;
-
-                    return PostCard(
-                      post: post,
-                      isLiked: isLiked,
-                      isAdmin: _isAdmin,
-                      onLike: () => _postRepo.toggleLike(post.postId),
-                      onComment: () => _showCommentDialog(post),
-                      onDelete: () => _deletePost(post.postId),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           );
         },
       ),
