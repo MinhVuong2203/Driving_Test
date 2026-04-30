@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register_header.dart';
 
-/// Hộp hiển thị thông báo lỗi với icon cảnh báo.
+/// Hộp hiển thị thông báo lỗi với icons cảnh báo.
 class ErrorBox extends StatelessWidget {
   const ErrorBox({super.key, required this.message});
 
