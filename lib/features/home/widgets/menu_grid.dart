@@ -13,27 +13,27 @@ class MenuGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       {
-        'icon': Icons.description,
+        'icons': Icons.description,
         'text': 'Thi thử',
         'color': Color.fromRGBO(8, 102, 255, 1),
         'route': const ExamListScreen()
       },
       {
-        'icon': Icons.close,
+        'icons': Icons.close,
         'text': 'Câu sai',
         'color': Color.fromRGBO(255, 0, 0, 0.8),
       },
-      {'icon': Icons.bookmark, 'text': 'Đã lưu', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
-      {'icon': Icons.menu_book, 'text': 'Câu khó', 'color': Color.fromRGBO(3, 252, 69,0.6)},
-      {'icon': Icons.change_history, 'text': 'Sa hình', 'color': Color.fromRGBO(3, 252, 69,0.6)},
-      {'icon': Icons.lightbulb, 'text': 'Mẹo', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
+      {'icons': Icons.bookmark, 'text': 'Đã lưu', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
+      {'icons': Icons.menu_book, 'text': 'Câu khó', 'color': Color.fromRGBO(3, 252, 69,0.6)},
+      {'icons': Icons.change_history, 'text': 'Sa hình', 'color': Color.fromRGBO(3, 252, 69,0.6)},
+      {'icons': Icons.lightbulb, 'text': 'Mẹo', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
       {
-        'icon': Icons.remove,
+        'icons': Icons.remove,
         'text': 'Biển báo',
         'color': Color.fromRGBO(255, 0, 0, 0.8),
         'route': const TrafficSignsScreen() // Đặt vào đây nha Minh
       },
-      {'icon': Icons.facebook, 'text': 'Hỏi đáp', 'color': Color.fromRGBO(8, 102, 255, 1)},
+      {'icons': Icons.facebook, 'text': 'Hỏi đáp', 'color': Color.fromRGBO(8, 102, 255, 1)},
     ];
 
     return Container(
@@ -66,7 +66,7 @@ class MenuGrid extends StatelessWidget {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: items[index]['color'] as Color,
-                  child: Icon(items[index]['icon'] as IconData, color: Colors.white),
+                  child: Icon(items[index]['icons'] as IconData, color: Colors.white),
                 ),
                 const SizedBox(height: 6),
                 Text(items[index]['text'] as String, style: const TextStyle(fontSize: 14)),
