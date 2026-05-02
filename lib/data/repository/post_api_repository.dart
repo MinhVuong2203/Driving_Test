@@ -53,4 +53,33 @@ class PostApiRepository {
         isDeleted: isDeleted,
       );
 
+  Future<void> likePost({
+    required String postId,
+    required String userId,
+  }) {
+    return _postApiService.likePost(
+      postId: postId,
+      userId: userId,
+    );
+  }
+
+  Future<void> unlikePost({
+    required String postId,
+    required String userId,
+  }) {
+    return _postApiService.unlikePost(
+      postId: postId,
+      userId: userId,
+    );
+  }
+
+  Future<bool> isLiked({
+    required String postId,
+    required String userId,
+  }) {
+    return _postApiService.isLiked(
+      postId: postId,
+      userId: userId,
+    );
+  }
 }
