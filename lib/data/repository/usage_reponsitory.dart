@@ -1,5 +1,4 @@
-
-import 'package:driving_test_prep/data/datasource/firebase/service/usage_service.dart';
+import 'package:driving_test_prep/data/services/firebase/usage_service.dart';
 
 class UsageRepository{
   final UsageService _usageService;

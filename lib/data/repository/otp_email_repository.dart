@@ -1,4 +1,6 @@
-import '../datasource/firebase/service/otp_email_service.dart';
+
+
+import 'package:driving_test_prep/data/services/firebase/otp_email_service.dart';
 
 class OtpEmailRepository {
   OtpEmailRepository._();
