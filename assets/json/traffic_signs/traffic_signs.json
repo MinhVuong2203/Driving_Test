@@ -1,44 +1,2557 @@
 [
   {
+    "sign_id": "DP.127a",
+    "category": "cam",
+    "name": "Cấm xe có tải trọng vượt quy định (đặc biệt)",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/DP127a.webp"
+  },
+  {
+    "sign_id": "DP.127b",
+    "category": "cam",
+    "name": "Cấm xe có tải trọng trục vượt quy định (đặc biệt)",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/DP127b.webp"
+  },
+  {
+    "sign_id": "DP.127c",
+    "category": "cam",
+    "name": "Cấm xe có tải trọng vượt quy định kết hợp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/DP127c.webp"
+  },
+  {
+    "sign_id": "DP.133",
+    "category": "cam",
+    "name": "Hết hạn chế tốc độ tối đa",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/DP133.webp"
+  },
+  {
+    "sign_id": "DP.134",
+    "category": "cam",
+    "name": "Hết cấm vượt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/DP134.webp"
+  },
+  {
+    "sign_id": "DP.135",
+    "category": "cam",
+    "name": "Hết tất cả lệnh cấm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/DP135.webp"
+  },
+  {
     "sign_id": "P.101",
     "category": "cam",
     "name": "Đường cấm",
-    "description": "Cấm các loại phương tiện đi lại cả hai hướng, trừ các xe được ưu tiên.",
-    "image_url": null
+    "description": "Biển báo đường cấm tất cả các loại phương tiện tham gia giao thông đi lại cả hai hướng, trừ xe ưu tiên theo luật định.",
+    "image_url": "assets/images/bien-bao/bien-cam/P101.webp"
+  },
+  {
+    "sign_id": "P.102",
+    "category": "cam",
+    "name": "Cấm đi ngược chiều",
+    "description": "Biển báo đường cấm tất cả các loại phương tiện tham gia giao thông đi vào theo chiều đặt biển.",
+    "image_url": "assets/images/bien-bao/bien-cam/P102.webp"
+  },
+  {
+    "sign_id": "P.103a",
+    "category": "cam",
+    "name": "Cấm xe ô tô",
+    "description": "Biển báo đường cấm tất cả các loại xe cơ giới kể cả mô tô 3 bánh có thùng đi qua, trừ xe mô tô 2 bánh, xe gắn máy (kể cả xe máy điện) và các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P103a.webp"
+  },
+  {
+    "sign_id": "P.103b",
+    "category": "cam",
+    "name": "Cấm xe ô tô rẽ phải",
+    "description": "Biển báo đường cấm xe ô tô rẽ phải ( kể cả xe mô tô ba bánh), trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P103b.webp"
+  },
+  {
+    "sign_id": "P.103c",
+    "category": "cam",
+    "name": "Cấm xe ô tô rẽ trái",
+    "description": "Biển báo đường cấm xe ô tô rẽ trái và cũng không được phép quay đầu xe, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P103c.webp"
+  },
+  {
+    "sign_id": "P.104",
+    "category": "cam",
+    "name": "Cấm xe máy",
+    "description": "Biển báo đường cấm tất cả các loại mô tô đi qua, trừ các loại xe mô tô được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P104.webp"
+  },
+  {
+    "sign_id": "P.105",
+    "category": "cam",
+    "name": "Cấm xe ô tô và xe máy",
+    "description": "Biển báo đường cấm tất cả xe cơ giới và xe mô tô đi qua trừ xe gắn máy và xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P105.webp"
+  },
+  {
+    "sign_id": "P.106a",
+    "category": "cam",
+    "name": "Cấm xe tải",
+    "description": "Biển báo đường cấm tất cả các loại xe ô tô tải trừ các xe được ưu tiên theo Luật Giao thông đường bộ, hiệu lực cấm đối với cả máy kéo và xe máy chuyên dùng.",
+    "image_url": "assets/images/bien-bao/bien-cam/P106a.webp"
+  },
+  {
+    "sign_id": "P.106b",
+    "category": "cam",
+    "name": "Cấm ô tô tải theo trọng lượng",
+    "description": "Trọng lượng được tính theo tấn ghi trên biển",
+    "image_url": "assets/images/bien-bao/bien-cam/P106b.webp"
+  },
+  {
+    "sign_id": "P.106c",
+    "category": "cam",
+    "name": "Cấm ô tô tải chở hàng nguy hiểm",
+    "description": "Biển báo P.106c đường cấm tất cả các loại xe ô tô tải chở hàng nguy hiểm.",
+    "image_url": "assets/images/bien-bao/bien-cam/P106c.webp"
+  },
+  {
+    "sign_id": "P.107",
+    "category": "cam",
+    "name": "Cấm xe khách và xe tải",
+    "description": "Biển báo đường cấm xe ô tô khách và các loại xe ô tô tải, kể cả máy kéo và xe máy chuyên dùng đi qua, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P107.webp"
+  },
+  {
+    "sign_id": "P.107a",
+    "category": "cam",
+    "name": "Cấm xe khách",
+    "description": "Biển báo đường cấm ôtô chở khách đi qua trừ các xe ưu tiên theo quy định. Biển này không cấm xe buýt.",
+    "image_url": "assets/images/bien-bao/bien-cam/P107a.webp"
+  },
+  {
+    "sign_id": "P.107b",
+    "category": "cam",
+    "name": "Cấm xe taxi",
+    "description": "Biển báo đường cấm ôtô taxi đi lại. Trường hợp cấm xe ôtô taxi theo giờ thì đặt biển phụ ghi giờ cấm.",
+    "image_url": "assets/images/bien-bao/bien-cam/P107b.webp"
+  },
+  {
+    "sign_id": "P.108",
+    "category": "cam",
+    "name": "Cấm ôtô kéo rơ moóc",
+    "description": "Biển báo đường cấm tất cả các loại xe cơ giới kéo theo rơ moóc kể cả xe mô tô, máy kéo, xe ô tô khách kéo theo rơ moóc đi qua, trừ loại xe ô tô sơ mi rơ moóc và các xe được ưu tiên theo Luật Giao thông đường bộ (có kéo theo rơ moóc).",
+    "image_url": "assets/images/bien-bao/bien-cam/P108.webp"
+  },
+  {
+    "sign_id": "P.108a",
+    "category": "cam",
+    "name": "Cấm xe sơ-mi rơ-moóc",
+    "description": "Biển báo đường cấm các loại xe sơ-mi-rơ-moóc và các xe kéo rơ- moóc trừ các xe được ưu tiên (có dạng xe sơ-mi-rơ-moóc hoặc có kéo theo rơ-moóc) theo quy định.",
+    "image_url": "assets/images/bien-bao/bien-cam/P108a.webp"
+  },
+  {
+    "sign_id": "P.109",
+    "category": "cam",
+    "name": "Cấm xe máy kéo",
+    "description": "Biển báo đường cấm tất cả các loại máy kéo, kể cả máy kéo bánh hơi và bánh xích đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P109.webp"
+  },
+  {
+    "sign_id": "P.110a",
+    "category": "cam",
+    "name": "Cấm xe đạp",
+    "description": "Biển báo đường cấm xe đạp đi qua. Biển không có giá trị cấm những người dắt xe đạp.",
+    "image_url": "assets/images/bien-bao/bien-cam/P110a.webp"
+  },
+  {
+    "sign_id": "P.110b",
+    "category": "cam",
+    "name": "Cấm xe đạp thồ",
+    "description": "Biển báo đường cấm xe đạp thồ đi qua. Biển không có giá trị cấm người dắt loại xe này.",
+    "image_url": "assets/images/bien-bao/bien-cam/P110b.webp"
+  },
+  {
+    "sign_id": "P.111a",
+    "category": "cam",
+    "name": "Cấm xe gắn máy",
+    "description": "Biển báo đường cấm xe gắn máy đi qua. Biển không có giá trị cấm đối với xe đạp.",
+    "image_url": "assets/images/bien-bao/bien-cam/P111a.webp"
+  },
+  {
+    "sign_id": "P.111b",
+    "category": "cam",
+    "name": "Cấm xe ba gác",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/P111b.webp"
+  },
+  {
+    "sign_id": "P.111c",
+    "category": "cam",
+    "name": "Cấm xe máy kéo nhỏ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/P111c.webp"
+  },
+  {
+    "sign_id": "P.111d",
+    "category": "cam",
+    "name": "Cấm xe súc vật kéo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-cam/P111d.webp"
+  },
+  {
+    "sign_id": "P.112",
+    "category": "cam",
+    "name": "Cấm người đi bộ",
+    "description": "Biển báo đường cấm người đi bộ qua lại.",
+    "image_url": "assets/images/bien-bao/bien-cam/P112.webp"
+  },
+  {
+    "sign_id": "P.113",
+    "category": "cam",
+    "name": "Cấm xe người kéo, đẩy",
+    "description": "Biển báo đường cấm xe người kéo đẩy đi qua. Biển không có giá trị cấm những xe nôi của trẻ em và phương tiện chuyên dùng để đi lại của những người khuyết tật.",
+    "image_url": "assets/images/bien-bao/bien-cam/P113.webp"
+  },
+  {
+    "sign_id": "P.114",
+    "category": "cam",
+    "name": "Cấm xe súc vật kéo",
+    "description": "Biển báo đường cấm súc vật vận tải hàng hóa hoặc hành khách dù kéo xe hay chở trên lưng đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P114.webp"
+  },
+  {
+    "sign_id": "P.115",
+    "category": "cam",
+    "name": "Hạn chế trọng lượng xe",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ kể cả các xe được ưu tiên theo Luật Giao thông đường bộ có trọng lượng toàn bộ (cả xe và hàng) vượt quá trị số ghi trên biển tính bằng tấn đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P115.webp"
+  },
+  {
+    "sign_id": "P.116",
+    "category": "cam",
+    "name": "Hạn chế trọng lượng trên trục xe",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ, kể cả các xe được ưu tiên theo Luật Giao thông đường bộ có trọng lượng toàn bộ (cả xe và hàng) phân bố trên một trục bất kỳ của xe vượt quá trị số ghi trên biển tính bằng tấn đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P116.webp"
+  },
+  {
+    "sign_id": "P.117",
+    "category": "cam",
+    "name": "Hạn chế chiều cao",
+    "description": "Biển có hiệu lực cấm các loại phương tiện giao thông đường bộ đi qua, kể cả các xe được ưu tiên theo Luật Giao thông đường bộ có chiều cao (tính đến điểm cao nhất cả xe và hàng hóa) vượt quá trị số ghi trên biển tính bằng mét đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P117.webp"
+  },
+  {
+    "sign_id": "P.118",
+    "category": "cam",
+    "name": "Hạn chế chiều ngang",
+    "description": "Biển có hiệu lực cấm các loại phương tiện giao thông đường bộ kể cả các xe được ưu tiên theo Luật Giao thông đường bộ có chiều ngang (cả xe và hàng hóa) vượt quá trị số ghi trên Biển tính bằng mét đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P118.webp"
+  },
+  {
+    "sign_id": "P.119",
+    "category": "cam",
+    "name": "Hạn chế chiều dài ô tô",
+    "description": "Biển báo đường cấm các loại xe (cơ giới và thô sơ), kể cả các xe được ưu tiên theo Luật Giao thông đường bộ, có độ dài toàn bộ (cả xe và hàng) vượt quá trị số ghi trên biển tính bằng mét đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P119.webp"
+  },
+  {
+    "sign_id": "P.120",
+    "category": "cam",
+    "name": "Hạn chế chiều dài ô tô kéo moóc",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ kéo theo rơ moóc kể cả ô tô sơ mi rơ moóc và các xe được ưu tiên theo Luật Giao thông đường bộ kéo theo rơ moóc có độ dài toàn bộ (cả xe, rơ moóc và hàng) vượt quá trị số ghi trên biển đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P120.webp"
+  },
+  {
+    "sign_id": "P.121",
+    "category": "cam",
+    "name": "Cự ly tối thiểu giữa hai xe",
+    "description": "Biển báo xe ô tô phải đi cách nhau một khoảng tối thiểu. Biển có hiệu lực cấm các xe ô tô không được đi cách nhau với cự ly nhỏ hơn trị số ghi trên biển tính bằng mét, kể cả các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P121.webp"
+  },
+  {
+    "sign_id": "P.123a",
+    "category": "cam",
+    "name": "Cấm rẽ trái",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ (xe cơ giới và xe thô sơ) rẽ trái, trừ các xe được ưu tiên theo Luật Giao thông đường bộ. Biển không có giá trị cấm quay đầu xe.",
+    "image_url": "assets/images/bien-bao/bien-cam/P123a.webp"
+  },
+  {
+    "sign_id": "P.123b",
+    "category": "cam",
+    "name": "Cấm rẽ phải",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ (xe cơ giới và xe thô sơ) rẽ phải, trừ các xe được ưu tiên theo Luật Giao thông đường bộ. Biển không có giá trị cấm quay đầu xe.",
+    "image_url": "assets/images/bien-bao/bien-cam/P123b.webp"
+  },
+  {
+    "sign_id": "P.124a1",
+    "category": "cam",
+    "name": "Cấm quay đầu xe từ trái",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ quay đầu xe theo kiểu chữ U, trừ các xe được ưu tiên theo Luật Giao thông đường bộ. Biển không có giá trị cấm rẽ trái để sang hướng đường khác.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124a1.webp"
+  },
+  {
+    "sign_id": "P.124a2",
+    "category": "cam",
+    "name": "Cấm quay đầu xe từ phải",
+    "description": "Biển báo đường cấm các loại phương tiện giao thông đường bộ quay đầu xe theo kiểu chữ U, trừ các xe được ưu tiên theo Luật Giao thông đường bộ. Biển không có giá trị cấm rẽ trái để sang hướng đường khác.   ",
+    "image_url": "assets/images/bien-bao/bien-cam/P124a2.webp"
+  },
+  {
+    "sign_id": "P.124b1",
+    "category": "cam",
+    "name": "Cấm ô tô quay đầu",
+    "description": "Biển báo đường cấm xe ô tô và xe mô tô 3 bánh quay đầu xe theo kiểu chữ U, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124b1.webp"
+  },
+  {
+    "sign_id": "P.124b2",
+    "category": "cam",
+    "name": "Cấm ô tô quay đầu",
+    "description": "Biển báo đường cấm xe ô tô và xe mô tô 3 bánh quay đầu xe theo kiểu chữ U, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124b2.webp"
+  },
+  {
+    "sign_id": "P.124c",
+    "category": "cam",
+    "name": "Cấm rẽ trái và quay đầu xe",
+    "description": "Biển báo cấm các loại xe rẽ trái đồng thời cấm quay đầu, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124c.webp"
+  },
+  {
+    "sign_id": "P.124d",
+    "category": "cam",
+    "name": "Cấm rẽ phải và quay đầu xe",
+    "description": "Biển báo cấm các loại xe rẽ phải đồng thời cấm quay đầu, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124d.webp"
+  },
+  {
+    "sign_id": "P.124e",
+    "category": "cam",
+    "name": "Cấm ô tô rẽ trái và quay xe",
+    "description": "Biển báo cấm xe ôtô rẽ trái và đồng thời cấm quay đầu phải, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124e.webp"
+  },
+  {
+    "sign_id": "P.124f",
+    "category": "cam",
+    "name": "Cấm ô tô rẽ phải và quay xe",
+    "description": "Biển báo cấm xe ôtô rẽ phải và đồng thời cấm quay đầu phải, trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P124f.webp"
+  },
+  {
+    "sign_id": "P.125",
+    "category": "cam",
+    "name": "Cấm vượt",
+    "description": "Biển có hiệu lực cấm tất cả các loại xe cơ giới vượt nhau, kể cả các xe được ưu tiên theo Luật Giao thông đường bộ. được phép vượt xe mô tô 2 bánh, xe gắn máy. Biển hết hiệu lực cấm khi có biển số DP.133 \"Hết cấm vượt\" hoặc đến chỗ có biển số DP.135 \"Hết tất cả các lệnh cấm\" nếu đồng thời có nhiều biển cấm khác hết tác dụng.",
+    "image_url": "assets/images/bien-bao/bien-cam/P125.webp"
+  },
+  {
+    "sign_id": "P.126",
+    "category": "cam",
+    "name": "Cấm ôtô tải vượt",
+    "description": "Biển có hiệu lực cấm các loại ôtô tải có khối lượng chuyên chở (theo Giấy chứng nhận kiểm định an toàn kỹ thuật và bảo vệ môi trường phương tiện giao thông cơ giới đường bộ) lớn hơn 3.500 kg (3,5 tấn) kể cả các xe được ưu tiên theo quy định vượt xe cơ giới khác. được phép vượt xe máy 2 bánh, xe gắn máy. Biển không có giá trị cấm các loại xe cơ giới khác vượt nhau và vượt xe ô tô tải.",
+    "image_url": "assets/images/bien-bao/bien-cam/P126.webp"
+  },
+  {
+    "sign_id": "P.127",
+    "category": "cam",
+    "name": "Tốc độ tối đa cho phép",
+    "description": "Biển có hiệu lực cấm tất cả các loại xe cơ giới đường bộ chạy với tốc độ tối đa vượt quá trị số ghi trên Biển (tính bằng km/h), trừ các xe được ưu tiên theo Luật Giao thông đường bộ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P127.webp"
+  },
+  {
+    "sign_id": "P.127a",
+    "category": "cam",
+    "name": "Tốc độ tối đa cho phép về ban đêm",
+    "description": "Biển có hiệu lực cấm tất cả các loại xe cơ giới đường bộ chạy ban đêm với tốc độ tối đa vượt quá trị số ghi trên biển (tính bằng km/h), trừ một số trường hợp ưu tiên được quy định.",
+    "image_url": "assets/images/bien-bao/bien-cam/P127a.webp"
+  },
+  {
+    "sign_id": "P.127b",
+    "category": "cam",
+    "name": "Tốc độ tối đa trên từng làn đường",
+    "description": "Biển ghép tốc độ tối đa cho phép trên từng làn đường",
+    "image_url": "assets/images/bien-bao/bien-cam/P127b.webp"
+  },
+  {
+    "sign_id": "P.127c",
+    "category": "cam",
+    "name": "Tốc độ tối đa phương tiện trên từng làn đường",
+    "description": "Biển ghép tốc độ tối đa cho phép theo phương tiện, trên từng làn đường",
+    "image_url": "assets/images/bien-bao/bien-cam/P127c.webp"
+  },
+  {
+    "sign_id": "P.128",
+    "category": "cam",
+    "name": "Cấm bóp còi",
+    "description": "Biển báo cấm các loại xe cơ giới sử dụng còi.",
+    "image_url": "assets/images/bien-bao/bien-cam/P128.webp"
+  },
+  {
+    "sign_id": "P.129",
+    "category": "cam",
+    "name": "Kiểm tra",
+    "description": "Biển báo nơi đặt trạm kiểm tra, các loại phương tiện vận tải qua đó phải dừng lại để làm thủ tục kiểm tra, kiểm soát theo quy định.",
+    "image_url": "assets/images/bien-bao/bien-cam/P129.webp"
+  },
+  {
+    "sign_id": "P.130",
+    "category": "cam",
+    "name": "Cấm dừng và đỗ xe",
+    "description": "Biển có hiệu lực cấm các loại xe cơ giới đường bộ dừng và đỗ lại ở phía đường có đặt biển,",
+    "image_url": "assets/images/bien-bao/bien-cam/P130.webp"
+  },
+  {
+    "sign_id": "P.131a",
+    "category": "cam",
+    "name": "Cấm đỗ xe",
+    "description": "Biển số 131a có hiệu lực cấm các loại xe cơ giới đỗ ở phía đường có đặt biển vào bất kể ngày nào.",
+    "image_url": "assets/images/bien-bao/bien-cam/P131a.webp"
+  },
+  {
+    "sign_id": "P.131b",
+    "category": "cam",
+    "name": "Cấm đỗ ngày lẻ",
+    "description": "Biển có hiệu lực cấm các loại xe cơ giới đỗ ở phía đường có đặt biển vào những ngày lẻ.",
+    "image_url": "assets/images/bien-bao/bien-cam/P131b.webp"
+  },
+  {
+    "sign_id": "P.131c",
+    "category": "cam",
+    "name": "Cấm đỗ xe ngày chẵn",
+    "description": "Biển có hiệu lực cấm các loại xe cơ giới đỗ ở phía đường có đặt biển vào những ngày chẵn.",
+    "image_url": "assets/images/bien-bao/bien-cam/P131c.webp"
+  },
+  {
+    "sign_id": "P.132",
+    "category": "cam",
+    "name": "Nhường cho xe ngược chiều qua đường hẹp",
+    "description": "Biển báo cho các loại phương tiện giao thông đường bộ (cơ giới và thô sơ), kể cả các xe được ưu tiên theo Luật Giao thông đường bộ đi theo chiều nhìn thấy biển phải nhường đường cho các loại xe cơ giới đi theo chiều ngược lại khi đi qua các đoạn đường và cầu hẹp.",
+    "image_url": "assets/images/bien-bao/bien-cam/P132.webp"
+  },
+  {
+    "sign_id": "P.136",
+    "category": "cam",
+    "name": "Cấm đi thẳng",
+    "description": "Biển được đặt trước nơi đường giao nhau và có hiệu lực cấm tất cả các loại phương tiện giao thông đường bộ (cơ giới và thô sơ) đi thẳng ở nơi đường giao nhau.",
+    "image_url": "assets/images/bien-bao/bien-cam/P136.webp"
+  },
+  {
+    "sign_id": "P.137",
+    "category": "cam",
+    "name": "Cấm rẽ trái và rẽ phải",
+    "description": "Biển được đặt trước nơi đường giao nhau và có hiệu lực cấm tất cả các loại phương tiện giao thông đường bộ (cơ giới và thô sơ) rẽ trái và rẽ phải ở nơi đường giao nhau.",
+    "image_url": "assets/images/bien-bao/bien-cam/P137.webp"
+  },
+  {
+    "sign_id": "P.138",
+    "category": "cam",
+    "name": "Cấm đi thẳng và rẽ trái",
+    "description": "Biển được đặt trước nơi đường giao nhau và có hiệu lực cấm tất cả các loại phương tiện giao thông đường bộ (cơ giới và thô sơ) đi thẳng và rẽ trái ở nơi đường giao nhau.",
+    "image_url": "assets/images/bien-bao/bien-cam/P138.webp"
+  },
+  {
+    "sign_id": "P.139",
+    "category": "cam",
+    "name": "Cấm đi thẳng và rẽ phải",
+    "description": "Biển được đặt trước nơi đường giao nhau và có hiệu lực cấm tất cả các loại phương tiện giao thông đường bộ (cơ giới và thô sơ) đi thẳng và rẽ phải ở nơi đường giao nhau.",
+    "image_url": "assets/images/bien-bao/bien-cam/P139.webp"
+  },
+  {
+    "sign_id": "P.140",
+    "category": "cam",
+    "name": "Cấm xe công nông và các loại xe tương tự",
+    "description": "Biển báo đường cấm tất cả các loại xe công nông và các loại xe tương tự đi qua.",
+    "image_url": "assets/images/bien-bao/bien-cam/P140.webp"
   },
   {
     "sign_id": "W.201a",
     "category": "canh-bao",
-    "name": "Chỗ ngoặt nguy hiểm vòng trái",
-    "description": "Báo trước sắp đến đoạn đường có chỗ ngoặt nguy hiểm vòng trái.",
-    "image_url": null
+    "name": "Chỗ ngoặt nguy hiểm vòng bên trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W201a.webp"
+  },
+  {
+    "sign_id": "W.201b",
+    "category": "canh-bao",
+    "name": "Chỗ ngoặt nguy hiểm vòng bên phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W201b.webp"
+  },
+  {
+    "sign_id": "W.201c",
+    "category": "canh-bao",
+    "name": "Chỗ ngoặt nguy hiểm liên tiếp trái-phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W201c.webp"
+  },
+  {
+    "sign_id": "W.201d",
+    "category": "canh-bao",
+    "name": "Chỗ ngoặt nguy hiểm liên tiếp phải-trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W201d.webp"
+  },
+  {
+    "sign_id": "W.202a",
+    "category": "canh-bao",
+    "name": "Đường bị thu hẹp cả hai bên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W202a.webp"
+  },
+  {
+    "sign_id": "W.202b",
+    "category": "canh-bao",
+    "name": "Đường bị thu hẹp về bên trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W202b.webp"
+  },
+  {
+    "sign_id": "W.203a",
+    "category": "canh-bao",
+    "name": "Đường dốc lên nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W203a.webp"
+  },
+  {
+    "sign_id": "W.203b",
+    "category": "canh-bao",
+    "name": "Đường dốc xuống nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W203b.webp"
+  },
+  {
+    "sign_id": "W.203c",
+    "category": "canh-bao",
+    "name": "Đường dốc nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W203c.webp"
+  },
+  {
+    "sign_id": "W.204",
+    "category": "canh-bao",
+    "name": "Đường không bằng phẳng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W204.webp"
+  },
+  {
+    "sign_id": "W.205a",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường không ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W205a.webp"
+  },
+  {
+    "sign_id": "W.205b",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường không ưu tiên bên phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W205b.webp"
+  },
+  {
+    "sign_id": "W.205c",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường không ưu tiên bên trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W205c.webp"
+  },
+  {
+    "sign_id": "W.205d",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường không ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W205d.webp"
+  },
+  {
+    "sign_id": "W.205e",
+    "category": "canh-bao",
+    "name": "Giao nhau nhiều ngã",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W205e.webp"
+  },
+  {
+    "sign_id": "W.206",
+    "category": "canh-bao",
+    "name": "Giao nhau có tín hiệu đèn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W206.webp"
+  },
+  {
+    "sign_id": "W.207a",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt có rào chắn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207a.webp"
+  },
+  {
+    "sign_id": "W.207b",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt không có rào chắn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207b.webp"
+  },
+  {
+    "sign_id": "W.207c",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt không rào chắn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207c.webp"
+  },
+  {
+    "sign_id": "W.207d",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207d.webp"
+  },
+  {
+    "sign_id": "W.207e",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207e.webp"
+  },
+  {
+    "sign_id": "W.207f",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207f.webp"
+  },
+  {
+    "sign_id": "W.207g",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207g.webp"
+  },
+  {
+    "sign_id": "W.207h",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207h.webp"
+  },
+  {
+    "sign_id": "W.207i",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207i.webp"
+  },
+  {
+    "sign_id": "W.207j",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207j.webp"
+  },
+  {
+    "sign_id": "W.207k",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207k.webp"
+  },
+  {
+    "sign_id": "W.207l",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207l.webp"
+  },
+  {
+    "sign_id": "W.207m",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường sắt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W207m.webp"
+  },
+  {
+    "sign_id": "W.208",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W208.webp"
+  },
+  {
+    "sign_id": "W.209",
+    "category": "canh-bao",
+    "name": "Nơi giao nhau chạy theo vòng xuyến",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W209.webp"
+  },
+  {
+    "sign_id": "W.210",
+    "category": "canh-bao",
+    "name": "Cầu quay - cầu cất",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W210.webp"
+  },
+  {
+    "sign_id": "W.211",
+    "category": "canh-bao",
+    "name": "Bến phà hoặc cầu phao",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W211.webp"
+  },
+  {
+    "sign_id": "W.211b",
+    "category": "canh-bao",
+    "name": "Kè, vực sâu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W211b.webp"
+  },
+  {
+    "sign_id": "W.212",
+    "category": "canh-bao",
+    "name": "Đoạn đường ngầm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W212.webp"
+  },
+  {
+    "sign_id": "W.213",
+    "category": "canh-bao",
+    "name": "Đường hai chiều",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W213.webp"
+  },
+  {
+    "sign_id": "W.214",
+    "category": "canh-bao",
+    "name": "Giao nhau với đường hai chiều",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W214.webp"
+  },
+  {
+    "sign_id": "W.215a",
+    "category": "canh-bao",
+    "name": "Đường trơn trượt vòng trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W215a.webp"
+  },
+  {
+    "sign_id": "W.215b",
+    "category": "canh-bao",
+    "name": "Đường trơn trượt vòng phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W215b.webp"
+  },
+  {
+    "sign_id": "W.215c",
+    "category": "canh-bao",
+    "name": "Đường trơn trượt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W215c.webp"
+  },
+  {
+    "sign_id": "W.216a",
+    "category": "canh-bao",
+    "name": "Đá lở bên trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W216a.webp"
+  },
+  {
+    "sign_id": "W.216b",
+    "category": "canh-bao",
+    "name": "Đá lở bên phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W216b.webp"
+  },
+  {
+    "sign_id": "W.217",
+    "category": "canh-bao",
+    "name": "Vách núi nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W217.webp"
+  },
+  {
+    "sign_id": "W.218",
+    "category": "canh-bao",
+    "name": "Sỏi đá bắn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W218.webp"
+  },
+  {
+    "sign_id": "W.219",
+    "category": "canh-bao",
+    "name": "Người đi bộ cắt ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W219.webp"
+  },
+  {
+    "sign_id": "W.220",
+    "category": "canh-bao",
+    "name": "Trẻ em",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W220.webp"
+  },
+  {
+    "sign_id": "W.221a",
+    "category": "canh-bao",
+    "name": "Cầu hẹp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W221a.webp"
+  },
+  {
+    "sign_id": "W.221b",
+    "category": "canh-bao",
+    "name": "Đường hẹp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W221b.webp"
+  },
+  {
+    "sign_id": "W.222a",
+    "category": "canh-bao",
+    "name": "Đường gồ ghề, giảm tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W222a.webp"
+  },
+  {
+    "sign_id": "W.222b",
+    "category": "canh-bao",
+    "name": "Đường gồ ghề",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W222b.webp"
+  },
+  {
+    "sign_id": "W.223a",
+    "category": "canh-bao",
+    "name": "Đường có ổ gà, lồi lõm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W223a.webp"
+  },
+  {
+    "sign_id": "W.223b",
+    "category": "canh-bao",
+    "name": "Đường có ổ gà",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W223b.webp"
+  },
+  {
+    "sign_id": "W.224",
+    "category": "canh-bao",
+    "name": "Nơi đường sắt giao nhau với đường bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W224.webp"
+  },
+  {
+    "sign_id": "W.225",
+    "category": "canh-bao",
+    "name": "Đường nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W225.webp"
+  },
+  {
+    "sign_id": "W.226",
+    "category": "canh-bao",
+    "name": "Cầu vượt đường bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W226.webp"
+  },
+  {
+    "sign_id": "W.227",
+    "category": "canh-bao",
+    "name": "Công trường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W227.webp"
+  },
+  {
+    "sign_id": "W.228a",
+    "category": "canh-bao",
+    "name": "Đường cắt ngang đê",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W228a.webp"
+  },
+  {
+    "sign_id": "W.228b",
+    "category": "canh-bao",
+    "name": "Đường ngập nước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W228b.webp"
+  },
+  {
+    "sign_id": "W.228c",
+    "category": "canh-bao",
+    "name": "Sông suối",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W228c.webp"
+  },
+  {
+    "sign_id": "W.228d",
+    "category": "canh-bao",
+    "name": "Bờ sông",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W228d.webp"
+  },
+  {
+    "sign_id": "W.229",
+    "category": "canh-bao",
+    "name": "Đường cắt qua đường ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W229.webp"
+  },
+  {
+    "sign_id": "W.230",
+    "category": "canh-bao",
+    "name": "Đường hầm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W230.webp"
+  },
+  {
+    "sign_id": "W.231",
+    "category": "canh-bao",
+    "name": "Chú ý chướng ngại vật",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W231.webp"
+  },
+  {
+    "sign_id": "W.232",
+    "category": "canh-bao",
+    "name": "Đường bị thu hẹp bên phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W232.webp"
+  },
+  {
+    "sign_id": "W.233",
+    "category": "canh-bao",
+    "name": "Nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W233.webp"
+  },
+  {
+    "sign_id": "W.234",
+    "category": "canh-bao",
+    "name": "Gió ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W234.webp"
+  },
+  {
+    "sign_id": "W.235",
+    "category": "canh-bao",
+    "name": "Đường đôi",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W235.webp"
+  },
+  {
+    "sign_id": "W.236",
+    "category": "canh-bao",
+    "name": "Sụt lở",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W236.webp"
+  },
+  {
+    "sign_id": "W.237",
+    "category": "canh-bao",
+    "name": "Đường người đi bộ sang ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W237.webp"
+  },
+  {
+    "sign_id": "W.238",
+    "category": "canh-bao",
+    "name": "Xe đạp cắt ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W238.webp"
+  },
+  {
+    "sign_id": "W.239a",
+    "category": "canh-bao",
+    "name": "Gia súc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W239a.webp"
+  },
+  {
+    "sign_id": "W.239b",
+    "category": "canh-bao",
+    "name": "Thú rừng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W239b.webp"
+  },
+  {
+    "sign_id": "W.240",
+    "category": "canh-bao",
+    "name": "Máy bay bay thấp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W240.webp"
+  },
+  {
+    "sign_id": "W.241",
+    "category": "canh-bao",
+    "name": "Ùn tắc giao thông",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W241.webp"
+  },
+  {
+    "sign_id": "W.242a",
+    "category": "canh-bao",
+    "name": "Đoạn đường hầm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W242a.webp"
+  },
+  {
+    "sign_id": "W.242b",
+    "category": "canh-bao",
+    "name": "Hầm chui",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W242b.webp"
+  },
+  {
+    "sign_id": "W.243a",
+    "category": "canh-bao",
+    "name": "Chú ý nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W243a.webp"
+  },
+  {
+    "sign_id": "W.243b",
+    "category": "canh-bao",
+    "name": "Khu vực nguy hiểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W243b.webp"
+  },
+  {
+    "sign_id": "W.243c",
+    "category": "canh-bao",
+    "name": "Chú ý nguy hiểm khác",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W243c.webp"
+  },
+  {
+    "sign_id": "W.244",
+    "category": "canh-bao",
+    "name": "Đoạn đường thường xảy ra tai nạn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W244.webp"
+  },
+  {
+    "sign_id": "W.245a",
+    "category": "canh-bao",
+    "name": "Đi chậm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W245a.webp"
+  },
+  {
+    "sign_id": "W.245b",
+    "category": "canh-bao",
+    "name": "Đường song song",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W245b.webp"
+  },
+  {
+    "sign_id": "W.246a",
+    "category": "canh-bao",
+    "name": "Cảnh báo cầu hẹp phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W246a.webp"
+  },
+  {
+    "sign_id": "W.246b",
+    "category": "canh-bao",
+    "name": "Cảnh báo đường hẹp phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W246b.webp"
+  },
+  {
+    "sign_id": "W.246c",
+    "category": "canh-bao",
+    "name": "Cảnh báo đường hẹp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W246c.webp"
+  },
+  {
+    "sign_id": "W.247",
+    "category": "canh-bao",
+    "name": "Chú ý xe cộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-canh-bao/W247.webp"
+  },
+  {
+    "sign_id": "I.401",
+    "category": "chi-dan",
+    "name": "Bắt đầu đường ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I401.webp"
+  },
+  {
+    "sign_id": "I.402",
+    "category": "chi-dan",
+    "name": "Hết đường ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I402.webp"
+  },
+  {
+    "sign_id": "I.405a",
+    "category": "chi-dan",
+    "name": "Đường một chiều",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I405a.webp"
+  },
+  {
+    "sign_id": "I.405b",
+    "category": "chi-dan",
+    "name": "Đường một chiều",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I405b.webp"
+  },
+  {
+    "sign_id": "I.405c",
+    "category": "chi-dan",
+    "name": "Đường một chiều",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I405c.webp"
+  },
+  {
+    "sign_id": "I.406",
+    "category": "chi-dan",
+    "name": "Nơi đỗ xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I406.webp"
   },
   {
     "sign_id": "I.407a",
     "category": "chi-dan",
     "name": "Bến xe buýt",
-    "description": "Chỉ dẫn vị trí bến xe buýt.",
-    "image_url": null
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I407a.webp"
+  },
+  {
+    "sign_id": "I.407b",
+    "category": "chi-dan",
+    "name": "Bến xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I407b.webp"
+  },
+  {
+    "sign_id": "I.407c",
+    "category": "chi-dan",
+    "name": "Bến xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I407c.webp"
+  },
+  {
+    "sign_id": "I.408",
+    "category": "chi-dan",
+    "name": "Bến xe taxi",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I408.webp"
+  },
+  {
+    "sign_id": "I.408a",
+    "category": "chi-dan",
+    "name": "Bến xe taxi",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I408a.webp"
+  },
+  {
+    "sign_id": "I.409",
+    "category": "chi-dan",
+    "name": "Nơi quay đầu xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I409.webp"
+  },
+  {
+    "sign_id": "I.410",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường cụt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I410.webp"
+  },
+  {
+    "sign_id": "I.413a",
+    "category": "chi-dan",
+    "name": "Đường người đi bộ sang ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I413a.webp"
+  },
+  {
+    "sign_id": "I.413b",
+    "category": "chi-dan",
+    "name": "Đường người đi bộ sang ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I413b.webp"
+  },
+  {
+    "sign_id": "I.413c",
+    "category": "chi-dan",
+    "name": "Đường người đi bộ sang ngang",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I413c.webp"
+  },
+  {
+    "sign_id": "I.414a",
+    "category": "chi-dan",
+    "name": "Cầu vượt dành cho người đi bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I414a.webp"
+  },
+  {
+    "sign_id": "I.414b",
+    "category": "chi-dan",
+    "name": "Cầu vượt dành cho người đi bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I414b.webp"
+  },
+  {
+    "sign_id": "I.414c",
+    "category": "chi-dan",
+    "name": "Hầm dành cho người đi bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I414c.webp"
+  },
+  {
+    "sign_id": "I.414d",
+    "category": "chi-dan",
+    "name": "Hầm dành cho người đi bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I414d.webp"
+  },
+  {
+    "sign_id": "I.415",
+    "category": "chi-dan",
+    "name": "Đường dành cho xe đạp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I415.webp"
+  },
+  {
+    "sign_id": "I.416",
+    "category": "chi-dan",
+    "name": "Đường dành cho người đi bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I416.webp"
+  },
+  {
+    "sign_id": "I.417a",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đi buồng điện thoại",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I417a.webp"
+  },
+  {
+    "sign_id": "I.417b",
+    "category": "chi-dan",
+    "name": "Bệnh viện",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I417b.webp"
+  },
+  {
+    "sign_id": "I.417c",
+    "category": "chi-dan",
+    "name": "Trạm xăng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I417c.webp"
+  },
+  {
+    "sign_id": "I.418",
+    "category": "chi-dan",
+    "name": "Nơi rửa xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I418.webp"
+  },
+  {
+    "sign_id": "I.419a",
+    "category": "chi-dan",
+    "name": "Nhà vệ sinh",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I419a.webp"
+  },
+  {
+    "sign_id": "I.419b",
+    "category": "chi-dan",
+    "name": "Nhà vệ sinh công cộng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I419b.webp"
+  },
+  {
+    "sign_id": "I.422a",
+    "category": "chi-dan",
+    "name": "Đường có phân cách",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I422a.webp"
+  },
+  {
+    "sign_id": "I.422b",
+    "category": "chi-dan",
+    "name": "Hết đường có phân cách",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I422b.webp"
+  },
+  {
+    "sign_id": "I.423a",
+    "category": "chi-dan",
+    "name": "Đường dành cho ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I423a.webp"
+  },
+  {
+    "sign_id": "I.423b",
+    "category": "chi-dan",
+    "name": "Hết đường dành cho ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I423b.webp"
+  },
+  {
+    "sign_id": "I.423c",
+    "category": "chi-dan",
+    "name": "Đường dành cho ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I423c.webp"
+  },
+  {
+    "sign_id": "I.424a",
+    "category": "chi-dan",
+    "name": "Tuyến đường xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I424a.webp"
+  },
+  {
+    "sign_id": "I.424b",
+    "category": "chi-dan",
+    "name": "Tuyến đường xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I424b.webp"
+  },
+  {
+    "sign_id": "I.424c",
+    "category": "chi-dan",
+    "name": "Tuyến đường xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I424c.webp"
+  },
+  {
+    "sign_id": "I.424d",
+    "category": "chi-dan",
+    "name": "Tuyến đường xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I424d.webp"
+  },
+  {
+    "sign_id": "I.425",
+    "category": "chi-dan",
+    "name": "Bãi đỗ xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I425.webp"
+  },
+  {
+    "sign_id": "I.426",
+    "category": "chi-dan",
+    "name": "Nơi đỗ xe có mái che",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I426.webp"
+  },
+  {
+    "sign_id": "I.427a",
+    "category": "chi-dan",
+    "name": "Trạm cấp cứu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I427a.webp"
+  },
+  {
+    "sign_id": "I.427b",
+    "category": "chi-dan",
+    "name": "Bệnh viện",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I427b.webp"
+  },
+  {
+    "sign_id": "I.428a",
+    "category": "chi-dan",
+    "name": "Điểm quay đầu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I428a.webp"
+  },
+  {
+    "sign_id": "I.429",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn địa điểm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I429.webp"
+  },
+  {
+    "sign_id": "I.430",
+    "category": "chi-dan",
+    "name": "Thông tin tuyến đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I430.webp"
+  },
+  {
+    "sign_id": "I.431",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn phương hướng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I431.webp"
+  },
+  {
+    "sign_id": "I.432",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn phương hướng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I432.webp"
+  },
+  {
+    "sign_id": "I.433a",
+    "category": "chi-dan",
+    "name": "Tên đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I433a.webp"
+  },
+  {
+    "sign_id": "I.433b",
+    "category": "chi-dan",
+    "name": "Tên đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I433b.webp"
+  },
+  {
+    "sign_id": "I.433c",
+    "category": "chi-dan",
+    "name": "Tên đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I433c.webp"
+  },
+  {
+    "sign_id": "I.433d",
+    "category": "chi-dan",
+    "name": "Tên đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I433d.webp"
+  },
+  {
+    "sign_id": "I.433e",
+    "category": "chi-dan",
+    "name": "Tên đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I433e.webp"
+  },
+  {
+    "sign_id": "I.434a",
+    "category": "chi-dan",
+    "name": "Số km cột mốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I434a.webp"
+  },
+  {
+    "sign_id": "I.434b",
+    "category": "chi-dan",
+    "name": "Số km cột mốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I434b.webp"
+  },
+  {
+    "sign_id": "I.435",
+    "category": "chi-dan",
+    "name": "Sơ đồ tuyến đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I435.webp"
+  },
+  {
+    "sign_id": "I.436",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường vòng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I436.webp"
+  },
+  {
+    "sign_id": "I.437",
+    "category": "chi-dan",
+    "name": "Hướng rẽ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I437.webp"
+  },
+  {
+    "sign_id": "I.439",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn vị trí",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I439.webp"
+  },
+  {
+    "sign_id": "I.440",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn tuyến đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I440.webp"
+  },
+  {
+    "sign_id": "I.441a",
+    "category": "chi-dan",
+    "name": "Làn đường dành cho ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I441a.webp"
+  },
+  {
+    "sign_id": "I.441b",
+    "category": "chi-dan",
+    "name": "Làn đường dành cho ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I441b.webp"
+  },
+  {
+    "sign_id": "I.441c",
+    "category": "chi-dan",
+    "name": "Làn đường dành cho ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I441c.webp"
+  },
+  {
+    "sign_id": "I.442",
+    "category": "chi-dan",
+    "name": "Phân chia làn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I442.webp"
+  },
+  {
+    "sign_id": "I.443",
+    "category": "chi-dan",
+    "name": "Số thứ tự đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I443.webp"
+  },
+  {
+    "sign_id": "I.444a",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444a.webp"
+  },
+  {
+    "sign_id": "I.444b",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444b.webp"
+  },
+  {
+    "sign_id": "I.444c",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444c.webp"
+  },
+  {
+    "sign_id": "I.444d",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444d.webp"
+  },
+  {
+    "sign_id": "I.444e",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444e.webp"
+  },
+  {
+    "sign_id": "I.444f",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444f.webp"
+  },
+  {
+    "sign_id": "I.444g",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444g.webp"
+  },
+  {
+    "sign_id": "I.444h",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444h.webp"
+  },
+  {
+    "sign_id": "I.444i",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444i.webp"
+  },
+  {
+    "sign_id": "I.444j",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444j.webp"
+  },
+  {
+    "sign_id": "I.444k",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444k.webp"
+  },
+  {
+    "sign_id": "I.444l",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444l.webp"
+  },
+  {
+    "sign_id": "I.444m",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I444m.webp"
+  },
+  {
+    "sign_id": "I.445a",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445a.webp"
+  },
+  {
+    "sign_id": "I.445b",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445b.webp"
+  },
+  {
+    "sign_id": "I.445c",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445c.webp"
+  },
+  {
+    "sign_id": "I.445d",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445d.webp"
+  },
+  {
+    "sign_id": "I.445e",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445e.webp"
+  },
+  {
+    "sign_id": "I.445f",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445f.webp"
+  },
+  {
+    "sign_id": "I.445g",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445g.webp"
+  },
+  {
+    "sign_id": "I.445h",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I445h.webp"
+  },
+  {
+    "sign_id": "I.446",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn làn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I446.webp"
+  },
+  {
+    "sign_id": "I.447a",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I447a.webp"
+  },
+  {
+    "sign_id": "I.447b",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I447b.webp"
+  },
+  {
+    "sign_id": "I.447c",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I447c.webp"
+  },
+  {
+    "sign_id": "I.447d",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phía trước",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I447d.webp"
+  },
+  {
+    "sign_id": "I.448",
+    "category": "chi-dan",
+    "name": "Chỉ dẫn đường phố",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I448.webp"
+  },
+  {
+    "sign_id": "I.449",
+    "category": "chi-dan",
+    "name": "Sơ đồ chỉ dẫn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-chi-dan/I449.webp"
+  },
+  {
+    "sign_id": "R.122",
+    "category": "hieu-lenh",
+    "name": "Dừng lại",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R122.webp"
+  },
+  {
+    "sign_id": "R.301a",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo bên phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301a.webp"
+  },
+  {
+    "sign_id": "R.301b",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo bên trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301b.webp"
+  },
+  {
+    "sign_id": "R.301c",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301c.webp"
+  },
+  {
+    "sign_id": "R.301d",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301d.webp"
+  },
+  {
+    "sign_id": "R.301e",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301e.webp"
+  },
+  {
+    "sign_id": "R.301f",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301f.webp"
+  },
+  {
+    "sign_id": "R.301g",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301g.webp"
+  },
+  {
+    "sign_id": "R.301h",
+    "category": "hieu-lenh",
+    "name": "Hướng đi phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R301h.webp"
   },
   {
     "sign_id": "R.302a",
     "category": "hieu-lenh",
-    "name": "Hướng đi thẳng",
-    "description": "Buộc người điều khiển phương tiện phải đi thẳng.",
-    "image_url": null
+    "name": "Hướng đi thẳng phải theo",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R302a.webp"
+  },
+  {
+    "sign_id": "R.302b",
+    "category": "hieu-lenh",
+    "name": "Hướng phải rẽ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R302b.webp"
+  },
+  {
+    "sign_id": "R.302c",
+    "category": "hieu-lenh",
+    "name": "Nơi giao nhau vòng xuyến",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R302c.webp"
+  },
+  {
+    "sign_id": "R.303",
+    "category": "hieu-lenh",
+    "name": "Hướng đi vòng chướng ngại vật sang phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R303.webp"
+  },
+  {
+    "sign_id": "R.304",
+    "category": "hieu-lenh",
+    "name": "Hướng đi vòng xuyến",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R304.webp"
+  },
+  {
+    "sign_id": "R.305",
+    "category": "hieu-lenh",
+    "name": "Đường dành cho xe đạp",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R305.webp"
+  },
+  {
+    "sign_id": "R.306",
+    "category": "hieu-lenh",
+    "name": "Đường dành cho người đi bộ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R306.webp"
+  },
+  {
+    "sign_id": "R.307",
+    "category": "hieu-lenh",
+    "name": "Tốc độ tối thiểu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R307.webp"
+  },
+  {
+    "sign_id": "R.308a",
+    "category": "hieu-lenh",
+    "name": "Hết hạn chế tốc độ tối thiểu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R308a.webp"
+  },
+  {
+    "sign_id": "R.308b",
+    "category": "hieu-lenh",
+    "name": "Hết tốc độ tối thiểu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R308b.webp"
+  },
+  {
+    "sign_id": "R.309",
+    "category": "hieu-lenh",
+    "name": "Làn đường dành cho xe ô tô",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R309.webp"
+  },
+  {
+    "sign_id": "R.310a",
+    "category": "hieu-lenh",
+    "name": "Phương tiện phải đi vòng bên phải",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R310a.webp"
+  },
+  {
+    "sign_id": "R.310b",
+    "category": "hieu-lenh",
+    "name": "Phương tiện phải đi vòng bên trái",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R310b.webp"
+  },
+  {
+    "sign_id": "R.310c",
+    "category": "hieu-lenh",
+    "name": "Đảo giao thông",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R310c.webp"
+  },
+  {
+    "sign_id": "R.403a",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403a.webp"
+  },
+  {
+    "sign_id": "R.403b",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403b.webp"
+  },
+  {
+    "sign_id": "R.403c",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403c.webp"
+  },
+  {
+    "sign_id": "R.403d",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403d.webp"
+  },
+  {
+    "sign_id": "R.403e",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403e.webp"
+  },
+  {
+    "sign_id": "R.403f",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403f.webp"
+  },
+  {
+    "sign_id": "R.403g",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403g.webp"
+  },
+  {
+    "sign_id": "R.403h",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403h.webp"
+  },
+  {
+    "sign_id": "R.403k",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường hướng dẫn",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R403k.webp"
+  },
+  {
+    "sign_id": "R.404a",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404a.webp"
+  },
+  {
+    "sign_id": "R.404b",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404b.webp"
+  },
+  {
+    "sign_id": "R.404c",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404c.webp"
+  },
+  {
+    "sign_id": "R.404d",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404d.webp"
+  },
+  {
+    "sign_id": "R.404e",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404e.webp"
+  },
+  {
+    "sign_id": "R.404f",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404f.webp"
+  },
+  {
+    "sign_id": "R.404g",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404g.webp"
+  },
+  {
+    "sign_id": "R.404h",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404h.webp"
+  },
+  {
+    "sign_id": "R.404k",
+    "category": "hieu-lenh",
+    "name": "Vạch kẻ đường bắt buộc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R404k.webp"
+  },
+  {
+    "sign_id": "R.411",
+    "category": "hieu-lenh",
+    "name": "Gộp làn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R411.webp"
+  },
+  {
+    "sign_id": "R.415a",
+    "category": "hieu-lenh",
+    "name": "Đường dành riêng xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R415a.webp"
+  },
+  {
+    "sign_id": "R.415b",
+    "category": "hieu-lenh",
+    "name": "Đường dành riêng xe buýt",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R415b.webp"
+  },
+  {
+    "sign_id": "R.420",
+    "category": "hieu-lenh",
+    "name": "Hết tất cả các lệnh cấm",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R420.webp"
+  },
+  {
+    "sign_id": "R.421",
+    "category": "hieu-lenh",
+    "name": "Nơi quay đầu xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/R421.webp"
+  },
+  {
+    "sign_id": "RE.10a",
+    "category": "hieu-lenh",
+    "name": "Tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/RE_10a.webp"
+  },
+  {
+    "sign_id": "RE.11a",
+    "category": "hieu-lenh",
+    "name": "Hết tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/RE_11a.webp"
+  },
+  {
+    "sign_id": "RE.11b",
+    "category": "hieu-lenh",
+    "name": "Hết tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/RE_11b.webp"
+  },
+  {
+    "sign_id": "RE.9a",
+    "category": "hieu-lenh",
+    "name": "Tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-hieu-lenh/RE_9a.webp"
   },
   {
     "sign_id": "S.501",
     "category": "phu",
     "name": "Phạm vi tác dụng của biển",
-    "description": "Biển phụ xác định phạm vi tác dụng của biển chính.",
-    "image_url": null
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S501.webp"
   },
   {
-    "sign_id": "CT.01",
+    "sign_id": "S.502",
+    "category": "phu",
+    "name": "Khoảng cách đến đối tượng báo hiệu",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S502.webp"
+  },
+  {
+    "sign_id": "S.503a",
+    "category": "phu",
+    "name": "Hướng tác dụng của biển (trái)",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S503a.webp"
+  },
+  {
+    "sign_id": "S.503b",
+    "category": "phu",
+    "name": "Hướng tác dụng của biển (phải)",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S503b.webp"
+  },
+  {
+    "sign_id": "S.503c",
+    "category": "phu",
+    "name": "Hướng tác dụng của biển",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S503c.webp"
+  },
+  {
+    "sign_id": "S.503d",
+    "category": "phu",
+    "name": "Hướng tác dụng của biển",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S503d.webp"
+  },
+  {
+    "sign_id": "S.503e",
+    "category": "phu",
+    "name": "Hướng tác dụng của biển",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S503e.webp"
+  },
+  {
+    "sign_id": "S.503f",
+    "category": "phu",
+    "name": "Hướng tác dụng của biển",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S503f.webp"
+  },
+  {
+    "sign_id": "S.504",
+    "category": "phu",
+    "name": "Loại xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S504.webp"
+  },
+  {
+    "sign_id": "S.505a",
+    "category": "phu",
+    "name": "Làn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S505a.webp"
+  },
+  {
+    "sign_id": "S.505b",
+    "category": "phu",
+    "name": "Làn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S505b.webp"
+  },
+  {
+    "sign_id": "S.505c",
+    "category": "phu",
+    "name": "Làn đường",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S505c.webp"
+  },
+  {
+    "sign_id": "S.506a",
+    "category": "phu",
+    "name": "Hướng đường ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S506a.webp"
+  },
+  {
+    "sign_id": "S.506b",
+    "category": "phu",
+    "name": "Hướng đường ưu tiên",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S506b.webp"
+  },
+  {
+    "sign_id": "S.507",
+    "category": "phu",
+    "name": "Biển phụ thời gian",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S507.webp"
+  },
+  {
+    "sign_id": "S.508a",
+    "category": "phu",
+    "name": "Chỉ dẫn đỗ xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S508a.webp"
+  },
+  {
+    "sign_id": "S.508b",
+    "category": "phu",
+    "name": "Chỉ dẫn cách đỗ xe",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S508b.webp"
+  },
+  {
+    "sign_id": "S.509a",
+    "category": "phu",
+    "name": "Biển phụ khoảng cách",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S509a.webp"
+  },
+  {
+    "sign_id": "S.509b",
+    "category": "phu",
+    "name": "Biển phụ khoảng cách",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S509b.webp"
+  },
+  {
+    "sign_id": "S.510a",
+    "category": "phu",
+    "name": "Biển phụ tải trọng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/S510a.webp"
+  },
+  {
+    "sign_id": "SG.7",
+    "category": "phu",
+    "name": "Hướng rẽ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/SG_7.webp"
+  },
+  {
+    "sign_id": "SG.8",
+    "category": "phu",
+    "name": "Hướng rẽ",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/SG_8.webp"
+  },
+  {
+    "sign_id": "SG.9b",
+    "category": "phu",
+    "name": "Chướng ngại vật",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-phu/SG_9b.webp"
+  },
+  {
+    "sign_id": "IE.450a",
+    "category": "tren-cao-toc",
+    "name": "Lối ra cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE450a.webp"
+  },
+  {
+    "sign_id": "IE.450b",
+    "category": "tren-cao-toc",
+    "name": "Lối ra cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE450b.webp"
+  },
+  {
+    "sign_id": "IE.451a",
+    "category": "tren-cao-toc",
+    "name": "Khoảng cách đến lối ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE451a.webp"
+  },
+  {
+    "sign_id": "IE.451b",
+    "category": "tren-cao-toc",
+    "name": "Khoảng cách đến lối ra",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE451b.webp"
+  },
+  {
+    "sign_id": "IE.452",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn đường trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE452.webp"
+  },
+  {
+    "sign_id": "IE.453a",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE453a.webp"
+  },
+  {
+    "sign_id": "IE.453b",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE453b.webp"
+  },
+  {
+    "sign_id": "IE.453c",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE453c.webp"
+  },
+  {
+    "sign_id": "IE.454",
     "category": "tren-cao-toc",
     "name": "Đường cao tốc",
-    "description": "Báo hiệu bắt đầu đoạn đường cao tốc, áp dụng các quy tắc đặc biệt.",
-    "image_url": null
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE454.webp"
+  },
+  {
+    "sign_id": "IE.455",
+    "category": "tren-cao-toc",
+    "name": "Hết đường cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE455.webp"
+  },
+  {
+    "sign_id": "IE.456a",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn làn đường cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE456a.webp"
+  },
+  {
+    "sign_id": "IE.456b",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn làn đường cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE456b.webp"
+  },
+  {
+    "sign_id": "IE.456c",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn làn đường cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE456c.webp"
+  },
+  {
+    "sign_id": "IE.457a",
+    "category": "tren-cao-toc",
+    "name": "Biển chỉ dẫn tốc độ cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE457a.webp"
+  },
+  {
+    "sign_id": "IE.457b",
+    "category": "tren-cao-toc",
+    "name": "Biển chỉ dẫn tốc độ cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE457b.webp"
+  },
+  {
+    "sign_id": "IE.458",
+    "category": "tren-cao-toc",
+    "name": "Hướng đường cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE458.webp"
+  },
+  {
+    "sign_id": "IE.459a",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trạm dừng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE459a.webp"
+  },
+  {
+    "sign_id": "IE.459b",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trạm dừng",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE459b.webp"
+  },
+  {
+    "sign_id": "IE.460a",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE460a.webp"
+  },
+  {
+    "sign_id": "IE.460b",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE460b.webp"
+  },
+  {
+    "sign_id": "IE.460c",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn trên cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE460c.webp"
+  },
+  {
+    "sign_id": "IE.461a",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn điểm ra cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE461a.webp"
+  },
+  {
+    "sign_id": "IE.461b",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn điểm ra cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE461b.webp"
+  },
+  {
+    "sign_id": "IE.461c",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn điểm ra cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE461c.webp"
+  },
+  {
+    "sign_id": "IE.461d",
+    "category": "tren-cao-toc",
+    "name": "Chỉ dẫn điểm ra cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE461d.webp"
+  },
+  {
+    "sign_id": "IE.462",
+    "category": "tren-cao-toc",
+    "name": "Biển chỉ dẫn cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE462.webp"
+  },
+  {
+    "sign_id": "IE.463a",
+    "category": "tren-cao-toc",
+    "name": "Hướng đi cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE463a.webp"
+  },
+  {
+    "sign_id": "IE.463b",
+    "category": "tren-cao-toc",
+    "name": "Hướng đi cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE463b.webp"
+  },
+  {
+    "sign_id": "IE.463c",
+    "category": "tren-cao-toc",
+    "name": "Hướng đi cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE463c.webp"
+  },
+  {
+    "sign_id": "IE.464a",
+    "category": "tren-cao-toc",
+    "name": "Biển khoảng cách",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE464a.webp"
+  },
+  {
+    "sign_id": "IE.464b",
+    "category": "tren-cao-toc",
+    "name": "Biển khoảng cách",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE464b.webp"
+  },
+  {
+    "sign_id": "IE.465",
+    "category": "tren-cao-toc",
+    "name": "Biển chỉ dẫn cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE465.webp"
+  },
+  {
+    "sign_id": "IE.466",
+    "category": "tren-cao-toc",
+    "name": "Biển chỉ dẫn cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE466.webp"
+  },
+  {
+    "sign_id": "IE.467a",
+    "category": "tren-cao-toc",
+    "name": "Biển phân làn cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE467a.webp"
+  },
+  {
+    "sign_id": "IE.467b",
+    "category": "tren-cao-toc",
+    "name": "Biển phân làn cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE467b.webp"
+  },
+  {
+    "sign_id": "IE.468a",
+    "category": "tren-cao-toc",
+    "name": "Sơ đồ tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE468a.webp"
+  },
+  {
+    "sign_id": "IE.468b",
+    "category": "tren-cao-toc",
+    "name": "Sơ đồ tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE468b.webp"
+  },
+  {
+    "sign_id": "IE.468c",
+    "category": "tren-cao-toc",
+    "name": "Sơ đồ tuyến cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE468c.webp"
+  },
+  {
+    "sign_id": "IE.469a",
+    "category": "tren-cao-toc",
+    "name": "Biển báo trạm thu phí",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE469a.webp"
+  },
+  {
+    "sign_id": "IE.469b",
+    "category": "tren-cao-toc",
+    "name": "Biển báo trạm thu phí",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE469b.webp"
+  },
+  {
+    "sign_id": "IE.470",
+    "category": "tren-cao-toc",
+    "name": "Sơ đồ nút giao cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE470.webp"
+  },
+  {
+    "sign_id": "IE.471",
+    "category": "tren-cao-toc",
+    "name": "Biển chỉ dẫn cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE471.webp"
+  },
+  {
+    "sign_id": "IE.472a",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE472a.webp"
+  },
+  {
+    "sign_id": "IE.472b",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE472b.webp"
+  },
+  {
+    "sign_id": "IE.472c",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE472c.webp"
+  },
+  {
+    "sign_id": "IE.472d",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE472d.webp"
+  },
+  {
+    "sign_id": "IE.472e",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE472e.webp"
+  },
+  {
+    "sign_id": "IE.473",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE473.webp"
+  },
+  {
+    "sign_id": "IE.474",
+    "category": "tren-cao-toc",
+    "name": "Biển thông tin cao tốc",
+    "description": "",
+    "image_url": "assets/images/bien-bao/bien-tren-cao-toc/IE474.webp"
   }
 ]
