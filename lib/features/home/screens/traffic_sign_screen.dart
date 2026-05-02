@@ -366,9 +366,7 @@ class _TrafficSignsScreenState extends State<TrafficSignsScreen>
       itemBuilder: (context, index) {
         final sign = signs[index];
         return InkWell(
-          onTap: () {
-            // TODO: Navigate to detail screen
-          },
+          onTap: () => _showSignDetail(context, sign),
           splashColor: Colors.blue.withOpacity(0.08),
           highlightColor: Colors.blue.withOpacity(0.04),
           child: Padding(
@@ -377,9 +375,37 @@ class _TrafficSignsScreenState extends State<TrafficSignsScreen>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Icon biển báo
-                SignIconWidget(
-                    category: sign.category, code: sign.signId),
+                // Icon biển báo - hiển thị ảnh thật từ assets
+                if (sign.imageUrl != null && sign.imageUrl!.isNotEmpty)
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        sign.imageUrl!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return SignIconWidget(
+                              category: sign.category, code: sign.signId);
+                        },
+                      ),
+                    ),
+                  )
+                else
+                  SignIconWidget(
+                      category: sign.category, code: sign.signId),
                 const SizedBox(width: 14),
                 // Nội dung
                 Expanded(
@@ -427,6 +453,100 @@ class _TrafficSignsScreenState extends State<TrafficSignsScreen>
                 const SizedBox(width: 8),
                 Icon(Icons.chevron_right,
                     color: onSurface.withOpacity(0.3)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSignDetail(BuildContext context, TrafficSign sign) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Nút đóng
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, size: 24),
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Ảnh biển báo
+                if (sign.imageUrl != null && sign.imageUrl!.isNotEmpty)
+                  SizedBox(
+                    height: 200,
+                    child: Image.asset(
+                      sign.imageUrl!,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return SignIconWidget(
+                          category: sign.category,
+                          code: sign.signId,
+                        );
+                      },
+                    ),
+                  )
+                else
+                  SizedBox(
+                    height: 200,
+                    child: SignIconWidget(
+                      category: sign.category,
+                      code: sign.signId,
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                // Mã biển
+                Text(
+                  sign.signId,
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Tên biển
+                Text(
+                  sign.name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    height: 1.3,
+                  ),
+                ),
+                // Mô tả
+                if (sign.description != null &&
+                    sign.description!.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    sign.description!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
