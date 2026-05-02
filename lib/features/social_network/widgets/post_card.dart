@@ -207,18 +207,12 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 6),
-                  StreamBuilder<int>(
-                    stream: _likeCountStream(post.postId),
-                    builder: (context, snapshot) {
-                      final likeCount = snapshot.data ?? post.likeCount;
-                      return Text(
-                        '$likeCount lượt thích',
-                        style: const TextStyle(
-                          color: kGrey,
-                          fontSize: 13,
-                        ),
-                      );
-                    },
+                  Text(
+                    '${post.likeCount} lượt thích',
+                    style: const TextStyle(
+                      color: kGrey,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),

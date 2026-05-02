@@ -27,16 +27,42 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   late Future<List<PostModel>> _postsFuture;
 
+  final Set<String> _likedPostIds = <String>{};
+  final Map<String, int> _localLikeCounts = <String, int>{};
+  final Set<String> _likingPostIds = <String>{};
+
   @override
   void initState() {
     super.initState();
-    _postsFuture = _postApiRepo.fetchPosts();
+    _postsFuture = _loadPosts();
   }
 
   Future<void> _refreshPosts() async {
     setState(() {
-      _postsFuture = _postApiRepo.fetchPosts();
+      _postsFuture = _loadPosts();
     });
+  }
+
+  Future<List<PostModel>> _loadPosts() async {
+    final posts = await _postApiRepo.fetchPosts();
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return posts;
+
+    _likedPostIds.clear();
+
+    for (final post in posts) {
+      final liked = await _postApiRepo.isLiked(
+        postId: post.postId,
+        userId: user.uid,
+      );
+
+      if (liked) {
+        _likedPostIds.add(post.postId);
+      }
+    }
+
+    return posts;
   }
 
   Future<({String authorId, String authorName, String authorAvatar})>
@@ -263,6 +289,69 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     await _refreshPosts();
   }
 
+  Future<void> _toggleLike(PostModel post) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bạn cần đăng nhập để thích bài viết')),
+      );
+      return;
+    }
+
+    if (_likingPostIds.contains(post.postId)) return;
+
+    final wasLiked = _likedPostIds.contains(post.postId);
+    final oldCount = _localLikeCounts[post.postId] ?? post.likeCount;
+    final newCount = wasLiked ? oldCount - 1 : oldCount + 1;
+
+    setState(() {
+      _likingPostIds.add(post.postId);
+
+      if (wasLiked) {
+        _likedPostIds.remove(post.postId);
+      } else {
+        _likedPostIds.add(post.postId);
+      }
+
+      _localLikeCounts[post.postId] = newCount < 0 ? 0 : newCount;
+    });
+
+    try {
+      if (wasLiked) {
+        await _postApiRepo.unlikePost(
+          postId: post.postId,
+          userId: user.uid,
+        );
+      } else {
+        await _postApiRepo.likePost(
+          postId: post.postId,
+          userId: user.uid,
+        );
+      }
+    } catch (e) {
+      setState(() {
+        if (wasLiked) {
+          _likedPostIds.add(post.postId);
+        } else {
+          _likedPostIds.remove(post.postId);
+        }
+
+        _localLikeCounts[post.postId] = oldCount;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi cập nhật like: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _likingPostIds.remove(post.postId);
+        });
+      }
+    }
+  }
+
   bool _isSigningOut = false;
 
   Future<void> _handleSignOut() async {
@@ -338,14 +427,19 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     ),
                   ),
                 ...posts.map(
-                      (post) => PostCard(
-                    post: post,
-                    isLiked: false,
-                    isAdmin: _isAdmin,
-                    onLike: () async => _refreshPosts(),
-                    onComment: () => _showCommentDialog(post),
-                    onDelete: () => _deletePost(post.postId),
-                  ),
+                      (post) {
+                    final currentLikeCount =
+                        _localLikeCounts[post.postId] ?? post.likeCount;
+
+                    return PostCard(
+                      post: post.copyWith(likeCount: currentLikeCount),
+                      isLiked: _likedPostIds.contains(post.postId),
+                      isAdmin: _isAdmin,
+                      onLike: () => _toggleLike(post),
+                      onComment: () => _showCommentDialog(post),
+                      onDelete: () => _deletePost(post.postId),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
               ],
