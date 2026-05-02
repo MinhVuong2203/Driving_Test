@@ -2,10 +2,11 @@ import 'dart:io';
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/recognition_history_dao.dart';
-import 'package:driving_test_prep/data/datasource/external/service/gemini_service.dart';
-import 'package:driving_test_prep/data/datasource/firebase/service/usage_service.dart';
+
 import 'package:driving_test_prep/data/repository/recognition_history_repository.dart';
 import 'package:driving_test_prep/data/repository/usage_reponsitory.dart';
+import 'package:driving_test_prep/data/services/external/gemini_service.dart';
+import 'package:driving_test_prep/data/services/firebase/usage_service.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/glass_card.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/history_sidebar.dart';
 import 'package:driving_test_prep/features/recognition_ai/widget/result_card.dart';
