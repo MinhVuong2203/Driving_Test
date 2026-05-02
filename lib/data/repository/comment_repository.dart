@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driving_test_prep/data/datasource/firebase/service/comment_service.dart';
+import 'package:driving_test_prep/data/services/firebase/comment_service.dart';
 
 class CommentRepository {
   CommentRepository._(this._commentService);

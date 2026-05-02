@@ -1,6 +1,6 @@
+import 'package:driving_test_prep/data/services/firebase/google_auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../datasource/firebase/service/google_auth_service.dart';
 
 class GoogleAuthRepository {
   GoogleAuthRepository._();

@@ -1,6 +1,6 @@
 
-import 'package:driving_test_prep/data/datasource/external/service/driving_center_service.dart';
 import 'package:driving_test_prep/data/models/driving_center_model.dart';
+import 'package:driving_test_prep/data/services/external/driving_center_service.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_detail_screen.dart';
 
 import 'package:flutter/material.dart';

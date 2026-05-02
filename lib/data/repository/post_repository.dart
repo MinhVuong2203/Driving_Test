@@ -1,4 +1,5 @@
-import 'package:driving_test_prep/data/datasource/firebase/service/post_service.dart';
+
+import 'package:driving_test_prep/data/services/firebase/post_service.dart';
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
 
 class PostRepository {

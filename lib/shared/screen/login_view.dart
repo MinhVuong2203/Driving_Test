@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:driving_test_prep/data/services/firebase/google_auth_service.dart';
 import 'package:driving_test_prep/features/social_network/screens/home_feed_screen.dart';
 import 'package:driving_test_prep/features/social_network/screens/register_with_otp_screen.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_action_buttons.dart';
@@ -11,7 +12,6 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/datasource/firebase/service/google_auth_service.dart';
 import '../../features/social_network/widgets/other_login_method.dart';
 
 
