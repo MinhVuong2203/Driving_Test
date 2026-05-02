@@ -92,4 +92,46 @@ class PostApiService {
       throw Exception('Failed to delete post');
     }
   }
+
+  Future<void> likePost({
+    required String postId,
+    required String userId,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/api/Post/$postId/like?userId=$userId'),
+    );
+
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      throw Exception('Failed to like post: ${res.statusCode} - ${res.body}');
+    }
+  }
+
+  Future<void> unlikePost({
+    required String postId,
+    required String userId,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/api/Post/$postId/unlike?userId=$userId'),
+    );
+
+    if (res.statusCode < 200 || res.statusCode >= 300) {
+      throw Exception('Failed to unlike post: ${res.statusCode} - ${res.body}');
+    }
+  }
+
+  Future<bool> isLiked({
+    required String postId,
+    required String userId,
+  }) async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/api/Post/$postId/liked?userId=$userId'),
+    );
+
+    if (res.statusCode != 200) {
+      throw Exception('Failed to check liked');
+    }
+
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    return data['isLiked'] == true;
+  }
 }
