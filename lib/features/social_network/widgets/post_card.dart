@@ -97,6 +97,14 @@ class PostCard extends StatelessWidget {
     );
   }
 
+  bool _isValidUrl(String url) {
+    if (url.trim().isEmpty) return false;
+    if (url == 'string') return false;
+
+    final uri = Uri.tryParse(url);
+    return uri != null && uri.hasScheme && uri.hasAuthority;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -121,10 +129,13 @@ class PostCard extends StatelessWidget {
               CircleAvatar(
                 radius: 22,
                 backgroundColor: kAmberLight,
-                backgroundImage:
-                post.authorAvatar.isNotEmpty ? NetworkImage(post.authorAvatar) : null,
-                child: post.authorAvatar.isEmpty
-                    ? const Icon(Icons.person, color: kNavy)
+                // backgroundImage:
+                // post.authorAvatar.isNotEmpty ? NetworkImage(post.authorAvatar) : null,
+                // child: post.authorAvatar.isEmpty
+                //     ? const Icon(Icons.person, color: kNavy)
+                //     : null,
+                backgroundImage: _isValidUrl(post.authorAvatar)
+                    ? NetworkImage(post.authorAvatar)
                     : null,
               ),
               const SizedBox(width: 10),
@@ -166,12 +177,13 @@ class PostCard extends StatelessWidget {
               height: 1.6,
             ),
           ),
-          if (post.imageUrl.isNotEmpty) ...[
+          if (_isValidUrl(post.imageUrl)) ...[
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: AspectRatio(
-                aspectRatio: 16 / 10,
+              child: SizedBox(
+                height: 200,
+                width: double.infinity,
                 child: Image.network(
                   post.imageUrl,
                   fit: BoxFit.cover,
