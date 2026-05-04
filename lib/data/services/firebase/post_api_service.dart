@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
@@ -58,9 +59,6 @@ class PostApiService {
       throw Exception('Failed to create post: ${res.statusCode} - ${res.body}');
     }
   }
-
-
-
 
   Future<void> updatePost(
       String id, {
@@ -133,5 +131,26 @@ class PostApiService {
 
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     return data['isLiked'] == true;
+  }
+
+  Future<String> uploadPostImage(File file) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/api/Post/upload-image'),
+    );
+
+    request.files.add(
+      await http.MultipartFile.fromPath('file', file.path),
+    );
+
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Upload image failed: $body');
+    }
+
+    final data = jsonDecode(body) as Map<String, dynamic>;
+    return data['imageUrl'].toString();
   }
 }

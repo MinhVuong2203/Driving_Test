@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:driving_test_prep/data/repository/post_api_repository.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../data/repository/comment_repository.dart';
+import '../../../data/repository/post_api_repository.dart';
 import '../controller/signout.dart';
 import '../models/post_model.dart';
 import '../widgets/create_post_box.dart';
@@ -45,6 +48,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   Future<List<PostModel>> _loadPosts() async {
     final posts = await _postApiRepo.fetchPosts();
+
+    posts.sort((a, b) {
+      final aTime = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final bTime = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+      return bTime.compareTo(aTime);
+    });
 
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return posts;
@@ -96,66 +105,160 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   Future<void> _showCreatePostDialog() async {
     final contentController = TextEditingController();
-    final imageController = TextEditingController();
+    XFile? selectedImage;
+    bool isPosting = false;
 
     await showDialog<void>(
       context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: const Text('Tạo bài viết'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                TextField(
-                  controller: contentController,
-                  maxLines: 4,
-                  decoration: const InputDecoration(
-                    hintText: 'Bạn đang nghĩ gì?',
-                    border: OutlineInputBorder(),
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Tạo bài viết'),
+
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextField(
+                        controller: contentController,
+                        maxLines: 4,
+                        decoration: const InputDecoration(
+                          hintText: 'Bạn đang nghĩ gì?',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      if (selectedImage != null)
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: 180,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.file(
+                              File(selectedImage!.path),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+
+                      const SizedBox(height: 12),
+
+                      OutlinedButton.icon(
+                        onPressed: isPosting
+                            ? null
+                            : () async {
+                          final picker = ImagePicker();
+
+                          final image = await picker.pickImage(
+                            source: ImageSource.gallery,
+                            imageQuality: 80,
+                          );
+
+                          if (image != null) {
+                            setDialogState(() {
+                              selectedImage = image;
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.image_outlined),
+                        label: const Text('Chọn ảnh từ thư viện'),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: imageController,
-                  decoration: const InputDecoration(
-                    hintText: 'Link ảnh (không bắt buộc)',
-                    border: OutlineInputBorder(),
-                  ),
+              ),
+
+              actions: <Widget>[
+                TextButton(
+                  onPressed: isPosting
+                      ? null
+                      : () => Navigator.pop(dialogContext),
+                  child: const Text('Hủy'),
+                ),
+
+                ElevatedButton(
+                  onPressed: isPosting
+                      ? null
+                      : () async {
+                    final content = contentController.text.trim();
+
+                    if (content.isEmpty && selectedImage == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Vui lòng nhập nội dung hoặc chọn ảnh'),
+                        ),
+                      );
+                      return;
+                    }
+
+                    setDialogState(() {
+                      isPosting = true;
+                    });
+
+                    try {
+                      String imageUrl = '';
+
+                      if (selectedImage != null) {
+                        imageUrl = await _postApiRepo.uploadPostImage(
+                          File(selectedImage!.path),
+                        );
+                      }
+
+                      final author = await _getAuthorInfo();
+
+                      final postId =
+                      DateTime.now().microsecondsSinceEpoch.toString();
+
+                      await _postApiRepo.createPost(
+                        postId: postId,
+                        authorId: author.authorId,
+                        authorName: author.authorName,
+                        authorAvatar: author.authorAvatar,
+                        content: content,
+                        imageUrl: imageUrl,
+                      );
+
+                      if (!mounted) return;
+
+                      Navigator.pop(dialogContext);
+                      await _refreshPosts();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Đăng bài thành công'),
+                        ),
+                      );
+                    } catch (e) {
+                      setDialogState(() {
+                        isPosting = false;
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Lỗi đăng bài: $e'),
+                        ),
+                      );
+                    }
+                  },
+                  child: isPosting
+                      ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : const Text('Đăng'),
                 ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Hủy'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final content = contentController.text.trim();
-                final imageUrl = imageController.text.trim();
-                if (content.isEmpty) return;
-
-                final author = await _getAuthorInfo();
-                final postId =
-                DateTime.now().microsecondsSinceEpoch.toString();
-
-                await _postApiRepo.createPost(
-                  postId: postId,
-                  authorId: author.authorId,
-                  authorName: author.authorName,
-                  authorAvatar: author.authorAvatar,
-                  content: content,
-                  imageUrl: imageUrl,
-                );
-
-                if (!mounted) return;
-                Navigator.pop(context);
-                await _refreshPosts();
-              },
-              child: const Text('Đăng'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
