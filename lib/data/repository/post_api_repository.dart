@@ -1,4 +1,4 @@
-
+import 'dart:io';
 import 'package:driving_test_prep/data/services/firebase/post_api_service.dart';
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
 
@@ -32,8 +32,6 @@ class PostApiRepository {
         content: content,
         imageUrl: imageUrl,
       );
-
-
 
   Future<void> deletePost(String postId) => _postApiService.deletePost(postId);
 
@@ -82,5 +80,9 @@ class PostApiRepository {
       postId: postId,
       userId: userId,
     );
+  }
+
+  Future<String> uploadPostImage(File file) {
+    return _postApiService.uploadPostImage(file);
   }
 }
