@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:image_picker/image_picker.dart';
+
 import '../../../data/repository/comment_repository.dart';
 import '../../../data/repository/post_api_repository.dart';
 import '../controller/signout.dart';
@@ -22,43 +22,132 @@ class HomeFeedScreen extends StatefulWidget {
 }
 
 class _HomeFeedScreenState extends State<HomeFeedScreen> {
-  String BACKEND_URL = AppConfig.baseUrl;
-  late final PostApiRepository _postApiRepo = PostApiRepository.instance(BACKEND_URL);
+  final String BACKEND_URL = AppConfig.baseUrl;
+
+  late final PostApiRepository _postApiRepo =
+  PostApiRepository.instance(BACKEND_URL);
+
   final CommentRepository _commentRepo = CommentRepository.instance;
 
   final bool _isAdmin = true;
 
-  late Future<List<PostModel>> _postsFuture;
+  final ScrollController _scrollController = ScrollController();
+
+  final List<PostModel> _posts = <PostModel>[];
 
   final Set<String> _likedPostIds = <String>{};
   final Map<String, int> _localLikeCounts = <String, int>{};
   final Set<String> _likingPostIds = <String>{};
 
+  final int _pageSize = 10;
+
+  bool _isInitialLoading = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  bool _isSigningOut = false;
+
   @override
   void initState() {
     super.initState();
-    _postsFuture = _loadPosts();
+
+    _loadInitialPosts();
+
+    _scrollController.addListener(() {
+      if (!_scrollController.hasClients) return;
+
+      final position = _scrollController.position;
+
+      if (position.pixels >= position.maxScrollExtent - 300) {
+        _loadMorePosts();
+      }
+    });
   }
 
-  Future<void> _refreshPosts() async {
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadInitialPosts() async {
     setState(() {
-      _postsFuture = _loadPosts();
+      _isInitialLoading = true;
+      _hasMore = true;
     });
+
+    try {
+      final posts = await _postApiRepo.fetchPostsPaged(
+        limit: _pageSize,
+      );
+
+      _likedPostIds.clear();
+      _localLikeCounts.clear();
+
+      await _loadLikeStatus(posts);
+
+      if (!mounted) return;
+
+      setState(() {
+        _posts
+          ..clear()
+          ..addAll(posts);
+
+        _hasMore = posts.length == _pageSize;
+        _isInitialLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isInitialLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi tải bài viết: $e')),
+      );
+    }
   }
 
-  Future<List<PostModel>> _loadPosts() async {
-    final posts = await _postApiRepo.fetchPosts();
+  Future<void> _loadMorePosts() async {
+    if (_isLoadingMore || !_hasMore || _posts.isEmpty) return;
 
-    posts.sort((a, b) {
-      final aTime = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-      final bTime = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-      return bTime.compareTo(aTime);
+    setState(() {
+      _isLoadingMore = true;
     });
 
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return posts;
+    try {
+      final lastCreatedAt = _posts.last.createdAt;
 
-    _likedPostIds.clear();
+      final newPosts = await _postApiRepo.fetchPostsPaged(
+        limit: _pageSize,
+        lastCreatedAt: lastCreatedAt,
+      );
+
+      await _loadLikeStatus(newPosts);
+
+      if (!mounted) return;
+
+      setState(() {
+        _posts.addAll(newPosts);
+        _hasMore = newPosts.length == _pageSize;
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingMore = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi tải thêm bài viết: $e')),
+      );
+    }
+  }
+
+  Future<void> _loadLikeStatus(List<PostModel> posts) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
     for (final post in posts) {
       final liked = await _postApiRepo.isLiked(
@@ -70,36 +159,27 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _likedPostIds.add(post.postId);
       }
     }
+  }
 
-    return posts;
+  Future<void> _refreshPosts() async {
+    await _loadInitialPosts();
   }
 
   Future<({String authorId, String authorName, String authorAvatar})>
   _getAuthorInfo() async {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user == null) {
       throw Exception('Người dùng chưa đăng nhập');
     }
 
-    final snap = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    final data = snap.data();
-
-    final authorName =
-    (data?['displayName'] ?? user.displayName ?? 'Người dùng').toString();
-
-    // nếu backend bắt buộc authorAvatar không rỗng => dùng default
-    final authorAvatar = (data?['photoURL'] ?? user.photoURL ?? '').toString();
     const defaultAvatar =
         'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
 
     return (
     authorId: user.uid,
-    authorName: authorName,
-    authorAvatar: authorAvatar.isEmpty ? defaultAvatar : authorAvatar,
+    authorName: user.displayName ?? user.email ?? 'Người dùng',
+    authorAvatar: user.photoURL ?? defaultAvatar,
     );
   }
 
@@ -115,7 +195,6 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               title: const Text('Tạo bài viết'),
-
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: SingleChildScrollView(
@@ -130,9 +209,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           border: OutlineInputBorder(),
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
                       if (selectedImage != null)
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.7,
@@ -145,9 +222,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             ),
                           ),
                         ),
-
                       const SizedBox(height: 12),
-
                       OutlinedButton.icon(
                         onPressed: isPosting
                             ? null
@@ -172,15 +247,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                   ),
                 ),
               ),
-
               actions: <Widget>[
                 TextButton(
-                  onPressed: isPosting
-                      ? null
-                      : () => Navigator.pop(dialogContext),
+                  onPressed:
+                  isPosting ? null : () => Navigator.pop(dialogContext),
                   child: const Text('Hủy'),
                 ),
-
                 ElevatedButton(
                   onPressed: isPosting
                       ? null
@@ -190,7 +262,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     if (content.isEmpty && selectedImage == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Vui lòng nhập nội dung hoặc chọn ảnh'),
+                          content: Text(
+                            'Vui lòng nhập nội dung hoặc chọn ảnh',
+                          ),
                         ),
                       );
                       return;
@@ -211,8 +285,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                       final author = await _getAuthorInfo();
 
-                      final postId =
-                      DateTime.now().microsecondsSinceEpoch.toString();
+                      final postId = DateTime.now()
+                          .microsecondsSinceEpoch
+                          .toString();
 
                       await _postApiRepo.createPost(
                         postId: postId,
@@ -223,10 +298,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         imageUrl: imageUrl,
                       );
 
+                      final newPost = PostModel(
+                        postId: postId,
+                        authorId: author.authorId,
+                        authorName: author.authorName,
+                        authorAvatar: author.authorAvatar,
+                        content: content,
+                        imageUrl: imageUrl,
+                        likeCount: 0,
+                        commentCount: 0,
+                        createdAt: DateTime.now(),
+                        updatedAt: DateTime.now(),
+                        status: true,
+                        isDeleted: false,
+                      );
+
                       if (!mounted) return;
 
                       Navigator.pop(dialogContext);
-                      await _refreshPosts();
+
+                      setState(() {
+                        _posts.insert(0, newPost);
+                        _localLikeCounts[postId] = 0;
+                      });
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -239,9 +333,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       });
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Lỗi đăng bài: $e'),
-                        ),
+                        SnackBar(content: Text('Lỗi đăng bài: $e')),
                       );
                     }
                   },
@@ -304,7 +396,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(child: Text('Chưa có bình luận nào'));
+                        return const Center(
+                          child: Text('Chưa có bình luận nào'),
+                        );
                       }
 
                       final docs = snapshot.data!.docs;
@@ -313,11 +407,13 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         itemCount: docs.length,
                         itemBuilder: (_, index) {
                           final data = docs[index].data();
+
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
                             leading: CircleAvatar(
-                              backgroundImage:
-                              (data['authorAvatar'] ?? '').toString().isNotEmpty
+                              backgroundImage: (data['authorAvatar'] ?? '')
+                                  .toString()
+                                  .isNotEmpty
                                   ? NetworkImage(
                                 (data['authorAvatar'] ?? '').toString(),
                               )
@@ -333,8 +429,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                               style:
                               const TextStyle(fontWeight: FontWeight.w700),
                             ),
-                            subtitle:
-                            Text((data['content'] ?? '').toString()),
+                            subtitle: Text(
+                              (data['content'] ?? '').toString(),
+                            ),
                           );
                         },
                       );
@@ -387,10 +484,19 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     await _postApiRepo.deletePost(postId);
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Đã xóa bài viết')));
-    await _refreshPosts();
+
+    setState(() {
+      _posts.removeWhere((post) => post.postId == postId);
+      _likedPostIds.remove(postId);
+      _localLikeCounts.remove(postId);
+      _likingPostIds.remove(postId);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Đã xóa bài viết')),
+    );
   }
+
 
   Future<void> _toggleLike(PostModel post) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -424,15 +530,17 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       if (wasLiked) {
         await _postApiRepo.unlikePost(
           postId: post.postId,
-          userId: user.uid,
+          userId: user!.uid,
         );
       } else {
         await _postApiRepo.likePost(
           postId: post.postId,
-          userId: user.uid,
+          userId: user!.uid,
         );
       }
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         if (wasLiked) {
           _likedPostIds.add(post.postId);
@@ -455,8 +563,6 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     }
   }
 
-  bool _isSigningOut = false;
-
   Future<void> _handleSignOut() async {
     await SignOutController.signOut(
       context: context,
@@ -469,6 +575,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       backgroundColor: kFeedBg,
       appBar: AppBar(
@@ -477,78 +584,90 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         centerTitle: false,
         title: const Text(
           'Bảng tin',
-          style: TextStyle(color: kNavy, fontWeight: FontWeight.w800),
+          style: TextStyle(
+            color: kNavy,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         actions: <Widget>[
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_none_rounded, color: kNavy),
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: kNavy,
+            ),
           ),
           IconButton(
             onPressed: _isSigningOut ? null : _handleSignOut,
-            icon: const Icon(Icons.person_outline_rounded, color: kNavy),
+            icon: const Icon(
+              Icons.person_outline_rounded,
+              color: kNavy,
+            ),
           ),
         ],
       ),
-      body: FutureBuilder<List<PostModel>>(
-        future: _postsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: kAmber),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Lỗi tải bài đăng: ${snapshot.error}',
-                style: const TextStyle(color: Colors.red),
-              ),
-            );
-          }
-
-          final posts = snapshot.data ?? <PostModel>[];
-
-          return RefreshIndicator(
-            onRefresh: _refreshPosts,
-            child: ListView(
-              children: <Widget>[
-                CreatePostBox(
-                  currentUserName: 'Bình Minh', // có thể lấy từ user luôn
-                  currentUserAvatar: '',
-                  onCreatePost: _showCreatePostDialog,
-                ),
-                if (posts.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Center(
-                      child: Text(
-                        'Chưa có bài đăng nào',
-                        style: TextStyle(color: kGrey, fontSize: 15),
-                      ),
+      body: _isInitialLoading
+          ? const Center(
+        child: CircularProgressIndicator(color: kAmber),
+      )
+          : RefreshIndicator(
+        onRefresh: _refreshPosts,
+        child: ListView(
+          controller: _scrollController,
+          children: <Widget>[
+            CreatePostBox(
+              currentUserName: user?.displayName ?? user?.email ?? 'Người dùng',
+              currentUserAvatar: user?.photoURL ?? '',
+              onCreatePost: _showCreatePostDialog,
+            ),
+            if (_posts.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(
+                  child: Text(
+                    'Chưa có bài đăng nào',
+                    style: TextStyle(
+                      color: kGrey,
+                      fontSize: 15,
                     ),
                   ),
-                ...posts.map(
-                      (post) {
-                    final currentLikeCount =
-                        _localLikeCounts[post.postId] ?? post.likeCount;
-
-                    return PostCard(
-                      post: post.copyWith(likeCount: currentLikeCount),
-                      isLiked: _likedPostIds.contains(post.postId),
-                      isAdmin: _isAdmin,
-                      onLike: () => _toggleLike(post),
-                      onComment: () => _showCommentDialog(post),
-                      onDelete: () => _deletePost(post.postId),
-                    );
-                  },
                 ),
-                const SizedBox(height: 20),
-              ],
+              ),
+            ..._posts.map(
+                  (post) {
+                final currentLikeCount =
+                    _localLikeCounts[post.postId] ?? post.likeCount;
+
+                return PostCard(
+                  post: post.copyWith(likeCount: currentLikeCount),
+                  isLiked: _likedPostIds.contains(post.postId),
+                  isAdmin: _isAdmin,
+                  onLike: () => _toggleLike(post),
+                  onComment: () => _showCommentDialog(post),
+                  onDelete: () => _deletePost(post.postId),
+                );
+              },
             ),
-          );
-        },
+            if (_isLoadingMore)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: CircularProgressIndicator(color: kAmber),
+                ),
+              ),
+            if (!_hasMore && _posts.isNotEmpty)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: Text(
+                    'Đã tải hết bài viết',
+                    style: TextStyle(color: kGrey),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
