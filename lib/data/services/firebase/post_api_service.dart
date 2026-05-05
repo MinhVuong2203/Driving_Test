@@ -153,4 +153,33 @@ class PostApiService {
     final data = jsonDecode(body) as Map<String, dynamic>;
     return data['imageUrl'].toString();
   }
+
+  Future<List<PostModel>> fetchPostsPaged({
+    int limit = 10,
+    DateTime? lastCreatedAt,
+  }) async {
+    final queryParams = <String, String>{
+      'limit': limit.toString(),
+    };
+
+    if (lastCreatedAt != null) {
+      queryParams['lastCreatedAt'] = lastCreatedAt.toUtc().toIso8601String();
+    }
+
+    final uri = Uri.parse('$baseUrl/api/Post/paged').replace(
+      queryParameters: queryParams,
+    );
+
+    final res = await http.get(uri);
+
+    if (res.statusCode != 200) {
+      throw Exception('Failed to load posts: ${res.body}');
+    }
+
+    final List data = jsonDecode(res.body) as List;
+
+    return data
+        .map((e) => PostModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }

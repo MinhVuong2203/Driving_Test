@@ -85,4 +85,14 @@ class PostApiRepository {
   Future<String> uploadPostImage(File file) {
     return _postApiService.uploadPostImage(file);
   }
+
+  Future<List<PostModel>> fetchPostsPaged({
+    int limit = 10,
+    DateTime? lastCreatedAt,
+  }) {
+    return _postApiService.fetchPostsPaged(
+      limit: limit,
+      lastCreatedAt: lastCreatedAt,
+    );
+  }
 }
