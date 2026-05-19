@@ -7,7 +7,7 @@ class CarAnimatedButton extends StatefulWidget {
   final Color primaryColor;
   final Color secondaryColor;
 
-  // 👇 Custom params
+  // Custom params
   final double width;
   final double height;
   final double borderRadius;

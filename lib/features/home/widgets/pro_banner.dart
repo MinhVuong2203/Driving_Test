@@ -7,26 +7,65 @@ class ProBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Colors.blue, Colors.cyan]),
-        borderRadius: BorderRadius.circular(12),
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.cardDark
+            : AppColors.cardLight,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text('Phiên bản Pro\nLoại bỏ quảng cáo', style: TextStyle(fontSize: 14)),
-          ElevatedButton(
-              onPressed: null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.cardDark : AppColors.cardLight
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.workspace_premium_rounded,
+              color: Color(0xFFF59E0B),
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Phiên bản Pro',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+                ),
+                SizedBox(height: 3),
+                Text(
+                  'Loại bỏ quảng cáo, học tập liền mạch hơn.',
+                  style: TextStyle(fontSize: 12, height: 1.25),
+                ),
+              ],
+            ),
+          ),
+          FilledButton(
+            onPressed: null,
+            style: FilledButton.styleFrom(
+              disabledBackgroundColor: const Color(0xFF0866FF),
+              disabledForegroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: const Text('Nâng cấp', style: TextStyle(fontSize: 18, color: AppColors.primary))
-          )
+            ),
+            child: const Text('Nâng cấp'),
+          ),
         ],
       ),
     );
   }
-
-
 }
