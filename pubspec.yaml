@@ -77,6 +77,7 @@ flutter:
     - assets/json/exam_sets/
     - assets/json/exam_sets_questions/
     - assets/json/traffic_signs/
+    - assets/json/province/
     - assets/images/bien-bao/bien-cam/
     - assets/images/bien-bao/bien-canh-bao/
     - assets/images/bien-bao/bien-chi-dan/

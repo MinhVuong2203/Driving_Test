@@ -1,8 +1,8 @@
-
 import 'package:driving_test_prep/data/models/driving_center_model.dart';
-import 'package:driving_test_prep/data/services/external/driving_center_service.dart';
+import 'package:driving_test_prep/data/repository/DrivingCenterRepository.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_detail_screen.dart';
-
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
+import 'package:driving_test_prep/shared/utils/constants/province_loader.dart';
 import 'package:flutter/material.dart';
 
 class CenterListScreen extends StatefulWidget {
@@ -13,29 +13,106 @@ class CenterListScreen extends StatefulWidget {
 }
 
 class _CenterListScreenState extends State<CenterListScreen> {
-  late Future<List<DrivingCenter>> _centersFuture;
+  final DrivingCenterRepository _repository = DrivingCenterRepository();
+
+  Future<List<DrivingCenter>>? _centersFuture;
+
+  String? _selectedProvince;
+  List<String> _provinces = [];
+
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+
+  Color get _backgroundColor =>
+      _isDark ? AppColors.darkBackground : AppColors.lightBackground;
+
+  Color get _surfaceColor =>
+      _isDark ? AppColors.darkSurface : AppColors.lightSurface;
+
+  Color get _textPrimaryColor =>
+      _isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+
+  Color get _textSecondaryColor =>
+      _isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+
+  Color get _textMutedColor =>
+      _isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted;
+
+  Color get _iconColor => _isDark ? AppColors.iconDark : AppColors.iconLight;
+
+  Color get _inputBackgroundColor =>
+      _isDark ? AppColors.darkInputBackground : AppColors.lightInputBackground;
+
+  Color get _inputBorderColor =>
+      _isDark ? AppColors.darkInputBorder : AppColors.lightInputBorder;
+
+  Color get _chipBackgroundColor =>
+      _isDark ? AppColors.darkChipBackground : AppColors.lightChipBackground;
+
+  Color get _chipTextColor =>
+      _isDark ? AppColors.darkChipText : AppColors.lightChipText;
 
   @override
   void initState() {
     super.initState();
-    _centersFuture = DrivingCenterService.fakeData();
+    _initProvinceData();
+  }
+
+  Future<void> _initProvinceData() async {
+    debugPrint('🔄 Bắt đầu load danh sách tỉnh/thành từ utils...');
+
+    final provinces = await ProvinceLoader.loadProvinceNames(
+      useDisplayName: false,
+    );
+
+    debugPrint('✅ Load xong danh sách tỉnh/thành. Số lượng: ${provinces.length}');
+
+    if (!mounted) return;
+
+    setState(() {
+      _provinces = provinces;
+      _selectedProvince = provinces.isNotEmpty ? provinces.first : null;
+
+      debugPrint('🎯 Tỉnh/thành đang chọn: $_selectedProvince');
+
+      if (_selectedProvince != null) {
+        _centersFuture = _repository.getCentersByProvince(_selectedProvince!);
+      } else {
+        _centersFuture = Future.value([]);
+      }
+    });
+  }
+
+  void _loadByProvince() {
+    final province = _selectedProvince;
+
+    if (province == null || province.trim().isEmpty) {
+      setState(() {
+        _centersFuture = Future.value([]);
+      });
+      return;
+    }
+
+    setState(() {
+      _centersFuture = _repository.getCentersByProvince(province);
+    });
   }
 
   void _reload() {
-    setState(() {
-      _centersFuture = DrivingCenterService.fakeData();
-    });
+    _loadByProvince();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A74D4),
-        foregroundColor: Colors.white,
+        elevation: 0,
+        backgroundColor:
+        _isDark ? AppColors.darkAppBarBackground : AppColors.secondary,
+        foregroundColor: AppColors.white,
         title: const Text(
           'Trung tâm đào tạo lái xe',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
         actions: [
@@ -46,70 +123,140 @@ class _CenterListScreenState extends State<CenterListScreen> {
           ),
         ],
       ),
+      body: Column(
+        children: [
+          _buildProvinceFilter(),
+          Expanded(
+            child: _centersFuture == null
+                ? _buildLoadingState()
+                : FutureBuilder<List<DrivingCenter>>(
+              future: _centersFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoadingState();
+                }
 
-      body: FutureBuilder<List<DrivingCenter>>(
-        future: _centersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 12),
-                  Text('Đang tìm trung tâm gần bạn...'),
-                ],
+                if (snapshot.hasError) {
+                  return _buildErrorState();
+                }
+
+                final data = snapshot.data ?? [];
+
+                if (data.isEmpty) {
+                  return _buildEmptyState();
+                }
+
+                return Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1160),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _buildCenterCard(data[index]),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProvinceFilter() {
+    return Container(
+      width: double.infinity,
+      color: _surfaceColor,
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1160),
+          child: DropdownButtonFormField<String>(
+            value: _selectedProvince,
+            isExpanded: true,
+            dropdownColor: _isDark
+                ? AppColors.darkSelectMenuBackground
+                : AppColors.lightSelectMenuBackground,
+            iconEnabledColor: _iconColor,
+            style: TextStyle(
+              color: _isDark
+                  ? AppColors.darkSelectText
+                  : AppColors.lightSelectText,
+              fontWeight: FontWeight.w600,
+            ),
+            decoration: InputDecoration(
+              labelText: 'Tỉnh / Thành phố',
+              labelStyle: TextStyle(color: _textSecondaryColor),
+              prefixIcon: Icon(
+                Icons.location_city_outlined,
+                color: _iconColor,
               ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.wifi_off, size: 48, color: Colors.grey),
-                  const SizedBox(height: 12),
-                  const Text('Không tải được dữ liệu'),
-                  const SizedBox(height: 8),
-                  ElevatedButton(onPressed: _reload, child: const Text('Thử lại')),
-                ],
+              filled: true,
+              fillColor: _inputBackgroundColor,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: _inputBorderColor),
               ),
-            );
-          }
-
-          final data = snapshot.data!;
-
-          if (data.isEmpty) {
-            return const Center(child: Text('Không tìm thấy trung tâm nào.'));
-          }
-
-          return Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1160),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(20),
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildCenterCard(data[index]),
-                  );
-                },
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.4,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: AppColors.danger),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
               ),
             ),
-          );
-        },
+            items: _provinces.map((province) {
+              return DropdownMenuItem<String>(
+                value: province,
+                child: Text(
+                  province,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value == null) return;
+
+              setState(() {
+                _selectedProvince = value;
+              });
+
+              _loadByProvince();
+            },
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildCenterCard(DrivingCenter center) {
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: _isDark ? AppColors.cardDark : AppColors.lightSurface,
+      shadowColor: _isDark ? AppColors.darkShadow : AppColors.lightShadow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(
+          color: _isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
+      ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         onTap: () {
           Navigator.push(
             context,
@@ -119,105 +266,14 @@ class _CenterListScreenState extends State<CenterListScreen> {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
+          padding: const EdgeInsets.all(10),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ẢNH — fallback khi Overpass không có ảnh
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: center.photo_url.isNotEmpty
-                    ? Image.network(
-                  center.photo_url,
-                  width: double.infinity,
-                  height: 140,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _imagePlaceholder(),
-                )
-                    : _imagePlaceholder(),
-              ),
-
-              const SizedBox(height: 10),
-
-              // TÊN
-              Text(
-                center.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-
-              const SizedBox(height: 6),
-
-              // ĐỊA CHỈ
-              if (center.address.isNotEmpty || center.district.isNotEmpty)
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 14, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        _buildAddressDisplay(center),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.grey, fontSize: 13),
-                      ),
-                    ),
-                  ],
-                ),
-
-              const SizedBox(height: 6),
-
-              // PHONE — chỉ hiện khi có
-              if (center.phone_number.isNotEmpty)
-                Row(
-                  children: [
-                    const Icon(Icons.phone, size: 14, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      center.phone_number,
-                      style: const TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                  ],
-                ),
-
-              const SizedBox(height: 10),
-
-              // RATING + OPENING STATUS
-              Row(
-                children: [
-                  // Rating (ẩn nếu = 0 vì Overpass không có)
-                  if (center.rating > 0) ...[
-                    const Icon(Icons.star, color: Colors.amber, size: 18),
-                    const SizedBox(width: 4),
-                    Text(center.rating.toStringAsFixed(1)),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${center.review_count} reviews',
-                      style: const TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-                    const SizedBox(width: 10),
-                  ],
-
-                  // Giờ mở cửa (opening_hours từ OSM)
-                  if (center.opening_status.isNotEmpty)
-                    Expanded(
-                      child: Row(
-                        children: [
-                          const Icon(Icons.access_time, size: 14, color: Colors.grey),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              center.opening_status,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+              _buildCenterImage(center),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildCenterInfo(center),
               ),
             ],
           ),
@@ -226,29 +282,276 @@ class _CenterListScreenState extends State<CenterListScreen> {
     );
   }
 
-  // Ghép địa chỉ đẹp: address + district + city
+  Widget _buildCenterImage(DrivingCenter center) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: center.photoUrl.isNotEmpty
+          ? Image.network(
+        center.photoUrl,
+        width: 96,
+        height: 96,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _imagePlaceholder(),
+      )
+          : _imagePlaceholder(),
+    );
+  }
+
+  Widget _buildCenterInfo(DrivingCenter center) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final chipMaxWidth = constraints.maxWidth;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              center.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: _textPrimaryColor,
+                fontWeight: FontWeight.w800,
+                fontSize: 15.5,
+                height: 1.25,
+              ),
+            ),
+            const SizedBox(height: 7),
+            if (_buildAddressDisplay(center).isNotEmpty)
+              _infoRow(
+                icon: Icons.location_on_outlined,
+                text: _buildAddressDisplay(center),
+                maxLines: 2,
+              ),
+            if (center.phoneNumber.isNotEmpty) ...[
+              const SizedBox(height: 5),
+              _infoRow(
+                icon: Icons.phone_outlined,
+                text: center.phoneNumber,
+              ),
+            ],
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                if (center.rating > 0)
+                  _chip(
+                    icon: Icons.star,
+                    text:
+                    '${center.rating.toStringAsFixed(1)} (${center.reviewCount})',
+                    maxWidth: chipMaxWidth * 0.48,
+                  ),
+                if (center.openingStatus.isNotEmpty)
+                  _chip(
+                    icon: Icons.access_time,
+                    text: center.openingStatus,
+                    maxWidth: chipMaxWidth,
+                  ),
+                if (center.city.isNotEmpty)
+                  _chip(
+                    icon: Icons.location_city_outlined,
+                    text: center.city,
+                    maxWidth: chipMaxWidth * 0.65,
+                  ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _infoRow({
+    required IconData icon,
+    required String text,
+    int maxLines = 1,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: _iconColor),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: maxLines,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: _textSecondaryColor,
+              fontSize: 13,
+              height: 1.3,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _chip({
+    required IconData icon,
+    required String text,
+    double? maxWidth,
+  }) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: maxWidth ?? double.infinity,
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: _chipBackgroundColor,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: _isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 13,
+              color: _chipTextColor,
+            ),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                style: TextStyle(
+                  color: _chipTextColor,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(color: AppColors.primary),
+          const SizedBox(height: 12),
+          Text(
+            'Đang tải danh sách trung tâm...',
+            style: TextStyle(color: _textSecondaryColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.wifi_off, size: 52, color: _textMutedColor),
+            const SizedBox(height: 12),
+            Text(
+              'Không tải được dữ liệu',
+              style: TextStyle(
+                color: _textPrimaryColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Vui lòng kiểm tra kết nối hoặc thử lại sau.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: _textSecondaryColor),
+            ),
+            const SizedBox(height: 14),
+            ElevatedButton.icon(
+              onPressed: _reload,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Thử lại'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final provinceName = _selectedProvince ?? '';
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.location_off_outlined,
+              size: 54,
+              color: _textMutedColor,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              provinceName.isEmpty
+                  ? 'Không có dữ liệu tỉnh/thành phố'
+                  : 'Không tìm thấy trung tâm ở $provinceName',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _textPrimaryColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Bạn có thể chọn tỉnh/thành phố khác hoặc tải lại dữ liệu.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: _textSecondaryColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _buildAddressDisplay(DrivingCenter c) {
     return [c.address, c.district, c.city]
-        .where((s) => s.isNotEmpty)
+        .where((s) => s.trim().isNotEmpty)
         .join(', ');
   }
 
-  // Placeholder ảnh khi Overpass không trả ảnh
   Widget _imagePlaceholder() {
     return Container(
-      width: double.infinity,
-      height: 140,
+      width: 96,
+      height: 96,
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        color: _isDark ? AppColors.darkSurface : AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: _isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.directions_car, size: 40, color: Colors.grey[400]),
-          const SizedBox(height: 6),
-          Text('Trung tâm dạy lái xe', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-        ],
+      child: Icon(
+        Icons.directions_car,
+        size: 34,
+        color: _isDark ? AppColors.darkIconDisabled : AppColors.primary,
       ),
     );
   }
