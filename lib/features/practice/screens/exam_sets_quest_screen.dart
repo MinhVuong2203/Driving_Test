@@ -5,7 +5,9 @@ import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/database/daos/exam_sets_quest_dao.dart';
+import '../../../core/database/daos/user_progress_dao.dart';
 import '../../../data/repository/exam_sets_quest_repository.dart';
+import '../../../data/repository/user_progress_repository.dart';
 import '../../../shared/utils/constants/app_colors.dart';
 
 class ExamSetsQuestScreen extends StatefulWidget {
@@ -29,6 +31,7 @@ class ExamSetsQuestScreen extends StatefulWidget {
 class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   late final db = DBProvider().db;
   late final ExamSetsQuestRepository repo;
+  late final UserProgressRepository userProgressRepo;
 
   List<ExamQuestionView> questions = [];
   int currentIndex = 0;
@@ -48,6 +51,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   void initState() {
     super.initState();
     repo = ExamSetsQuestRepository(ExamSetsQuestDao(db));
+    userProgressRepo = UserProgressRepository(UserProgressDao(db));
     remaining = Duration(minutes: widget.durationMinutes);
     _loadData();
     _startTimer();
@@ -61,6 +65,11 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
   Future<void> _loadData() async {
     final data = await repo.getQuestionsByExamSet(widget.examSetId);
+    
+    final savedQuestions = await userProgressRepo.getSavedQuestions();
+    bookmarkedQuestionIds.clear();
+    bookmarkedQuestionIds.addAll(savedQuestions.map((q) => q.id));
+
     if (!mounted) return;
     setState(() {
       questions = data;
@@ -174,6 +183,21 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final passNeed = widget.passScore > 0 ? widget.passScore : total;
     final passed = correct >= passNeed;
 
+    // Lưu vào database
+    for (final item in questions) {
+      final q = item.question;
+      final selected = selectedAnswers[q.id];
+      if (selected != null) {
+        final ok = _isCorrect(q, selected);
+        await userProgressRepo.logAnswer(q.id, selected, ok);
+        if (!ok) {
+          await userProgressRepo.logWrongAnswer(q.id);
+        } else {
+          await userProgressRepo.removeWrongQuestion(q.id);
+        }
+      }
+    }
+
     if (!mounted) return;
 
     await showDialog<void>(
@@ -221,6 +245,14 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
     if (widget.gradeInstantly) {
       final ok = _isCorrect(q, label);
+      
+      userProgressRepo.logAnswer(q.id, label, ok);
+      if (!ok) {
+        userProgressRepo.logWrongAnswer(q.id);
+      } else {
+        userProgressRepo.removeWrongQuestion(q.id);
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(ok ? 'Chính xác' : 'Sai rồi'),
@@ -362,7 +394,8 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         ),
                         const Spacer(),
                         IconButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await userProgressRepo.toggleSavedQuestion(qId);
                             setState(() {
                               if (isBookmarked) {
                                 bookmarkedQuestionIds.remove(qId);

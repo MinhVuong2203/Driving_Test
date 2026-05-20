@@ -3,6 +3,8 @@ import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:driving_test_prep/features/practice/screens/exam_topic_quets_screen.dart';
+import 'package:driving_test_prep/features/home/screens/tips_screen.dart';
 import '../screens/traffic_sign_screen.dart';
 
 class MenuGrid extends StatelessWidget {
@@ -22,11 +24,32 @@ class MenuGrid extends StatelessWidget {
         'icons': Icons.close,
         'text': 'Câu sai',
         'color': Color.fromRGBO(255, 0, 0, 0.8),
+        'route': const ExamTopicQuetsScreen(topicId: -1, mode: 4, topicTitle: 'Câu làm sai'),
       },
-      {'icons': Icons.bookmark, 'text': 'Đã lưu', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
-      {'icons': Icons.menu_book, 'text': 'Câu khó', 'color': Color.fromRGBO(3, 252, 69,0.6)},
-      {'icons': Icons.change_history, 'text': 'Sa hình', 'color': Color.fromRGBO(3, 252, 69,0.6)},
-      {'icons': Icons.lightbulb, 'text': 'Mẹo', 'color': Color.fromRGBO(252, 227, 3, 0.7)},
+      {
+        'icons': Icons.bookmark, 
+        'text': 'Đã lưu', 
+        'color': Color.fromRGBO(252, 227, 3, 0.7),
+        'route': const ExamTopicQuetsScreen(topicId: -1, mode: 3, topicTitle: 'Câu đã lưu'),
+      },
+      {
+        'icons': Icons.menu_book, 
+        'text': 'Câu khó', 
+        'color': Color.fromRGBO(3, 252, 69,0.6),
+        'route': const ExamTopicQuetsScreen(topicId: -1, mode: 2, topicTitle: 'Câu hỏi điểm liệt'),
+      },
+      {
+        'icons': Icons.change_history, 
+        'text': 'Sa hình', 
+        'color': Color.fromRGBO(3, 252, 69,0.6),
+        'route': const ExamTopicQuetsScreen(topicId: 6, mode: 0),
+      },
+      {
+        'icons': Icons.lightbulb, 
+        'text': 'Mẹo', 
+        'color': Color.fromRGBO(252, 227, 3, 0.7),
+        'route': const TipsScreen(),
+      },
       {
         'icons': Icons.remove,
         'text': 'Biển báo',
