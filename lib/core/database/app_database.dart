@@ -11,6 +11,7 @@ import 'package:driving_test_prep/core/database/seeds/seed_traffic_signs.dart';
 import 'package:driving_test_prep/core/database/seeds/seeds_topics.dart';
 import 'package:driving_test_prep/core/database/tables/recognition_history_table.dart';
 import 'package:driving_test_prep/core/database/tables/setting_table.dart';
+import 'package:driving_test_prep/core/database/tables/saved_questions_table.dart';
 import 'package:driving_test_prep/core/database/tables/traffic_signs_table.dart';
 
 import 'package:flutter/foundation.dart';
@@ -34,7 +35,7 @@ part 'app_database.g.dart';
   Topics, Questions, ExamGroups, Ranks, ExamSets,
   ExamSetQuestions, PracticeSessions, UserAnswers,
   WrongQuestions, ExamHistory, TrafficSigns, Setting,
-  RecognitionHistoryTable
+  RecognitionHistoryTable, SavedQuestions
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection()){

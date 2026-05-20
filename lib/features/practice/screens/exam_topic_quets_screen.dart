@@ -1,13 +1,15 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/exam_sets_quest_dao.dart';
+import 'package:driving_test_prep/core/database/daos/user_progress_dao.dart';
 import 'package:driving_test_prep/data/repository/exam_sets_quest_repository.dart';
+import 'package:driving_test_prep/data/repository/user_progress_repository.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class ExamTopicQuetsScreen extends StatefulWidget {
   final int topicId;
-  final int mode; // 0: full, 1: random 20, 2: critical only
+  final int mode; // 0: full, 1: random 20, 2: critical only, 3: saved, 4: wrong
   final bool gradeInstantly;
   final String? topicTitle;
 
@@ -26,6 +28,8 @@ class ExamTopicQuetsScreen extends StatefulWidget {
 class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
   late final ExamSetsQuestRepository repo =
   ExamSetsQuestRepository(ExamSetsQuestDao(DBProvider().db));
+  late final UserProgressRepository userProgressRepo =
+  UserProgressRepository(UserProgressDao(DBProvider().db));
 
   List<Question> questions = [];
   int currentIndex = 0;
@@ -62,8 +66,24 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     });
 
     try {
-      final data = await repo.getQuestionsByTopic(widget.topicId);
+      List<Question> data;
+      if (widget.mode == 3) {
+        data = await userProgressRepo.getSavedQuestions();
+      } else if (widget.mode == 4) {
+        data = await userProgressRepo.getWrongQuestions();
+      } else if (widget.mode == 2 && widget.topicId <= 0) {
+        final all = await repo.getAllQuestions();
+        data = all.where((q) => q.isCritical == 1).toList();
+      } else {
+        data = widget.topicId > 0 ? await repo.getQuestionsByTopic(widget.topicId) : await repo.getAllQuestions();
+      }
+
       final filtered = _applyMode(data, widget.mode);
+      
+      // Load bookmarked status
+      final savedQuestions = await userProgressRepo.getSavedQuestions();
+      bookmarkedQuestionIds.clear();
+      bookmarkedQuestionIds.addAll(savedQuestions.map((q) => q.id));
 
       if (!mounted) return;
       setState(() {
@@ -90,6 +110,9 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
         return list.take(20).toList();
       case 2:
         return list.where((q) => q.isCritical == 1).toList();
+      case 3:
+      case 4:
+        return list; // Đã lọc ở _loadData
       default:
         return list;
     }
@@ -181,6 +204,20 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     final answered = selectedAnswers.length;
     final correct = _countCorrectAnswers();
 
+    // Lưu vào database
+    for (final q in questions) {
+      final selected = selectedAnswers[q.id];
+      if (selected != null) {
+        final ok = _isCorrect(q, selected);
+        await userProgressRepo.logAnswer(q.id, selected, ok);
+        if (!ok) {
+          await userProgressRepo.logWrongAnswer(q.id);
+        } else {
+          await userProgressRepo.removeWrongQuestion(q.id);
+        }
+      }
+    }
+
     if (!mounted) return;
 
     await showDialog<void>(
@@ -226,6 +263,15 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
 
     if (widget.gradeInstantly) {
       final ok = _isCorrect(q, label);
+      
+      // Lưu vào database ngay lập tức
+      userProgressRepo.logAnswer(q.id, label, ok);
+      if (!ok) {
+        userProgressRepo.logWrongAnswer(q.id);
+      } else {
+        userProgressRepo.removeWrongQuestion(q.id);
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(ok ? 'Chính xác' : 'Sai rồi'),
@@ -407,7 +453,8 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                         ),
                         const Spacer(),
                         IconButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await userProgressRepo.toggleSavedQuestion(qId);
                             setState(() {
                               if (isBookmarked) {
                                 bookmarkedQuestionIds.remove(qId);
