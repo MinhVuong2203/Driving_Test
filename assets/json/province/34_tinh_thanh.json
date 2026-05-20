@@ -1,0 +1,381 @@
+{
+  "metadata": {
+    "country": "Việt Nam",
+    "total": 34,
+    "provinceCount": 28,
+    "cityCount": 6,
+    "effectiveFrom": "2025-07-01",
+    "sourceNote": "Danh sách 34 đơn vị hành chính cấp tỉnh sau sắp xếp năm 2025."
+  },
+  "data": [
+    {
+      "id": 1,
+      "name": "Hà Nội",
+      "type": "thanh_pho",
+      "displayName": "Thành phố Hà Nội",
+      "isMerged": false,
+      "mergedFrom": [
+        "Hà Nội"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Huế",
+      "type": "thanh_pho",
+      "displayName": "Thành phố Huế",
+      "isMerged": false,
+      "mergedFrom": [
+        "Huế"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Cao Bằng",
+      "type": "tinh",
+      "displayName": "Tỉnh Cao Bằng",
+      "isMerged": false,
+      "mergedFrom": [
+        "Cao Bằng"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Điện Biên",
+      "type": "tinh",
+      "displayName": "Tỉnh Điện Biên",
+      "isMerged": false,
+      "mergedFrom": [
+        "Điện Biên"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Hà Tĩnh",
+      "type": "tinh",
+      "displayName": "Tỉnh Hà Tĩnh",
+      "isMerged": false,
+      "mergedFrom": [
+        "Hà Tĩnh"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Lai Châu",
+      "type": "tinh",
+      "displayName": "Tỉnh Lai Châu",
+      "isMerged": false,
+      "mergedFrom": [
+        "Lai Châu"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Lạng Sơn",
+      "type": "tinh",
+      "displayName": "Tỉnh Lạng Sơn",
+      "isMerged": false,
+      "mergedFrom": [
+        "Lạng Sơn"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Nghệ An",
+      "type": "tinh",
+      "displayName": "Tỉnh Nghệ An",
+      "isMerged": false,
+      "mergedFrom": [
+        "Nghệ An"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Quảng Ninh",
+      "type": "tinh",
+      "displayName": "Tỉnh Quảng Ninh",
+      "isMerged": false,
+      "mergedFrom": [
+        "Quảng Ninh"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Thanh Hóa",
+      "type": "tinh",
+      "displayName": "Tỉnh Thanh Hóa",
+      "isMerged": false,
+      "mergedFrom": [
+        "Thanh Hóa"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Sơn La",
+      "type": "tinh",
+      "displayName": "Tỉnh Sơn La",
+      "isMerged": false,
+      "mergedFrom": [
+        "Sơn La"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Tuyên Quang",
+      "type": "tinh",
+      "displayName": "Tỉnh Tuyên Quang",
+      "isMerged": true,
+      "mergedFrom": [
+        "Tuyên Quang",
+        "Hà Giang"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Lào Cai",
+      "type": "tinh",
+      "displayName": "Tỉnh Lào Cai",
+      "isMerged": true,
+      "mergedFrom": [
+        "Lào Cai",
+        "Yên Bái"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Thái Nguyên",
+      "type": "tinh",
+      "displayName": "Tỉnh Thái Nguyên",
+      "isMerged": true,
+      "mergedFrom": [
+        "Thái Nguyên",
+        "Bắc Kạn"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Phú Thọ",
+      "type": "tinh",
+      "displayName": "Tỉnh Phú Thọ",
+      "isMerged": true,
+      "mergedFrom": [
+        "Phú Thọ",
+        "Vĩnh Phúc",
+        "Hòa Bình"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Bắc Ninh",
+      "type": "tinh",
+      "displayName": "Tỉnh Bắc Ninh",
+      "isMerged": true,
+      "mergedFrom": [
+        "Bắc Ninh",
+        "Bắc Giang"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Hưng Yên",
+      "type": "tinh",
+      "displayName": "Tỉnh Hưng Yên",
+      "isMerged": true,
+      "mergedFrom": [
+        "Hưng Yên",
+        "Thái Bình"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Hải Phòng",
+      "type": "thanh_pho",
+      "displayName": "Thành phố Hải Phòng",
+      "isMerged": true,
+      "mergedFrom": [
+        "Hải Phòng",
+        "Hải Dương"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Ninh Bình",
+      "type": "tinh",
+      "displayName": "Tỉnh Ninh Bình",
+      "isMerged": true,
+      "mergedFrom": [
+        "Ninh Bình",
+        "Hà Nam",
+        "Nam Định"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Quảng Trị",
+      "type": "tinh",
+      "displayName": "Tỉnh Quảng Trị",
+      "isMerged": true,
+      "mergedFrom": [
+        "Quảng Trị",
+        "Quảng Bình"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Đà Nẵng",
+      "type": "thanh_pho",
+      "displayName": "Thành phố Đà Nẵng",
+      "isMerged": true,
+      "mergedFrom": [
+        "Đà Nẵng",
+        "Quảng Nam"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Quảng Ngãi",
+      "type": "tinh",
+      "displayName": "Tỉnh Quảng Ngãi",
+      "isMerged": true,
+      "mergedFrom": [
+        "Quảng Ngãi",
+        "Kon Tum"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Gia Lai",
+      "type": "tinh",
+      "displayName": "Tỉnh Gia Lai",
+      "isMerged": true,
+      "mergedFrom": [
+        "Gia Lai",
+        "Bình Định"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Khánh Hòa",
+      "type": "tinh",
+      "displayName": "Tỉnh Khánh Hòa",
+      "isMerged": true,
+      "mergedFrom": [
+        "Khánh Hòa",
+        "Ninh Thuận"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Lâm Đồng",
+      "type": "tinh",
+      "displayName": "Tỉnh Lâm Đồng",
+      "isMerged": true,
+      "mergedFrom": [
+        "Lâm Đồng",
+        "Đắk Nông",
+        "Bình Thuận"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Đắk Lắk",
+      "type": "tinh",
+      "displayName": "Tỉnh Đắk Lắk",
+      "isMerged": true,
+      "mergedFrom": [
+        "Đắk Lắk",
+        "Phú Yên"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Thành phố Hồ Chí Minh",
+      "type": "thanh_pho",
+      "displayName": "Thành phố Hồ Chí Minh",
+      "isMerged": true,
+      "mergedFrom": [
+        "Thành phố Hồ Chí Minh",
+        "Bình Dương",
+        "Bà Rịa - Vũng Tàu"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Đồng Nai",
+      "type": "tinh",
+      "displayName": "Tỉnh Đồng Nai",
+      "isMerged": true,
+      "mergedFrom": [
+        "Đồng Nai",
+        "Bình Phước"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Tây Ninh",
+      "type": "tinh",
+      "displayName": "Tỉnh Tây Ninh",
+      "isMerged": true,
+      "mergedFrom": [
+        "Tây Ninh",
+        "Long An"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Cần Thơ",
+      "type": "thanh_pho",
+      "displayName": "Thành phố Cần Thơ",
+      "isMerged": true,
+      "mergedFrom": [
+        "Cần Thơ",
+        "Sóc Trăng",
+        "Hậu Giang"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Vĩnh Long",
+      "type": "tinh",
+      "displayName": "Tỉnh Vĩnh Long",
+      "isMerged": true,
+      "mergedFrom": [
+        "Vĩnh Long",
+        "Bến Tre",
+        "Trà Vinh"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Đồng Tháp",
+      "type": "tinh",
+      "displayName": "Tỉnh Đồng Tháp",
+      "isMerged": true,
+      "mergedFrom": [
+        "Đồng Tháp",
+        "Tiền Giang"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "Cà Mau",
+      "type": "tinh",
+      "displayName": "Tỉnh Cà Mau",
+      "isMerged": true,
+      "mergedFrom": [
+        "Cà Mau",
+        "Bạc Liêu"
+      ]
+    },
+    {
+      "id": 34,
+      "name": "An Giang",
+      "type": "tinh",
+      "displayName": "Tỉnh An Giang",
+      "isMerged": true,
+      "mergedFrom": [
+        "An Giang",
+        "Kiên Giang"
+      ]
+    }
+  ]
+}
