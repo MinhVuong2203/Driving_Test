@@ -1,13 +1,46 @@
+import 'package:driving_test_prep/core/database/DBProvider.dart';
+import 'package:driving_test_prep/core/database/app_database.dart';
+import 'package:driving_test_prep/core/database/daos/user_progress_dao.dart';
+import 'package:driving_test_prep/data/repository/user_progress_repository.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class ProgressCard extends StatelessWidget {
+class ProgressCard extends StatefulWidget {
   const ProgressCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const progress = 0.15;
+  State<ProgressCard> createState() => _ProgressCardState();
+}
 
+class _ProgressCardState extends State<ProgressCard> {
+  int total = 600;
+  int correct = 0;
+  int wrong = 0;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProgress();
+  }
+
+  Future<void> _loadProgress() async {
+    final userProgressRepo = UserProgressRepository(UserProgressDao(DBProvider().db));
+    final stats = await userProgressRepo.getProgressStats();
+    if (mounted) {
+      setState(() {
+        total = stats['total'] ?? 600;
+        correct = stats['correct'] ?? 0;
+        wrong = stats['wrong'] ?? 0;
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double progress = total == 0 ? 0 : (correct + wrong) / total;
+    if (progress > 1.0) progress = 1.0;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -26,82 +59,14 @@ class ProgressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0866FF).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.trending_up_rounded,
-                  color: Color(0xFF0866FF),
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  'Tiến độ ôn tập',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF22C55E).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  '15%',
-                  style: TextStyle(
-                    color: Color(0xFF16A34A),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: const LinearProgressIndicator(
-              value: progress,
-              minHeight: 10,
-              backgroundColor: Color(0xFFE2E8F0),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0866FF)),
-            ),
-          ),
-          const SizedBox(height: 14),
-          const Row(
-            children: [
-              Expanded(
-                child: _StatTile(
-                  value: '90/600',
-                  label: 'câu đã ôn',
-                  color: Color(0xFF0866FF),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _StatTile(
-                  value: '28',
-                  label: 'đúng',
-                  color: Color(0xFF22C55E),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _StatTile(
-                  value: '62',
-                  label: 'sai',
-                  color: Color(0xFFEF4444),
-                ),
-              ),
-            ],
-          ),
+          const Text('Tiến độ ôn tập', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          LinearProgressIndicator(value: progress),
+          const SizedBox(height: 6),
+          if (isLoading)
+            const Text('Đang tải...')
+          else
+            Text('${correct + wrong}/$total câu - $correct đúng, $wrong sai'),
         ],
       ),
     );

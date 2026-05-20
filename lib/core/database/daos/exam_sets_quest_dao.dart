@@ -62,6 +62,10 @@ class ExamSetsQuestDao {
     return query.get();
   }
 
+  Future<List<Question>> getAllQuestions() {
+    return (db.select(db.questions)..orderBy([(q) => OrderingTerm.asc(q.id)])).get();
+  }
+
 
   //Lấy thông tin của topic dựa trên topic id
   Future<Topic?> getTopicById(int topicId) async {
