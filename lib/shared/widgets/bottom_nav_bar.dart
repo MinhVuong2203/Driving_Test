@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_list_screen.dart';
 import 'package:driving_test_prep/features/home/screens/home_screen.dart';
+import 'package:driving_test_prep/features/profile/screens/info_screen.dart';
 import 'package:driving_test_prep/features/recognition_ai/screens/recognition_home_screen.dart';
 import '../../features/social_network/screens/email_login_screen.dart';
 import '../screen/login_view.dart';
@@ -29,7 +30,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     ) : RecognitionHomeScreen(),
     HomeScreen(),
     EmailLoginScreen(),
-    const Center(child: Text('Thông tin', style: TextStyle(fontSize: 20))),
+    const InfoScreen(),
   ];
 
 
