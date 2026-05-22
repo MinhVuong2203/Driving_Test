@@ -23,6 +23,7 @@ class PostApiRepository {
     required String authorAvatar,
     required String content,
     String imageUrl = '',
+    required String address,
   }) =>
       _postApiService.createPost(
         postId: postId,
@@ -31,6 +32,7 @@ class PostApiRepository {
         authorAvatar: authorAvatar,
         content: content,
         imageUrl: imageUrl,
+        address: address,
       );
 
   Future<void> deletePost(String postId) => _postApiService.deletePost(postId);

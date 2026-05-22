@@ -35,6 +35,7 @@ class PostApiService {
     required String authorId,
     required String authorName,
     required String authorAvatar,
+    required String address,
   }) async {
     final nowUtc = DateTime.now().toUtc().toIso8601String();
 
@@ -52,6 +53,7 @@ class PostApiService {
         // thêm 2 field thời gian dạng UTC
         'createdAt': nowUtc,
         'updatedAt': nowUtc,
+        'address': address,
       }),
     );
 
