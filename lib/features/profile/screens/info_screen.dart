@@ -1,6 +1,8 @@
-import 'package:driving_test_prep/data/models/vip_package_model.dart';
+﻿import 'package:driving_test_prep/data/models/vip_package_model.dart';
+import 'package:driving_test_prep/data/models/user_vip_model.dart';
 import 'package:driving_test_prep/data/repository/vip_repository.dart';
 import 'package:driving_test_prep/data/services/firebase/vip_firebase_service.dart';
+import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
 import 'package:driving_test_prep/features/vip/widgets/vip_package_card.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:driving_test_prep/shared/widgets/car_animated_button.dart';
@@ -18,8 +20,10 @@ class InfoScreen extends StatefulWidget {
 class _InfoScreenState extends State<InfoScreen> {
   late final VipRepository _vipRepository;
   late Future<List<VipPackageModel>> _vipPackagesFuture;
+  late Future<UserVipModel?> _currentVipFuture;
 
   String? _selectedPackageId;
+  int _currentPackageIndex = 0;
   int? _lastOrderCode;
   bool _isCreatingPayment = false;
   bool _isCheckingPayment = false;
@@ -29,11 +33,13 @@ class _InfoScreenState extends State<InfoScreen> {
     super.initState();
     _vipRepository = VipRepository(VipFirebaseService());
     _vipPackagesFuture = _vipRepository.getActiveVipPackages();
+    _currentVipFuture = UserVipService().getCurrentUserVip();
   }
 
   Future<void> _refreshPackages() async {
     setState(() {
       _vipPackagesFuture = _vipRepository.getActiveVipPackages();
+      _currentVipFuture = UserVipService().getCurrentUserVip();
     });
   }
 
@@ -77,6 +83,11 @@ class _InfoScreenState extends State<InfoScreen> {
     setState(() => _isCheckingPayment = true);
     try {
       final paid = await _vipRepository.syncPayOsStatus(orderCode);
+      if (paid && mounted) {
+        setState(() {
+          _currentVipFuture = UserVipService().getCurrentUserVip();
+        });
+      }
       _showMessage(
         paid
             ? 'Thanh toán thành công. Tài khoản đã được cập nhật VIP.'
@@ -93,25 +104,35 @@ class _InfoScreenState extends State<InfoScreen> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final background = isDark ? AppColors.darkBackground : AppColors.lightBackground;
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final mutedColor = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final background = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightBackground;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final mutedColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
         title: const Text('Thông tin'),
-        backgroundColor: isDark ? AppColors.darkAppBarBackground : AppColors.lightAppBarBackground,
-        foregroundColor: isDark ? AppColors.darkAppBarText : AppColors.lightAppBarText,
+        backgroundColor: isDark
+            ? AppColors.darkAppBarBackground
+            : AppColors.lightAppBarBackground,
+        foregroundColor: isDark
+            ? AppColors.darkAppBarText
+            : AppColors.lightAppBarText,
         elevation: 0,
       ),
       body: RefreshIndicator(
@@ -119,11 +140,17 @@ class _InfoScreenState extends State<InfoScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
           children: [
-            _UserSummaryCard(
-              user: user,
-              textColor: textColor,
-              mutedColor: mutedColor,
-              isDark: isDark,
+            FutureBuilder<UserVipModel?>(
+              future: _currentVipFuture,
+              builder: (context, snapshot) {
+                return _UserSummaryCard(
+                  user: user,
+                  vip: snapshot.data,
+                  textColor: textColor,
+                  mutedColor: mutedColor,
+                  isDark: isDark,
+                );
+              },
             ),
             const SizedBox(height: 18),
             Row(
@@ -141,7 +168,9 @@ class _InfoScreenState extends State<InfoScreen> {
                 TextButton.icon(
                   onPressed: _isCheckingPayment ? null : _checkLastPayment,
                   icon: const Icon(Icons.sync_rounded, size: 18),
-                  label: Text(_isCheckingPayment ? 'Đang kiểm tra' : 'Kiểm tra'),
+                  label: Text(
+                    _isCheckingPayment ? 'Đang kiểm tra' : 'Kiểm tra',
+                  ),
                 ),
               ],
             ),
@@ -168,25 +197,62 @@ class _InfoScreenState extends State<InfoScreen> {
                   return const _EmptyState();
                 }
 
-                final selectedId = _selectedPackageId ?? packages.first.id;
+                final activeIndex = _currentPackageIndex.clamp(
+                  0,
+                  packages.length - 1,
+                );
 
                 return Column(
-                  children: packages
-                      .map(
-                        (package) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: VipPackageCard(
+                  children: [
+                    SizedBox(
+                      height: 350,
+                      child: PageView.builder(
+                        itemCount: packages.length,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPackageIndex = index;
+                            _selectedPackageId = packages[index].id;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          final package = packages[index];
+
+                          return VipPackageCard(
                             package: package,
-                            isSelected: package.id == selectedId,
-                            isLoading: _isCreatingPayment && package.id == selectedId,
+                            isSelected: true,
+                            isLoading:
+                                _isCreatingPayment &&
+                                (_selectedPackageId == null
+                                    ? index == activeIndex
+                                    : _selectedPackageId == package.id),
                             onTap: () {
                               setState(() => _selectedPackageId = package.id);
                             },
                             onPay: () => _pay(package),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        packages.length,
+                        (index) => AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: index == _currentPackageIndex ? 18 : 7,
+                          height: 7,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            color: index == activeIndex
+                                ? AppColors.primary
+                                : AppColors.lightBorder,
+                            borderRadius: BorderRadius.circular(99),
                           ),
                         ),
-                      )
-                      .toList(),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -199,12 +265,14 @@ class _InfoScreenState extends State<InfoScreen> {
 
 class _UserSummaryCard extends StatelessWidget {
   final User? user;
+  final UserVipModel? vip;
   final Color textColor;
   final Color mutedColor;
   final bool isDark;
 
   const _UserSummaryCard({
     required this.user,
+    required this.vip,
     required this.textColor,
     required this.mutedColor,
     required this.isDark,
@@ -217,14 +285,18 @@ class _UserSummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 27,
+            radius: 32,
             backgroundColor: AppColors.primaryLight,
-            backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+            backgroundImage: user?.photoURL != null
+                ? NetworkImage(user!.photoURL!)
+                : null,
             child: user?.photoURL == null
                 ? Icon(Icons.person_rounded, color: AppColors.primary, size: 30)
                 : null,
@@ -249,6 +321,58 @@ class _UserSummaryCard extends StatelessWidget {
                   style: TextStyle(color: mutedColor, fontSize: 13),
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (vip != null) ...[
+                  const SizedBox(height: 2),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.workspace_premium_rounded,
+                          color: AppColors.warning,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          vip!.name.isEmpty ? 'Gói VIP' : vip!.name,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Spacer(),
+                        Text(
+                          vip!.durationLabel,
+                          style: TextStyle(
+                            color: mutedColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        // Expanded(
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+
+                        //       const SizedBox(height: 2),
+
+                        //     ],
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -262,10 +386,7 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final Future<void> Function() onRetry;
 
-  const _ErrorState({
-    required this.message,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +394,11 @@ class _ErrorState extends StatelessWidget {
       padding: const EdgeInsets.only(top: 48),
       child: Column(
         children: [
-          const Icon(Icons.error_outline_rounded, color: AppColors.danger, size: 42),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: AppColors.danger,
+            size: 42,
+          ),
           const SizedBox(height: 10),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),
@@ -299,9 +424,7 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.only(top: 48),
-      child: Center(
-        child: Text('Chưa có gói VIP khả dụng.'),
-      ),
+      child: Center(child: Text('Chưa có gói VIP khả dụng.')),
     );
   }
 }

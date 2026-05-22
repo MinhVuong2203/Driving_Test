@@ -4,10 +4,35 @@ import 'package:driving_test_prep/features/home/widgets/progress_card.dart';
 import 'package:driving_test_prep/features/home/widgets/topic_card.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_topic_screen.dart';
 import 'package:driving_test_prep/features/settings/screens/settings_screens.dart';
+import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final VoidCallback? onUpgradeVip;
+
+  const HomeScreen({super.key, this.onUpgradeVip});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final Future<bool> _shouldShowProBanner;
+
+  @override
+  void initState() {
+    super.initState();
+    _shouldShowProBanner = _loadProBannerVisibility();
+  }
+
+  Future<bool> _loadProBannerVisibility() async {
+    try {
+      final vip = await UserVipService().getCurrentUserVip();
+      return vip == null;
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +81,17 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   const _HeroHeader(),
                   const SizedBox(height: 16),
-                  const ProBanner(),
-                  const SizedBox(height: 16),
+                  FutureBuilder<bool>(
+                    future: _shouldShowProBanner,
+                    builder: (context, snapshot) {
+                      if (snapshot.data != true) return const SizedBox.shrink();
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: ProBanner(onUpgrade: widget.onUpgradeVip),
+                      );
+                    },
+                  ),
                   const MenuGrid(),
                   const SizedBox(height: 16),
                   ProgressCard(),
