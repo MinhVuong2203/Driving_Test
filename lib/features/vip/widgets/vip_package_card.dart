@@ -23,28 +23,28 @@ class VipPackageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppColors.darkSurface : AppColors.lightSurface;
-    final textColor = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final mutedColor = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final textColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final mutedColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
     final themeColor = _themeColor(package.colorTheme);
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: double.infinity,
+      child: Container(
+        margin: const EdgeInsets.only(left: 8, right: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: surface,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? themeColor : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
-            width: isSelected ? 1.6 : 1,
-          ),
+          border: Border.all(color: themeColor, width: 1.4),
           boxShadow: [
             BoxShadow(
-              color: isSelected ? themeColor.withOpacity(0.16) : AppColors.lightShadow,
-              blurRadius: isSelected ? 18 : 10,
+              color: themeColor.withOpacity(0.16),
+              blurRadius: 18,
               offset: const Offset(0, 8),
             ),
           ],
@@ -61,38 +61,28 @@ class VipPackageCard extends StatelessWidget {
                     color: themeColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.workspace_premium_rounded, color: themeColor),
+                  child: Icon(
+                    Icons.workspace_premium_rounded,
+                    color: themeColor,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        package.vipName,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        package.durationLabel,
-                        style: TextStyle(
-                          color: mutedColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    package.vipName,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (isSelected)
-                  Icon(Icons.check_circle_rounded, color: themeColor, size: 22),
+                // Icon(Icons.swipe_rounded, color: themeColor, size: 22),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -100,11 +90,12 @@ class VipPackageCard extends StatelessWidget {
                   _formatPrice(package.vipPrice),
                   style: TextStyle(
                     color: themeColor,
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                if (package.priceInline != null && package.priceInline! > package.vipPrice) ...[
+                if (package.priceInline != null &&
+                    package.priceInline! > package.vipPrice) ...[
                   const SizedBox(width: 8),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 3),
@@ -120,8 +111,25 @@ class VipPackageCard extends StatelessWidget {
                 ],
               ],
             ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Icon(Icons.schedule_rounded, color: themeColor, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  package.durationLabel,
+                  style: TextStyle(
+                    color: mutedColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 12),
-            ...package.descript.take(4).map(
+            ...package.descript
+                .take(4)
+                .map(
                   (item) => Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
@@ -143,25 +151,27 @@ class VipPackageCard extends StatelessWidget {
                     ),
                   ),
                 ),
-            if (isSelected) ...[
-              const SizedBox(height: 8),
-              CarAnimatedButton(
-                text: isLoading ? 'Đang tạo thanh toán...' : 'Thanh toán PayOS',
-                onPressed: onPay,
-                isEnabled: !isLoading,
-                primaryColor: themeColor,
-                secondaryColor: AppColors.success,
-                width: double.infinity,
-                height: 50,
-                borderRadius: 8,
-                icon: const Icon(Icons.payments_rounded, color: AppColors.white, size: 20),
-                textStyle: const TextStyle(
-                  color: AppColors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                ),
+            SizedBox(height: 14),
+            CarAnimatedButton(
+              text: isLoading ? 'Đang tạo thanh toán...' : 'Thanh toán',
+              onPressed: onPay,
+              isEnabled: !isLoading,
+              primaryColor: themeColor,
+              secondaryColor: _sameToneGradientEnd(themeColor),
+              width: double.infinity,
+              height: 50,
+              borderRadius: 8,
+              icon: const Icon(
+                Icons.payments_rounded,
+                color: AppColors.white,
+                size: 20,
               ),
-            ],
+              textStyle: const TextStyle(
+                color: AppColors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ],
         ),
       ),
@@ -184,13 +194,21 @@ class VipPackageCard extends StatelessWidget {
   static Color _themeColor(String theme) {
     switch (theme.toLowerCase()) {
       case 'purple':
-        return AppColors.secondary;
+        return const Color.fromARGB(255, 119, 9, 245);
       case 'gold':
         return AppColors.warning;
       case 'platinum':
-        return AppColors.info;
+        return const Color.fromARGB(255, 176, 2, 199);
+      case 'blue':
+        return Colors.blue;
+      case 'green':
+        return Colors.green;
       default:
         return AppColors.primary;
     }
+  }
+
+  static Color _sameToneGradientEnd(Color color) {
+    return Color.lerp(color, Colors.black, 0.18) ?? color;
   }
 }

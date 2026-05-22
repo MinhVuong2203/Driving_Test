@@ -27,8 +27,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
         setState(() {}); // login xong -> rebuild để hiện RecognitionHomeScreen
       },
       fallbackSuccessScreen: const SizedBox.shrink(),
-    ) : RecognitionHomeScreen(),
-    HomeScreen(),
+    ) : RecognitionHomeScreen(onUpgradeVip: () => _onItemTapped(4)),
+    HomeScreen(onUpgradeVip: () => _onItemTapped(4)),
     EmailLoginScreen(),
     const InfoScreen(),
   ];

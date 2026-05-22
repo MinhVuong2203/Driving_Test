@@ -69,8 +69,7 @@ class HistorySidebar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => onHistoryTap(history),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -100,6 +99,8 @@ class HistorySidebar extends StatelessWidget {
                 child: Image.file(
                   File(history.imagePath),
                   fit: BoxFit.cover,
+                  cacheWidth: 96,
+                  cacheHeight: 96,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey.shade800,
