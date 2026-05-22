@@ -6,13 +6,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../data/repository/comment_repository.dart';
 import '../../../data/repository/post_api_repository.dart';
+import '../../../data/repository/comment_api_repository.dart';
+import '../models/comment_model.dart';
 import '../controller/signout.dart';
 import '../models/post_model.dart';
+import '../widgets/comment_bottom_sheet.dart';
 import '../widgets/create_post_box.dart';
 import '../widgets/post_card.dart';
 import '../widgets/social_colors.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({super.key});
@@ -27,9 +31,10 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   late final PostApiRepository _postApiRepo =
   PostApiRepository.instance(BACKEND_URL);
 
-  final CommentRepository _commentRepo = CommentRepository.instance;
+  late final CommentApiRepository _commentApiRepo =
+  CommentApiRepository.instance(BACKEND_URL);
 
-  final bool _isAdmin = true;
+  bool _isAdmin = false;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -49,7 +54,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   @override
   void initState() {
     super.initState();
-
+    _loadCurrentUserRole();
     _loadInitialPosts();
 
     _scrollController.addListener(() {
@@ -67,6 +72,24 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadCurrentUserRole() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final data = snap.data();
+
+    if (!mounted) return;
+
+    setState(() {
+      _isAdmin = data?['role']?.toString().toLowerCase() == 'admin';
+    });
   }
 
   Future<void> _loadInitialPosts() async {
@@ -183,6 +206,44 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     );
   }
 
+  Future<String> _getCurrentAddress() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return '';
+
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      return '';
+    }
+
+    final position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    final placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    if (placemarks.isEmpty) return '';
+
+    final p = placemarks.first;
+
+    return [
+      p.street,
+      p.subLocality,
+      p.locality,
+      p.subAdministrativeArea,
+      p.administrativeArea,
+      p.country,
+    ].where((e) => e != null && e.trim().isNotEmpty).join(', ');
+  }
+
   Future<void> _showCreatePostDialog() async {
     final contentController = TextEditingController();
     XFile? selectedImage;
@@ -285,6 +346,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                       final author = await _getAuthorInfo();
 
+                      final address = await _getCurrentAddress();
+
                       final postId = DateTime.now()
                           .microsecondsSinceEpoch
                           .toString();
@@ -296,6 +359,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         authorAvatar: author.authorAvatar,
                         content: content,
                         imageUrl: imageUrl,
+                        address: address,
                       );
 
                       final newPost = PostModel(
@@ -311,6 +375,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         updatedAt: DateTime.now(),
                         status: true,
                         isDeleted: false,
+                        address: address,
                       );
 
                       if (!mounted) return;
@@ -357,139 +422,63 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   }
 
   Future<void> _showCommentDialog(PostModel post) async {
-    final commentController = TextEditingController();
-
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: kWhite,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          ),
-          child: SizedBox(
-            height: 420,
-            child: Column(
-              children: <Widget>[
-                const Text(
-                  'Bình luận',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: kNavy,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: _commentRepo.getCommentsStream(post.postId),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+        return CommentBottomSheet(
+          post: post,
+          commentApiRepo: _commentApiRepo,
+          isAdmin: _isAdmin,
+          onCommentAdded: () {
+            if (!mounted) return;
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
-                          child: Text('Chưa có bình luận nào'),
-                        );
-                      }
+            setState(() {
+              final index = _posts.indexWhere(
+                    (p) => p.postId == post.postId,
+              );
 
-                      final docs = snapshot.data!.docs;
+              if (index != -1) {
+                final oldPost = _posts[index];
 
-                      return ListView.builder(
-                        itemCount: docs.length,
-                        itemBuilder: (_, index) {
-                          final data = docs[index].data();
-
-                          return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: CircleAvatar(
-                              backgroundImage: (data['authorAvatar'] ?? '')
-                                  .toString()
-                                  .isNotEmpty
-                                  ? NetworkImage(
-                                (data['authorAvatar'] ?? '').toString(),
-                              )
-                                  : null,
-                              child: (data['authorAvatar'] ?? '')
-                                  .toString()
-                                  .isEmpty
-                                  ? const Icon(Icons.person)
-                                  : null,
-                            ),
-                            title: Text(
-                              (data['authorName'] ?? '').toString(),
-                              style:
-                              const TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                            subtitle: Text(
-                              (data['content'] ?? '').toString(),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: commentController,
-                        decoration: InputDecoration(
-                          hintText: 'Viết bình luận...',
-                          filled: true,
-                          fillColor: kInputBg,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      onPressed: () async {
-                        final text = commentController.text.trim();
-                        if (text.isEmpty) return;
-
-                        await _commentRepo.addComment(
-                          postId: post.postId,
-                          content: text,
-                        );
-
-                        commentController.clear();
-                      },
-                      icon: const Icon(Icons.send_rounded, color: kAmber),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+                _posts[index] = oldPost.copyWith(
+                  commentCount: oldPost.commentCount + 1,
+                );
+              }
+            });
+          },
         );
       },
     );
   }
 
-  Future<void> _deletePost(String postId) async {
-    await _postApiRepo.deletePost(postId);
+  Future<void> _deletePost(PostModel post) async {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+
+    final canDelete =
+        _isAdmin || (currentUserId != null && post.authorId == currentUserId);
+
+    if (!canDelete) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bạn không có quyền xóa bài viết này')),
+      );
+      return;
+    }
+
+    await _postApiRepo.deletePost(post.postId);
 
     if (!mounted) return;
 
     setState(() {
-      _posts.removeWhere((post) => post.postId == postId);
-      _likedPostIds.remove(postId);
-      _localLikeCounts.remove(postId);
-      _likingPostIds.remove(postId);
+      _posts.removeWhere((item) => item.postId == post.postId);
+      _likedPostIds.remove(post.postId);
+      _localLikeCounts.remove(post.postId);
+      _likingPostIds.remove(post.postId);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -530,12 +519,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       if (wasLiked) {
         await _postApiRepo.unlikePost(
           postId: post.postId,
-          userId: user!.uid,
+          userId: user.uid,
         );
       } else {
         await _postApiRepo.likePost(
           postId: post.postId,
-          userId: user!.uid,
+          userId: user.uid,
         );
       }
     } catch (e) {
@@ -638,13 +627,18 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                 final currentLikeCount =
                     _localLikeCounts[post.postId] ?? post.likeCount;
 
+                final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+                final canDelete =
+                    _isAdmin || (currentUserId != null && post.authorId == currentUserId);
+
                 return PostCard(
                   post: post.copyWith(likeCount: currentLikeCount),
                   isLiked: _likedPostIds.contains(post.postId),
                   isAdmin: _isAdmin,
+                  canDelete: canDelete,
                   onLike: () => _toggleLike(post),
                   onComment: () => _showCommentDialog(post),
-                  onDelete: () => _deletePost(post.postId),
+                  onDelete: () => _deletePost(post),
                 );
               },
             ),

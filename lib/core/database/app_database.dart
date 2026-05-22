@@ -70,10 +70,10 @@ LazyDatabase _openConnection() {
     final file = File(p.join(dir.path, 'gplx_app.db'));
 
     // Xóa db cũ mỗi lần mở app — CHỈ DÙNG KHI DEV
-    // if (await file.exists()) {
-    //   await file.delete();
-    //   print('✅ Đã xóa DB cũ');
-    // }
+    if (await file.exists()) {
+      await file.delete();
+      print('✅ Đã xóa DB cũ');
+    }
 
 
     return NativeDatabase.createInBackground(file);
