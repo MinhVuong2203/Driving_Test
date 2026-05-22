@@ -13,6 +13,7 @@ class PostModel {
   final bool status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? address;
 
   const PostModel({
     required this.postId,
@@ -27,6 +28,7 @@ class PostModel {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
+    this.address,
   });
 
   factory PostModel.fromFirestore(
@@ -51,6 +53,7 @@ class PostModel {
       status: data['status'] == true,
       createdAt: _toDateTime(data['createdAt']),
       updatedAt: _toDateTime(data['updatedAt']),
+      address: (data['address'] ?? '').toString(),
     );
   }
 
@@ -67,6 +70,7 @@ class PostModel {
       'status': status,
       'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
       'updatedAt': updatedAt == null ? null : Timestamp.fromDate(updatedAt!),
+      'address': address,
     };
   }
 
@@ -83,6 +87,7 @@ class PostModel {
     bool? status,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? address,
   }) {
     return PostModel(
       postId: postId ?? this.postId,
@@ -97,6 +102,7 @@ class PostModel {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      address: address ?? this.address,
     );
   }
 
@@ -124,6 +130,7 @@ class PostModel {
       status: json['status'] == true,
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
+      address: json['address']?.toString() ?? '',
     );
   }
 

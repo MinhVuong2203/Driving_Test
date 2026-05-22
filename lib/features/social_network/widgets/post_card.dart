@@ -8,6 +8,7 @@ class PostCard extends StatelessWidget {
   final PostModel post;
   final bool isLiked;
   final bool isAdmin;
+  final bool canDelete;
   final VoidCallback onLike;
   final VoidCallback onComment;
   final VoidCallback onDelete;
@@ -17,6 +18,7 @@ class PostCard extends StatelessWidget {
     required this.post,
     required this.isLiked,
     required this.isAdmin,
+    required this.canDelete,
     required this.onLike,
     required this.onComment,
     required this.onDelete,
@@ -65,12 +67,12 @@ class PostCard extends StatelessWidget {
         return SafeArea(
           child: Wrap(
             children: <Widget>[
-              if (isAdmin)
+              if (canDelete)
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: kError),
-                  title: const Text(
-                    'Xóa bài viết',
-                    style: TextStyle(
+                  title: Text(
+                    isAdmin ? 'Xóa bài viết với quyền admin' : 'Xóa bài viết',
+                    style: const TextStyle(
                       color: kError,
                       fontWeight: FontWeight.w600,
                     ),
@@ -79,17 +81,17 @@ class PostCard extends StatelessWidget {
                     Navigator.pop(context);
                     onDelete();
                   },
-                ),
-              if (!isAdmin)
+                )
+              else ...[
                 const ListTile(
                   leading: Icon(Icons.report_gmailerrorred_outlined),
                   title: Text('Báo cáo bài viết'),
                 ),
-              if (!isAdmin)
                 const ListTile(
                   leading: Icon(Icons.bookmark_border_rounded),
                   title: Text('Lưu bài viết'),
                 ),
+              ],
             ],
           ),
         );

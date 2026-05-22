@@ -34,6 +34,10 @@ dependencies:
   path_provider: ^2.1.2
   path: ^1.8.3
 
+  #GPS
+  geolocator: ^12.0.0
+  geocoding: ^3.0.0
+
   # Bản đồ OSM
   flutter_map: ^6.1.0
   latlong2: ^0.9.0
