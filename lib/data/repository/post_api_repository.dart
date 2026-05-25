@@ -16,7 +16,7 @@ class PostApiRepository {
 
   Future<List<PostModel>> fetchPosts() => _postApiService.fetchPosts();
 
-  Future<void> createPost({
+  Future<PostModel> createPost({
     required String postId,
     required String authorId,
     required String authorName,
@@ -24,16 +24,17 @@ class PostApiRepository {
     required String content,
     String imageUrl = '',
     required String address,
-  }) =>
-      _postApiService.createPost(
-        postId: postId,
-        authorId: authorId,
-        authorName: authorName,
-        authorAvatar: authorAvatar,
-        content: content,
-        imageUrl: imageUrl,
-        address: address,
-      );
+  }) {
+    return _postApiService.createPost(
+      postId: postId,
+      authorId: authorId,
+      authorName: authorName,
+      authorAvatar: authorAvatar,
+      content: content,
+      imageUrl: imageUrl,
+      address: address,
+    );
+  }
 
   Future<void> deletePost(String postId) => _postApiService.deletePost(postId);
 
