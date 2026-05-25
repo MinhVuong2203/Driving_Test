@@ -28,7 +28,7 @@ class PostApiService {
     return list.map((e) => PostModel.fromJson(e)).toList();
   }
 
-  Future<void> createPost({
+  Future<PostModel> createPost({
     required String content,
     String imageUrl = '',
     required String postId,
@@ -49,8 +49,6 @@ class PostApiService {
         'authorAvatar': authorAvatar,
         'content': content,
         'imageUrl': imageUrl,
-
-        // thêm 2 field thời gian dạng UTC
         'createdAt': nowUtc,
         'updatedAt': nowUtc,
         'address': address,
@@ -60,6 +58,8 @@ class PostApiService {
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw Exception('Failed to create post: ${res.statusCode} - ${res.body}');
     }
+
+    return PostModel.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
   }
 
   Future<void> updatePost(

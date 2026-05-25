@@ -352,29 +352,13 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           .microsecondsSinceEpoch
                           .toString();
 
-                      await _postApiRepo.createPost(
+                      final createdPost = await _postApiRepo.createPost(
                         postId: postId,
                         authorId: author.authorId,
                         authorName: author.authorName,
                         authorAvatar: author.authorAvatar,
                         content: content,
                         imageUrl: imageUrl,
-                        address: address,
-                      );
-
-                      final newPost = PostModel(
-                        postId: postId,
-                        authorId: author.authorId,
-                        authorName: author.authorName,
-                        authorAvatar: author.authorAvatar,
-                        content: content,
-                        imageUrl: imageUrl,
-                        likeCount: 0,
-                        commentCount: 0,
-                        createdAt: DateTime.now(),
-                        updatedAt: DateTime.now(),
-                        status: true,
-                        isDeleted: false,
                         address: address,
                       );
 
@@ -383,15 +367,31 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       Navigator.pop(dialogContext);
 
                       setState(() {
-                        _posts.insert(0, newPost);
-                        _localLikeCounts[postId] = 0;
+                        _posts.insert(0, createdPost);
+                        _localLikeCounts[createdPost.postId] = createdPost.likeCount;
                       });
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Đăng bài thành công'),
-                        ),
+                        const SnackBar(content: Text('Đăng bài thành công')),
                       );
+
+                      Future.delayed(const Duration(seconds: 1), () {
+                        if (!mounted) return;
+
+                        if (createdPost.isDeleted || !createdPost.status) {
+                          setState(() {
+                            _posts.removeWhere((p) => p.postId == createdPost.postId);
+                            _localLikeCounts.remove(createdPost.postId);
+                            _likedPostIds.remove(createdPost.postId);
+                          });
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Bài viết vi phạm tiêu chuẩn nên đã bị tự động xóa'),
+                            ),
+                          );
+                        }
+                      });
                     } catch (e) {
                       setDialogState(() {
                         isPosting = false;
