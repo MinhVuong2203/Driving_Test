@@ -6,8 +6,16 @@ class DrivingCenterRepository {
   DrivingCenterRepository({DrivingCenterApiService? apiService,
   }) : _apiService = apiService ?? DrivingCenterApiService();
 
-  Future<List<DrivingCenter>> getCentersByProvince(String province) {
-    return _apiService.fetchByProvince(province);
+  Future<DrivingCenterPage> getCentersByProvince(
+    String province, {
+    int page = 1,
+    int pageSize = 10,
+  }) {
+    return _apiService.fetchByProvince(
+      province,
+      page: page,
+      pageSize: pageSize,
+    );
   }
 
   Future<List<DrivingCenter>> getAllCenters() {

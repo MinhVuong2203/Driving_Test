@@ -81,3 +81,37 @@ class DrivingCenter {
 
   bool get hasWebsite => website.trim().isNotEmpty;
 }
+
+class DrivingCenterPage {
+  final List<DrivingCenter> items;
+  final int total;
+  final int page;
+  final int pageSize;
+  final bool hasMore;
+
+  DrivingCenterPage({
+    required this.items,
+    required this.total,
+    required this.page,
+    required this.pageSize,
+    required this.hasMore,
+  });
+
+  factory DrivingCenterPage.fromJson(Map<String, dynamic> json) {
+    final List data = json['data'] ?? [];
+    final pageSize = DrivingCenter._toInt(json['page_size'] ?? json['pageSize']);
+    final items = data
+        .map((item) => DrivingCenter.fromJson(Map<String, dynamic>.from(item)))
+        .toList();
+
+    return DrivingCenterPage(
+      items: items,
+      total: DrivingCenter._toInt(json['total']),
+      page: DrivingCenter._toInt(json['page']),
+      pageSize: pageSize,
+      hasMore: json['has_more'] == true ||
+          json['hasMore'] == true ||
+          (pageSize > 0 && items.length >= pageSize),
+    );
+  }
+}

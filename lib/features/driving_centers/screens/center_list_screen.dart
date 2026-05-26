@@ -14,11 +14,21 @@ class CenterListScreen extends StatefulWidget {
 
 class _CenterListScreenState extends State<CenterListScreen> {
   final DrivingCenterRepository _repository = DrivingCenterRepository();
+  final ScrollController _scrollController = ScrollController();
 
-  Future<List<DrivingCenter>>? _centersFuture;
+  static const int _pageSize = 10;
+
+  final List<DrivingCenter> _centers = [];
 
   String? _selectedProvince;
   List<String> _provinces = [];
+  int _currentPage = 0;
+  int _totalCenters = 0;
+  int _requestSerial = 0;
+  bool _hasMore = true;
+  bool _isInitialLoading = false;
+  bool _isLoadingMore = false;
+  String? _errorMessage;
 
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
 
@@ -54,7 +64,16 @@ class _CenterListScreenState extends State<CenterListScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_handleScroll);
     _initProvinceData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_handleScroll)
+      ..dispose();
+    super.dispose();
   }
 
   Future<void> _initProvinceData() async {
@@ -74,31 +93,91 @@ class _CenterListScreenState extends State<CenterListScreen> {
 
       debugPrint('🎯 Tỉnh/thành đang chọn: $_selectedProvince');
 
-      if (_selectedProvince != null) {
-        _centersFuture = _repository.getCentersByProvince(_selectedProvince!);
-      } else {
-        _centersFuture = Future.value([]);
-      }
     });
+
+    _loadByProvince(reset: true);
   }
 
-  void _loadByProvince() {
+  Future<void> _loadByProvince({bool reset = true}) async {
     final province = _selectedProvince;
 
     if (province == null || province.trim().isEmpty) {
       setState(() {
-        _centersFuture = Future.value([]);
+        _centers.clear();
+        _currentPage = 0;
+        _totalCenters = 0;
+        _hasMore = false;
+        _isInitialLoading = false;
+        _isLoadingMore = false;
+        _errorMessage = null;
       });
       return;
     }
 
+    if (!reset && (!_hasMore || _isLoadingMore || _isInitialLoading)) {
+      return;
+    }
+
+    final requestId = ++_requestSerial;
+    final nextPage = reset ? 1 : _currentPage + 1;
+
+    if (reset && _scrollController.hasClients) {
+      _scrollController.jumpTo(0);
+    }
+
     setState(() {
-      _centersFuture = _repository.getCentersByProvince(province);
+      if (reset) {
+        _centers.clear();
+        _currentPage = 0;
+        _totalCenters = 0;
+        _hasMore = true;
+        _isInitialLoading = true;
+      } else {
+        _isLoadingMore = true;
+      }
+
+      _errorMessage = null;
     });
+
+    try {
+      final result = await _repository.getCentersByProvince(
+        province,
+        page: nextPage,
+        pageSize: _pageSize,
+      );
+
+      if (!mounted || requestId != _requestSerial) return;
+
+      setState(() {
+        _centers.addAll(result.items);
+        _currentPage = result.page;
+        _totalCenters = result.total;
+        _hasMore = result.hasMore;
+        _isInitialLoading = false;
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      if (!mounted || requestId != _requestSerial) return;
+
+      setState(() {
+        _errorMessage = e.toString();
+        _isInitialLoading = false;
+        _isLoadingMore = false;
+      });
+    }
   }
 
   void _reload() {
-    _loadByProvince();
+    _loadByProvince(reset: true);
+  }
+
+  void _handleScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 260) {
+      _loadByProvince(reset: false);
+    }
   }
 
   @override
@@ -127,42 +206,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
         children: [
           _buildProvinceFilter(),
           Expanded(
-            child: _centersFuture == null
-                ? _buildLoadingState()
-                : FutureBuilder<List<DrivingCenter>>(
-              future: _centersFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return _buildLoadingState();
-                }
-
-                if (snapshot.hasError) {
-                  return _buildErrorState();
-                }
-
-                final data = snapshot.data ?? [];
-
-                if (data.isEmpty) {
-                  return _buildEmptyState();
-                }
-
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1160),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: _buildCenterCard(data[index]),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
+            child: _buildCenterContent(),
           ),
         ],
       ),
@@ -235,12 +279,84 @@ class _CenterListScreenState extends State<CenterListScreen> {
                 _selectedProvince = value;
               });
 
-              _loadByProvince();
+              _loadByProvince(reset: true);
             },
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildCenterContent() {
+    if (_isInitialLoading && _centers.isEmpty) {
+      return _buildLoadingState();
+    }
+
+    if (_errorMessage != null && _centers.isEmpty) {
+      return _buildErrorState();
+    }
+
+    if (_centers.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1160),
+        child: ListView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+          itemCount: _centers.length + 1,
+          itemBuilder: (context, index) {
+            if (index == _centers.length) {
+              return _buildListFooter();
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildCenterCard(_centers[index]),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListFooter() {
+    if (_isLoadingMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.4,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (_errorMessage != null && _hasMore) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10, top: 4),
+        child: Center(
+          child: TextButton.icon(
+            onPressed: () => _loadByProvince(reset: false),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Thá»­ láº¡i'),
+          ),
+        ),
+      );
+    }
+
+    if (!_hasMore && _totalCenters > _pageSize) {
+      return const SizedBox(height: 8);
+    }
+
+    return const SizedBox(height: 4);
   }
 
   Widget _buildCenterCard(DrivingCenter center) {

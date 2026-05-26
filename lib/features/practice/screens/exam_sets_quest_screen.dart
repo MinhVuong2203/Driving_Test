@@ -9,6 +9,7 @@ import '../../../core/database/daos/user_progress_dao.dart';
 import '../../../data/repository/exam_sets_quest_repository.dart';
 import '../../../data/repository/user_progress_repository.dart';
 import '../../../shared/utils/constants/app_colors.dart';
+import '../../../shared/widgets/question_image.dart';
 
 class ExamSetsQuestScreen extends StatefulWidget {
   final int examSetId;
@@ -138,38 +139,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   }
 
   Widget _buildQuestionImage(String rawPath) {
-    final path = rawPath.trim();
-    if (path.isEmpty) return const SizedBox.shrink();
-
-    final isRemote = path.startsWith('http://') || path.startsWith('https://');
-    final assetPath = path.startsWith('assets/')
-        ? path
-        : 'assets/images/questions/$path';
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 260),
-        child: isRemote
-            ? Image.network(
-          path,
-          fit: BoxFit.contain,
-          loadingBuilder: (context, child, progress) {
-            if (progress == null) return child;
-            return const SizedBox(
-              height: 140,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          },
-          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-        )
-            : Image.asset(
-          assetPath,
-          fit: BoxFit.contain,
-          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-        ),
-      ),
-    );
+    return QuestionImage(path: rawPath);
   }
 
   Future<void> _submitExam({bool autoSubmit = false}) async {
