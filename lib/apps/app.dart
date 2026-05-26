@@ -1,7 +1,9 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
+import 'package:driving_test_prep/data/services/question_image_cache_service.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/shared/widgets/bottom_nav_bar.dart';
+import 'package:driving_test_prep/shared/widgets/question_data_download_banner.dart';
 import 'package:flutter/material.dart';
 
 final ValueNotifier<int> themeNotifier = ValueNotifier<int>(1);
@@ -19,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    QuestionImageCacheService.instance.startBackgroundDownload();
     loadSetting();
   }
 
@@ -58,6 +61,14 @@ class _MyAppState extends State<MyApp> {
           darkTheme: ThemeData.dark(),
           themeMode: modeValue == 0 ? ThemeMode.dark : ThemeMode.light,
           home: const BottomNavBar(),
+          builder: (context, child) {
+            return Stack(
+              children: [
+                if (child != null) child,
+                const QuestionDataDownloadBanner(),
+              ],
+            );
+          },
         );
       },
     );

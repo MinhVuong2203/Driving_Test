@@ -72,8 +72,8 @@ flutter:
 
   assets:
     - assets/icons/
-    - assets/images/
-    - assets/images/questions/
+    - assets/images/driving_center.png
+    - assets/images/warehouse.png
     - assets/json/questions/
     - assets/json/ranks/
     - assets/json/topics/

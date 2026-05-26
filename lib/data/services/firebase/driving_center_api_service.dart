@@ -6,9 +6,17 @@ import 'package:http/http.dart' as http;
 class DrivingCenterApiService {
   static final String baseUrl = AppConfig.baseUrl;
 
-  Future<List<DrivingCenter>> fetchByProvince(String keyword) async {
-    final uri = Uri.parse(
-      '$baseUrl/api/DrivingCenters/search?keyword=${Uri.encodeComponent(keyword)}',
+  Future<DrivingCenterPage> fetchByProvince(
+    String keyword, {
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    final uri = Uri.parse('$baseUrl/api/DrivingCenters/search').replace(
+      queryParameters: {
+        'keyword': keyword,
+        'page': page.toString(),
+        'pageSize': pageSize.toString(),
+      },
     );
 
     print('--------------- [ $uri ] ---------------');
@@ -18,11 +26,7 @@ class DrivingCenterApiService {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
 
-      final List data = body['data'] ?? [];
-
-      return data
-          .map((item) => DrivingCenter.fromJson(item))
-          .toList();
+      return DrivingCenterPage.fromJson(body);
     }
 
     throw Exception(
