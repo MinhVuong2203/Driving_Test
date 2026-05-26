@@ -14,11 +14,18 @@ class PostApiService {
     return list.map((e) => PostModel.fromJson(e)).toList();
   }
 
-  Future<PostModel> getPostById(String id) async {
-    final res = await http.get(Uri.parse('$baseUrl/api/Post/$id'));
-    if (res.statusCode != 200) throw Exception('Failed to load post');
-    final data = jsonDecode(res.body) as Map<String, dynamic>;
-    return PostModel.fromJson(data);
+  Future<PostModel> getPostById(String postId) async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/api/Post/$postId'),
+    );
+
+    if (res.statusCode != 200) {
+      throw Exception('Failed to get post: ${res.statusCode} - ${res.body}');
+    }
+
+    return PostModel.fromJson(
+      jsonDecode(res.body) as Map<String, dynamic>,
+    );
   }
 
   Future<List<PostModel>> getPostsByAuthor(String authorId) async {
