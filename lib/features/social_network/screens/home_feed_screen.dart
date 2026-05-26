@@ -375,21 +375,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         const SnackBar(content: Text('Đăng bài thành công')),
                       );
 
-                      Future.delayed(const Duration(seconds: 1), () {
+                      Future.delayed(const Duration(seconds: 4), () async {
                         if (!mounted) return;
 
-                        if (createdPost.isDeleted || !createdPost.status) {
-                          setState(() {
-                            _posts.removeWhere((p) => p.postId == createdPost.postId);
-                            _localLikeCounts.remove(createdPost.postId);
-                            _likedPostIds.remove(createdPost.postId);
-                          });
+                        try {
+                          final checkedPost = await _postApiRepo.getPostById(createdPost.postId);
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Bài viết vi phạm tiêu chuẩn nên đã bị tự động xóa'),
-                            ),
-                          );
+                          if (checkedPost.isDeleted || !checkedPost.status) {
+                            setState(() {
+                              _posts.removeWhere((p) => p.postId == createdPost.postId);
+                              _localLikeCounts.remove(createdPost.postId);
+                              _likedPostIds.remove(createdPost.postId);
+                            });
+
+                            if (!mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Bài viết vi phạm tiêu chuẩn nên đã bị tự động xóa'),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          debugPrint('Check moderation failed: $e');
                         }
                       });
                     } catch (e) {
