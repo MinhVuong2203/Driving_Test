@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
+import 'package:driving_test_prep/data/services/question_image_cache_service.dart';
 import 'package:flutter/services.dart';
 
 class SeedsQuestions {
@@ -18,12 +19,16 @@ class SeedsQuestions {
       final List<dynamic> jsonData = json.decode(jsonString);
 
       for (final item in jsonData) {
+        final imageUrl = item['image_url'] is String
+            ? QuestionImageCacheService.storagePathFor(item['image_url'])
+            : null;
+
         await db.into(db.questions).insert(
           QuestionsCompanion.insert(
             id: item['id'],
             topicId: Value(item['topic_id']),
             question: item['question'],
-            imageUrl: Value(item['image_url']),
+            imageUrl: Value(imageUrl),
             answerA: Value(item['answer_a']),
             answerB: Value(item['answer_b']),
             answerC: Value(item['answer_c']),

@@ -5,6 +5,7 @@ import 'package:driving_test_prep/core/database/daos/user_progress_dao.dart';
 import 'package:driving_test_prep/data/repository/exam_sets_quest_repository.dart';
 import 'package:driving_test_prep/data/repository/user_progress_repository.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
+import 'package:driving_test_prep/shared/widgets/question_image.dart';
 import 'package:flutter/material.dart';
 
 class ExamTopicQuetsScreen extends StatefulWidget {
@@ -326,6 +327,7 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     }
 
     final q = questions[currentIndex];
+    final image = q.imageUrl;
     final opts = _optionsOf(q);
     final qId = q.id;
     final selected = selectedAnswers[qId];
@@ -480,6 +482,11 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                         color: Colors.black,
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    if (image != null && image.trim().isNotEmpty) ...[
+                      QuestionImage(path: image),
+                      const SizedBox(height: 12),
+                    ],
                     const Divider(height: 24),
 
                     ...List.generate(opts.length, (i) {
