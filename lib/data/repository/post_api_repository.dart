@@ -38,8 +38,12 @@ class PostApiRepository {
 
   Future<void> deletePost(String postId) => _postApiService.deletePost(postId);
 
-  Future<PostModel> getPostById(String id) => _postApiService.getPostById(id);
+  Future<PostModel> getPostById(String postId) {
+    return _postApiService.getPostById(postId);
+  }
+
   Future<List<PostModel>> getPostsByAuthor(String authorId) => _postApiService.getPostsByAuthor(authorId);
+
   Future<void> updatePost(
       String id, {
         String? content,
