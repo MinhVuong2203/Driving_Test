@@ -101,12 +101,24 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
 
       _commentController.clear();
 
-      setState(() {
-        _comments.add(newComment);
-        _isSending = false;
-      });
+      if (!newComment.isDeleted && newComment.status) {
+        setState(() {
+          _comments.add(newComment);
+          _isSending = false;
+        });
 
-      widget.onCommentAdded();
+        widget.onCommentAdded();
+      } else {
+        setState(() {
+          _isSending = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bình luận vi phạm tiêu chuẩn nên đã bị tự động xóa'),
+          ),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
 
@@ -150,7 +162,7 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: kNavy,
+                  color: Color(0xFF111827),
                 ),
               ),
 
@@ -166,24 +178,70 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                   itemBuilder: (context, index) {
                     final comment = _comments[index];
 
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundImage:
-                        comment.authorAvatar.isNotEmpty
-                            ? NetworkImage(comment.authorAvatar)
-                            : null,
-                        child: comment.authorAvatar.isEmpty
-                            ? const Icon(Icons.person)
-                            : null,
-                      ),
-                      title: Text(
-                        comment.authorName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: const Color(0xFFE5E7EB),
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      subtitle: Text(comment.content),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 22,
+                            backgroundColor: const Color(0xFFE5E7EB),
+                            backgroundImage: comment.authorAvatar.isNotEmpty
+                                ? NetworkImage(comment.authorAvatar)
+                                : null,
+                            child: comment.authorAvatar.isEmpty
+                                ? const Icon(
+                              Icons.person,
+                              color: Color(0xFF6B7280),
+                            )
+                                : null,
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  comment.authorName,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF111827),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+
+                                Text(
+                                  comment.content,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF374151),
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -198,13 +256,21 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
                       controller: _commentController,
                       minLines: 1,
                       maxLines: 3,
+                      style: TextStyle(
+                        color: Color(0xFF111827),
+                        fontSize: 14,
+                        // fontWeight: FontWeight.w500,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Viết bình luận...',
                         filled: true,
-                        fillColor: kInputBg,
+                        fillColor: const Color(0xFFF3F4F6),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide.none,
+                        ),
+                        hintStyle: const TextStyle(
+                          color: Color(0xFF9CA3AF),
                         ),
                       ),
                     ),
