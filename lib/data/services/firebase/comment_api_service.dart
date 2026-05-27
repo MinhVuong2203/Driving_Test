@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../features/social_network/models/comment_model.dart';
-
+import 'auth_api_headers.dart';
 
 class CommentApiService {
   CommentApiService(this.baseUrl);
@@ -13,6 +13,7 @@ class CommentApiService {
   Future<List<CommentModel>> getComments(String postId) async {
     final res = await http.get(
       Uri.parse('$baseUrl/api/Comment/$postId'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode != 200) {
@@ -35,7 +36,7 @@ class CommentApiService {
   }) async {
     final res = await http.post(
       Uri.parse('$baseUrl/api/Comment/$postId'),
-      headers: {'Content-Type': 'application/json'},
+      headers: await AuthApiHeaders.json(),
       body: jsonEncode({
         'authorId': authorId,
         'authorName': authorName,
@@ -66,7 +67,10 @@ class CommentApiService {
       },
     );
 
-    final res = await http.delete(uri);
+    final res = await http.delete(
+      uri,
+      headers: await AuthApiHeaders.bearer(),
+    );
 
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw Exception('Failed to delete comment: ${res.body}');

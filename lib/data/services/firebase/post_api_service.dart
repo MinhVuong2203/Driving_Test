@@ -2,13 +2,17 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
+import 'auth_api_headers.dart';
 
 class PostApiService {
   PostApiService(this.baseUrl);
   final String baseUrl;
 
   Future<List<PostModel>> fetchPosts() async {
-    final res = await http.get(Uri.parse('$baseUrl/api/Post'));
+    final res = await http.get(
+      Uri.parse('$baseUrl/api/Post'),
+      headers: await AuthApiHeaders.bearer(),
+    );
     if (res.statusCode != 200) throw Exception('Failed to load posts');
     final list = jsonDecode(res.body) as List;
     return list.map((e) => PostModel.fromJson(e)).toList();
@@ -17,6 +21,7 @@ class PostApiService {
   Future<PostModel> getPostById(String postId) async {
     final res = await http.get(
       Uri.parse('$baseUrl/api/Post/$postId'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode != 200) {
@@ -29,7 +34,10 @@ class PostApiService {
   }
 
   Future<List<PostModel>> getPostsByAuthor(String authorId) async {
-    final res = await http.get(Uri.parse('$baseUrl/api/Post/author/$authorId'));
+    final res = await http.get(
+      Uri.parse('$baseUrl/api/Post/author/$authorId'),
+      headers: await AuthApiHeaders.bearer(),
+    );
     if (res.statusCode != 200) throw Exception('Failed to load author posts');
     final list = jsonDecode(res.body) as List;
     return list.map((e) => PostModel.fromJson(e)).toList();
@@ -48,7 +56,7 @@ class PostApiService {
 
     final res = await http.post(
       Uri.parse('$baseUrl/api/Post'),
-      headers: {'Content-Type': 'application/json'},
+      headers: await AuthApiHeaders.json(),
       body: jsonEncode({
         'postId': postId,
         'authorId': authorId,
@@ -85,7 +93,7 @@ class PostApiService {
 
     final res = await http.put(
       Uri.parse('$baseUrl/api/Post/$id'),
-      headers: {'Content-Type': 'application/json'},
+      headers: await AuthApiHeaders.json(),
       body: jsonEncode(body),
     );
     if (res.statusCode < 200 || res.statusCode >= 300) {
@@ -94,7 +102,10 @@ class PostApiService {
   }
 
   Future<void> deletePost(String postId) async {
-    final res = await http.delete(Uri.parse('$baseUrl/api/Post/$postId'));
+    final res = await http.delete(
+      Uri.parse('$baseUrl/api/Post/$postId'),
+      headers: await AuthApiHeaders.bearer(),
+    );
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw Exception('Failed to delete post');
     }
@@ -106,6 +117,7 @@ class PostApiService {
   }) async {
     final res = await http.post(
       Uri.parse('$baseUrl/api/Post/$postId/like?userId=$userId'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode < 200 || res.statusCode >= 300) {
@@ -119,6 +131,7 @@ class PostApiService {
   }) async {
     final res = await http.post(
       Uri.parse('$baseUrl/api/Post/$postId/unlike?userId=$userId'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode < 200 || res.statusCode >= 300) {
@@ -132,6 +145,7 @@ class PostApiService {
   }) async {
     final res = await http.get(
       Uri.parse('$baseUrl/api/Post/$postId/liked?userId=$userId'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode != 200) {
@@ -151,6 +165,7 @@ class PostApiService {
     request.files.add(
       await http.MultipartFile.fromPath('file', file.path),
     );
+    request.headers.addAll(await AuthApiHeaders.bearer());
 
     final response = await request.send();
     final body = await response.stream.bytesToString();
@@ -179,7 +194,10 @@ class PostApiService {
       queryParameters: queryParams,
     );
 
-    final res = await http.get(uri);
+    final res = await http.get(
+      uri,
+      headers: await AuthApiHeaders.bearer(),
+    );
 
     if (res.statusCode != 200) {
       throw Exception('Failed to load posts: ${res.body}');
