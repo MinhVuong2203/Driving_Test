@@ -4,6 +4,7 @@ import 'package:driving_test_prep/data/models/payos_payment_model.dart';
 import 'package:driving_test_prep/data/models/vip_package_model.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
 import 'package:http/http.dart' as http;
+import 'auth_api_headers.dart';
 
 class VipFirebaseService {
   final String baseUrl = AppConfig.baseUrl;
@@ -27,7 +28,7 @@ class VipFirebaseService {
   }) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/Payment/payos/create'),
-      headers: {'Content-Type': 'application/json'},
+      headers: await AuthApiHeaders.json(),
       body: jsonEncode({
         'userId': userId,
         'packageId': packageId,
@@ -44,6 +45,7 @@ class VipFirebaseService {
   Future<bool> syncPayOsStatus(int orderCode) async {
     final response = await http.get(
       Uri.parse('$baseUrl/api/Payment/payos-status/$orderCode'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (response.statusCode == 200) {
