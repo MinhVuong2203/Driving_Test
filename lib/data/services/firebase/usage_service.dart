@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_api_headers.dart';
 
 class UsageService {
   final String baseUrl = AppConfig.baseUrl;
@@ -12,6 +13,7 @@ class UsageService {
     print('---------------$baseUrl/api/usage/can-use-recognition/$_uid');
     final res = await http.post(
       Uri.parse('$baseUrl/api/usage/can-use-recognition/$_uid'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode == 200) {
@@ -24,6 +26,7 @@ class UsageService {
   Future<int> getRemainingRecognition() async {
     final res = await http.get(
       Uri.parse('$baseUrl/api/usage/remaining/$_uid'),
+      headers: await AuthApiHeaders.bearer(),
     );
 
     if (res.statusCode == 200) {
