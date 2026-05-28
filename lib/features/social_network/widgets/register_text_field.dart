@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'register_header.dart'; // color tokens
+import 'register_header.dart';
 
-/// Text field có style nhất quán với chủ đề lái xe.
 class RegisterTextField extends StatelessWidget {
   const RegisterTextField({
     super.key,
@@ -15,6 +14,9 @@ class RegisterTextField extends StatelessWidget {
     this.suffixIcon,
     this.validator,
     this.readOnly = false,
+    this.textColor = kNavy,
+    this.subTextColor = kGrey,
+    this.inputBg = kInputBg,
   });
 
   final TextEditingController controller;
@@ -27,16 +29,23 @@ class RegisterTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
   final bool readOnly;
+  final Color textColor;
+  final Color subTextColor;
+  final Color inputBg;
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = readOnly
+        ? inputBg.withValues(alpha: 0.65)
+        : inputBg;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           label,
-          style: const TextStyle(
-            color: kNavy,
+          style: TextStyle(
+            color: textColor,
             fontSize: 13,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
@@ -50,37 +59,65 @@ class RegisterTextField extends StatelessWidget {
           maxLength: maxLength,
           validator: validator,
           readOnly: readOnly,
-          style: const TextStyle(color: kNavy, fontSize: 15),
+          style: TextStyle(
+            color: textColor,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: kGrey.withOpacity(0.6), fontSize: 14),
-            prefixIcon: Icon(icon, color: kGrey, size: 20),
+            hintStyle: TextStyle(
+              color: subTextColor.withValues(alpha: 0.65),
+              fontSize: 14,
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: subTextColor,
+              size: 20,
+            ),
             suffixIcon: suffixIcon,
-            counterText: '',           // Ẩn counter maxLength
+            counterText: '',
             filled: true,
-            fillColor: readOnly ? kInputBg.withOpacity(0.6) : kInputBg,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            fillColor: bgColor,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Colors.transparent),
+              borderSide: BorderSide(
+                color: subTextColor.withValues(alpha: 0.08),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: kAmber, width: 2),
+              borderSide: const BorderSide(
+                color: kAmber,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: kError, width: 1.5),
+              borderSide: const BorderSide(
+                color: kError,
+                width: 1.5,
+              ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: kError, width: 2),
+              borderSide: const BorderSide(
+                color: kError,
+                width: 2,
+              ),
             ),
-            errorStyle: const TextStyle(color: kError, fontSize: 11),
+            errorStyle: const TextStyle(
+              color: kError,
+              fontSize: 11,
+            ),
           ),
         ),
       ],

@@ -172,10 +172,16 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   }
 
   Widget _buildCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final cardBg = isDark ? const Color(0xFF111827) : _kWhite;
+    final textColor = isDark ? Colors.white : _kNavy;
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : _kGrey;
+    final inputBg = isDark ? const Color(0xFF1F2937) : _kInputBg;
     return Container(
-      decoration: const BoxDecoration(
-        color: _kWhite,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       padding: const EdgeInsets.fromLTRB(28, 36, 28, 40),
       child: Form(
@@ -183,21 +189,21 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Text(
+            Text(
               'Đăng nhập',
               style: TextStyle(
-                color: _kNavy,
+                color: textColor,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Chào mừng bạn quay trở lại 👋',
-              style: TextStyle(color: _kGrey, fontSize: 13),
+              style: TextStyle(color: subTextColor, fontSize: 13),
             ),
             const SizedBox(height: 28),
-            const SectionLabel(text: 'Email', color: _kNavy),
+            SectionLabel(text: 'Email', color: textColor),
             const SizedBox(height: 6),
             LoginTextField(
               controller: _emailCtrl,
@@ -205,14 +211,14 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
               validator: AuthValidators.email,
-              navy: _kNavy,
-              grey: _kGrey,
-              inputBg: _kInputBg,
+              navy: textColor,
+              grey: subTextColor,
+              inputBg: inputBg,
               amber: _kAmber,
               error: _kError,
             ),
             const SizedBox(height: 20),
-            const SectionLabel(text: 'Mật khẩu', color: _kNavy),
+            SectionLabel(text: 'Mật khẩu', color: textColor),
             const SizedBox(height: 6),
             ValueListenableBuilder<bool>(
               valueListenable: _obscurePassword,
@@ -227,15 +233,15 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                       isObscured
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: _kGrey,
+                      color: subTextColor,
                       size: 20,
                     ),
                     onPressed: () => _obscurePassword.value = !isObscured,
                   ),
                   validator: AuthValidators.password,
-                  navy: _kNavy,
-                  grey: _kGrey,
-                  inputBg: _kInputBg,
+                  navy: textColor,
+                  grey: subTextColor,
+                  inputBg: inputBg,
                   amber: _kAmber,
                   error: _kError,
                 );
@@ -270,7 +276,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
                 'Bằng cách đăng nhập, bạn đồng ý với\nChính sách & Điều khoản sử dụng.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: _kGrey.withValues(alpha: 0.7),
+                  color: subTextColor.withValues(alpha: 0.75),
                   fontSize: 11,
                   height: 1.6,
                 ),
