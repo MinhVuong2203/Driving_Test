@@ -203,8 +203,18 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final pageBg = isDark ? const Color(0xFF0F172A) : kNavy;
+    final cardBg = isDark ? const Color(0xFF111827) : kWhite;
+    final textColor = isDark ? Colors.white : kNavy;
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : kGrey;
+    final dividerColor = isDark ? const Color(0xFF374151) : kGrey.withValues(alpha: 0.18);
+    final inputBg = isDark
+        ? const Color(0xFF1F2937)
+        : kInputBg;
     return Scaffold(
-      backgroundColor: kNavy,
+      backgroundColor: pageBg,
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -212,16 +222,20 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
               alignment: Alignment.centerLeft,
               child: IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: kWhite, size: 20),
+                icon: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: isDark ? Colors.white : kWhite,
+                  size: 20,
+                ),
                 padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
               ),
             ),
             const RegisterHeader(),
             Expanded(
               child: Container(
-                decoration: const BoxDecoration(
-                  color: kWhite,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                decoration: BoxDecoration(
+                  color: cardBg,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
                 ),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(28, 32, 28, 40),
@@ -237,6 +251,9 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                           hint: 'Nguyễn Văn A',
                           icon: Icons.person_outline_rounded,
                           validator: AuthValidators.displayName,
+                          textColor: textColor,
+                          subTextColor: subTextColor,
+                          inputBg: inputBg,
                         ),
                         const SizedBox(height: 18),
                         if (!_hasFixedEmail)
@@ -247,6 +264,9 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                             icon: Icons.email_outlined,
                             keyboardType: TextInputType.emailAddress,
                             validator: AuthValidators.email,
+                            textColor: textColor,
+                            subTextColor: subTextColor,
+                            inputBg: inputBg,
                           )
                         else
                           RegisterTextField(
@@ -255,6 +275,9 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                             hint: '',
                             icon: Icons.email_outlined,
                             readOnly: true,
+                            textColor: textColor,
+                            subTextColor: subTextColor,
+                            inputBg: inputBg,
                           ),
                         const SizedBox(height: 18),
                         if (!_hasFixedPassword)
@@ -276,6 +299,9 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                               onPressed: () =>
                                   setState(() => _obscurePassword = !_obscurePassword),
                             ),
+                            textColor: textColor,
+                            subTextColor: subTextColor,
+                            inputBg: inputBg,
                           )
                         else
                           RegisterTextField(
@@ -284,6 +310,9 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                             hint: '',
                             icon: Icons.lock_outline_rounded,
                             readOnly: true,
+                            textColor: textColor,
+                            subTextColor: subTextColor,
+                            inputBg: inputBg,
                           ),
                         const SizedBox(height: 24),
                         RegisterTextField(
@@ -306,9 +335,12 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                                   () => _obscureConfirmPassword = !_obscureConfirmPassword,
                             ),
                           ),
+                          textColor: textColor,
+                          subTextColor: subTextColor,
+                          inputBg: inputBg,
                         ),
                         const SizedBox(height: 24),
-                        Divider(color: kGrey.withOpacity(0.18)),
+                        Divider(color: dividerColor),
                         const SizedBox(height: 20),
                         OtpSection(
                           otpController: _otpCtrl,
@@ -338,7 +370,7 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
                             'Bằng cách đăng ký, bạn đồng ý với\nChính sách & Điều khoản sử dụng.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: kGrey.withOpacity(0.7),
+                              color: subTextColor.withValues(alpha: 0.75),
                               fontSize: 11,
                               height: 1.6,
                             ),

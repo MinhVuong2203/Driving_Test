@@ -17,7 +17,7 @@ class PostHeader extends StatelessWidget {
   String _timeAgo(DateTime? time) {
     if (time == null) return 'Vừa xong';
 
-    final Duration diff = DateTime.now().difference(time);
+    final diff = DateTime.now().difference(time);
 
     if (diff.inMinutes < 1) return 'Vừa xong';
     if (diff.inMinutes < 60) return '${diff.inMinutes} phút trước';
@@ -26,18 +26,23 @@ class PostHeader extends StatelessWidget {
     return '${time.day}/${time.month}/${time.year}';
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final textColor = isDark ? Colors.white : kNavy;
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : kGrey;
+    final avatarBg = isDark ? const Color(0xFF334155) : kAmberLight;
+
     return Row(
       children: <Widget>[
         CircleAvatar(
           radius: 22,
-          backgroundColor: kAmberLight,
+          backgroundColor: avatarBg,
           backgroundImage:
           post.authorAvatar.isNotEmpty ? NetworkImage(post.authorAvatar) : null,
           child: post.authorAvatar.isEmpty
-              ? const Icon(Icons.person, color: kNavy)
+              ? Icon(Icons.person, color: textColor)
               : null,
         ),
         const SizedBox(width: 10),
@@ -47,8 +52,8 @@ class PostHeader extends StatelessWidget {
             children: <Widget>[
               Text(
                 post.authorName,
-                style: const TextStyle(
-                  color: kNavy,
+                style: TextStyle(
+                  color: textColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
@@ -56,8 +61,8 @@ class PostHeader extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 _timeAgo(post.createdAt),
-                style: const TextStyle(
-                  color: kGrey,
+                style: TextStyle(
+                  color: subTextColor,
                   fontSize: 12,
                 ),
               ),
@@ -66,7 +71,7 @@ class PostHeader extends StatelessWidget {
         ),
         IconButton(
           onPressed: onMorePressed,
-          icon: const Icon(Icons.more_horiz_rounded, color: kGrey),
+          icon: Icon(Icons.more_horiz_rounded, color: subTextColor),
           tooltip: isAdmin ? 'Tùy chọn quản trị' : 'Tùy chọn',
         ),
       ],

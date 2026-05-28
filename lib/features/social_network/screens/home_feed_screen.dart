@@ -246,6 +246,15 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   Future<void> _showCreatePostDialog() async {
     final contentController = TextEditingController();
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final dialogBg = isDark ? const Color(0xFF111827) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF111827);
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF6B7280);
+    final inputBg = isDark ? const Color(0xFF1F2937) : const Color(0xFFF3F4F6);
+    final borderColor = isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB);
+
     XFile? selectedImage;
     bool isPosting = false;
 
@@ -255,7 +264,17 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Tạo bài viết'),
+              backgroundColor: dialogBg,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              title: Text(
+                'Tạo bài viết',
+                style: TextStyle(
+                  color: textColor,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
                 child: SingleChildScrollView(
@@ -265,9 +284,30 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       TextField(
                         controller: contentController,
                         maxLines: 4,
-                        decoration: const InputDecoration(
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 15,
+                        ),
+                        cursorColor: kAmber,
+                        decoration: InputDecoration(
                           hintText: 'Bạn đang nghĩ gì?',
-                          border: OutlineInputBorder(),
+                          hintStyle: TextStyle(
+                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF9CA3AF),
+                          ),
+                          filled: true,
+                          fillColor: inputBg,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: borderColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: borderColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(color: kAmber, width: 1.4),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -285,6 +325,13 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         ),
                       const SizedBox(height: 12),
                       OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: isDark ? Colors.white : kNavy,
+                          side: BorderSide(color: borderColor),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                         onPressed: isPosting
                             ? null
                             : () async {
@@ -310,9 +357,11 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               ),
               actions: <Widget>[
                 TextButton(
-                  onPressed:
-                  isPosting ? null : () => Navigator.pop(dialogContext),
-                  child: const Text('Hủy'),
+                  onPressed: isPosting ? null : () => Navigator.pop(dialogContext),
+                  child: Text(
+                    'Hủy',
+                    style: TextStyle(color: subTextColor),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: isPosting
@@ -573,32 +622,40 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final feedBg = isDark ? const Color(0xFF0F172A) : kFeedBg;
+    final cardBg = isDark ? const Color(0xFF111827) : kWhite;
+    final textColor = isDark ? Colors.white : kNavy;
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : kGrey;
+
     return Scaffold(
-      backgroundColor: kFeedBg,
+      backgroundColor: feedBg,
       appBar: AppBar(
-        backgroundColor: kWhite,
+        backgroundColor: cardBg,
         elevation: 0,
         centerTitle: false,
-        title: const Text(
+        title: Text(
           'Bảng tin',
           style: TextStyle(
-            color: kNavy,
+            color: textColor,
             fontWeight: FontWeight.w800,
           ),
         ),
         actions: <Widget>[
           IconButton(
             onPressed: () {},
-            icon: const Icon(
+            icon: Icon(
               Icons.notifications_none_rounded,
-              color: kNavy,
+              color: textColor,
             ),
           ),
           IconButton(
             onPressed: _isSigningOut ? null : _handleSignOut,
-            icon: const Icon(
+            icon: Icon(
               Icons.person_outline_rounded,
-              color: kNavy,
+              color: textColor,
             ),
           ),
         ],
@@ -616,6 +673,10 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               currentUserName: user?.displayName ?? user?.email ?? 'Người dùng',
               currentUserAvatar: user?.photoURL ?? '',
               onCreatePost: _showCreatePostDialog,
+              backgroundColor: cardBg,
+              textColor: textColor,
+              subTextColor: subTextColor,
+              inputColor: isDark ? const Color(0xFF1F2937) : const Color(0xFFF1F5F9),
             ),
             if (_posts.isEmpty)
               const Padding(
