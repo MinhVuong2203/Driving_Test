@@ -10,23 +10,30 @@ class OtherLoginMethod extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final textColor = isDark ? const Color(0xFFE5E7EB) : const Color(0xFF374151);
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF6B7280);
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE5E7EB);
+    final buttonBg = isDark ? const Color(0xFF1F2937) : Colors.white;
+
     return Column(
       children: <Widget>[
         Row(
           children: <Widget>[
-            Expanded(child: Divider(color: Colors.grey.withOpacity(0.25))),
+            Expanded(child: Divider(color: borderColor)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
                 'Hoặc tiếp tục bằng',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: subTextColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-            Expanded(child: Divider(color: Colors.grey.withOpacity(0.25))),
+            Expanded(child: Divider(color: borderColor)),
           ],
         ),
         const SizedBox(height: 16),
@@ -37,6 +44,9 @@ class OtherLoginMethod extends StatelessWidget {
                 icon: Icons.g_mobiledata_rounded,
                 label: 'Google',
                 onTap: onGoogleTap,
+                backgroundColor: buttonBg,
+                textColor: textColor,
+                borderColor: borderColor,
               ),
             ),
           ],
@@ -50,11 +60,17 @@ class _LoginMethodButton extends StatelessWidget {
   const _LoginMethodButton({
     required this.icon,
     required this.label,
+    required this.backgroundColor,
+    required this.textColor,
+    required this.borderColor,
     this.onTap,
   });
 
   final IconData icon;
   final String label;
+  final Color backgroundColor;
+  final Color textColor;
+  final Color borderColor;
   final VoidCallback? onTap;
 
   @override
@@ -65,27 +81,20 @@ class _LoginMethodButton extends StatelessWidget {
       child: Ink(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey.withOpacity(0.18)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: borderColor),
         ),
         child: Column(
           children: <Widget>[
-            Icon(icon, size: 28, color: Colors.black87),
+            Icon(icon, size: 30, color: textColor),
             const SizedBox(height: 6),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                fontWeight: FontWeight.w700,
+                color: textColor,
               ),
             ),
           ],

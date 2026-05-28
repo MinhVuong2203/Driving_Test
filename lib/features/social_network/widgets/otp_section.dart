@@ -20,6 +20,20 @@ class OtpSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
+    final textColor =
+    isDark ? Colors.white : kNavy;
+
+    final subTextColor =
+    isDark ? const Color(0xFFCBD5E1) : kGrey;
+
+    final inputBg =
+    isDark ? const Color(0xFF1F2937) : kInputBg;
+
+    final cardBg =
+    isDark ? const Color(0xFF111827) : Colors.white;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -34,7 +48,8 @@ class OtpSection extends StatelessWidget {
             ),
             label: Text(otpSent ? 'Gửi lại OTP' : 'Gửi mã OTP đến email'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: kNavy,
+              foregroundColor: textColor,
+              backgroundColor: cardBg,
               side: BorderSide(
                 color: otpSent ? kGreen : kAmber,
                 width: 1.8,
@@ -63,10 +78,10 @@ class OtpSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         // ── Label ─────────────────────────────────────────────────────────────
-        const Text(
+        Text(
           'Mã OTP',
           style: TextStyle(
-            color: kNavy,
+            color: textColor,
             fontSize: 13,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
@@ -81,8 +96,8 @@ class OtpSection extends StatelessWidget {
           maxLength: 6,
           validator: validator,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: kNavy,
+          style: TextStyle(
+            color: textColor,
             fontSize: 22,
             fontWeight: FontWeight.w700,
             letterSpacing: 12,
@@ -90,13 +105,13 @@ class OtpSection extends StatelessWidget {
           decoration: InputDecoration(
             hintText: '------',
             hintStyle: TextStyle(
-              color: kGrey.withOpacity(0.4),
+              color: subTextColor.withValues(alpha: 0.45),
               fontSize: 22,
               letterSpacing: 12,
             ),
             counterText: '',
             filled: true,
-            fillColor: kInputBg,
+            fillColor: inputBg,
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
             suffixIcon: otpSent
                 ? const Icon(Icons.verified_rounded, color: kGreen, size: 20)
@@ -108,7 +123,11 @@ class OtpSection extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: otpSent ? kGreen.withOpacity(0.4) : Colors.transparent,
+                color: otpSent
+                    ? kGreen.withValues(alpha: 0.4)
+                    : (isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.transparent),
                 width: 1.5,
               ),
             ),

@@ -26,7 +26,7 @@ class LoginHeader extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: amber.withValues(alpha: 0.4),
+                  color: amber.withValues(alpha: 0.35),
                   blurRadius: 24,
                   spreadRadius: 4,
                 ),
@@ -41,16 +41,14 @@ class LoginHeader extends StatelessWidget {
               color: white,
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             'Ôn thi GPLX nhanh – đúng – chắc',
             style: TextStyle(
-              color: white.withValues(alpha: 0.6),
+              color: white.withValues(alpha: 0.75),
               fontSize: 14,
-              letterSpacing: 0.3,
             ),
           ),
           const SizedBox(height: 36),
@@ -77,8 +75,7 @@ class SectionLabel extends StatelessWidget {
       style: TextStyle(
         color: color,
         fontSize: 13,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.2,
+        fontWeight: FontWeight.w700,
       ),
     );
   }
@@ -88,20 +85,29 @@ class OrDivider extends StatelessWidget {
   const OrDivider({
     super.key,
     required this.grey,
+    this.textColor,
   });
 
   final Color grey;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Expanded(child: Divider(color: grey.withValues(alpha: 0.3))),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text('hoặc', style: TextStyle(fontSize: 12)),
+        Expanded(child: Divider(color: grey.withValues(alpha: 0.35))),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'hoặc',
+            style: TextStyle(
+              fontSize: 12,
+              color: textColor ?? grey,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
-        Expanded(child: Divider(color: grey.withValues(alpha: 0.3))),
+        Expanded(child: Divider(color: grey.withValues(alpha: 0.35))),
       ],
     );
   }
@@ -122,9 +128,9 @@ class LoginErrorBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: errorColor.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: errorColor.withValues(alpha: 0.3)),
+        color: errorColor.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: errorColor.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: <Widget>[

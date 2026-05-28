@@ -109,15 +109,25 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final cardBg = isDark ? const Color(0xFF111827) : Colors.white;
+    final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final subTextColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF94A3B8);
+    final borderColor = isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB);
+    // final actionBg = isDark ? const Color(0xFF1F2937) : Colors.white;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: kWhite,
+        color: cardBg,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: kNavy.withOpacity(0.05),
+            color: isDark
+                ? Colors.black.withOpacity(0.25)
+                : kNavy.withOpacity(0.05),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -147,8 +157,8 @@ class PostCard extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       post.authorName,
-                      style: const TextStyle(
-                        color: kNavy,
+                      style: TextStyle(
+                        color: textColor,
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),
@@ -156,8 +166,8 @@ class PostCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       _timeAgo(post.createdAt),
-                      style: const TextStyle(
-                        color: kGrey,
+                      style: TextStyle(
+                        color: subTextColor,
                         fontSize: 12,
                       ),
                     ),
@@ -166,15 +176,18 @@ class PostCard extends StatelessWidget {
               ),
               IconButton(
                 onPressed: () => _showMoreMenu(context),
-                icon: const Icon(Icons.more_horiz_rounded, color: kGrey),
+                icon: Icon(
+                  Icons.more_horiz_rounded,
+                  color: subTextColor,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             post.content,
-            style: const TextStyle(
-              color: kNavy,
+            style: TextStyle(
+              color: textColor,
               fontSize: 14,
               height: 1.6,
             ),
@@ -223,8 +236,8 @@ class PostCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     '${post.likeCount} lượt thích',
-                    style: const TextStyle(
-                      color: kGrey,
+                    style: TextStyle(
+                      color: subTextColor,
                       fontSize: 13,
                     ),
                   ),
@@ -237,8 +250,8 @@ class PostCard extends StatelessWidget {
                   final commentCount = snapshot.data ?? post.commentCount;
                   return Text(
                     '$commentCount bình luận',
-                    style: const TextStyle(
-                      color: kGrey,
+                    style: TextStyle(
+                      color: subTextColor,
                       fontSize: 13,
                     ),
                   );
@@ -247,7 +260,10 @@ class PostCard extends StatelessWidget {
             ],
           ),
 
-          const Divider(height: 24),
+          Divider(
+            height: 24,
+            color: borderColor,
+          ),
           Row(
             children: <Widget>[
               Expanded(
@@ -260,7 +276,7 @@ class PostCard extends StatelessWidget {
                   label: Text(
                     'Thích',
                     style: TextStyle(
-                      color: isLiked ? kAmber : kNavy,
+                      color: isLiked ? kAmber : textColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -269,11 +285,14 @@ class PostCard extends StatelessWidget {
               Expanded(
                 child: TextButton.icon(
                   onPressed: onComment,
-                  icon: const Icon(Icons.mode_comment_outlined, color: kGrey),
-                  label: const Text(
+                  icon: Icon(
+                    Icons.mode_comment_outlined,
+                    color: subTextColor,
+                  ),
+                  label: Text(
                     'Bình luận',
                     style: TextStyle(
-                      color: kNavy,
+                      color: textColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
