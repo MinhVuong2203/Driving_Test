@@ -21,19 +21,33 @@ class MenuGrid extends StatelessWidget {
         icon: Icons.close_rounded,
         text: 'Câu sai',
         color: const Color(0xFFEF4444),
-        route: const ExamTopicQuetsScreen(topicId: -1, mode: 4, topicTitle: 'Câu làm sai'),
+        route: const ExamTopicQuetsScreen(
+          topicId: -1,
+          mode: 4,
+          gradeInstantly: true,
+          topicTitle: 'Câu làm sai',
+        ),
       ),
       _MenuItem(
         icon: Icons.bookmark_rounded,
         text: 'Đã lưu',
         color: const Color(0xFFF59E0B),
-        route: const ExamTopicQuetsScreen(topicId: -1, mode: 3, topicTitle: 'Câu đã lưu'),
+        route: const ExamTopicQuetsScreen(
+          topicId: -1,
+          mode: 3,
+          gradeInstantly: true,
+          topicTitle: 'Câu đã lưu',
+        ),
       ),
       _MenuItem(
         icon: Icons.menu_book_rounded,
         text: 'Câu khó',
         color: const Color(0xFF16A34A),
-        route: const ExamTopicQuetsScreen(topicId: -1, mode: 2, topicTitle: 'Câu hỏi điểm liệt'),
+        route: const ExamTopicQuetsScreen(
+          topicId: -1,
+          mode: 2,
+          topicTitle: 'Câu hỏi điểm liệt',
+        ),
       ),
       _MenuItem(
         icon: Icons.change_history_rounded,
