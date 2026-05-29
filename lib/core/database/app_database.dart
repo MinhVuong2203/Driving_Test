@@ -31,20 +31,30 @@ import 'tables/exam_history_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [
-  Topics, Questions, ExamGroups, Ranks, ExamSets,
-  ExamSetQuestions, PracticeSessions, UserAnswers,
-  WrongQuestions, ExamHistory, TrafficSigns, Setting,
-  RecognitionHistoryTable, SavedQuestions
-])
+@DriftDatabase(
+  tables: [
+    Topics,
+    Questions,
+    ExamGroups,
+    Ranks,
+    ExamSets,
+    ExamSetQuestions,
+    PracticeSessions,
+    UserAnswers,
+    WrongQuestions,
+    ExamHistory,
+    TrafficSigns,
+    Setting,
+    RecognitionHistoryTable,
+    SavedQuestions,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection()){
-  }
+  AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
-  @override
   bool get logStatements => kDebugMode;
 
   @override
@@ -61,6 +71,24 @@ class AppDatabase extends _$AppDatabase {
       await SeedsExamSetQuestions.seedExamSetQuestions(this);
       await SeedsTrafficSigns.seedTrafficSigns(this);
     },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        final tableRows = await customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table'",
+        ).get();
+        final tableNames = tableRows
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!tableNames.contains('wrong_questions')) {
+          await m.createTable(wrongQuestions);
+        }
+        if (!tableNames.contains('saved_questions')) {
+          await m.createTable(savedQuestions);
+        }
+      }
+    },
   );
 }
 
@@ -69,14 +97,6 @@ LazyDatabase _openConnection() {
     final dir = await getApplicationDocumentsDirectory();
     final file = File(p.join(dir.path, 'gplx_app.db'));
 
-    // Xóa db cũ mỗi lần mở app — CHỈ DÙNG KHI DEV
-    if (await file.exists()) {
-      await file.delete();
-      print('✅ Đã xóa DB cũ');
-    }
-
-
     return NativeDatabase.createInBackground(file);
   });
 }
-
