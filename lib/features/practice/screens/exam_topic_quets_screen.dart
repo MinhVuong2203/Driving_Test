@@ -27,10 +27,12 @@ class ExamTopicQuetsScreen extends StatefulWidget {
 }
 
 class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
-  late final ExamSetsQuestRepository repo =
-  ExamSetsQuestRepository(ExamSetsQuestDao(DBProvider().db));
-  late final UserProgressRepository userProgressRepo =
-  UserProgressRepository(UserProgressDao(DBProvider().db));
+  late final ExamSetsQuestRepository repo = ExamSetsQuestRepository(
+    ExamSetsQuestDao(DBProvider().db),
+  );
+  late final UserProgressRepository userProgressRepo = UserProgressRepository(
+    UserProgressDao(DBProvider().db),
+  );
 
   List<Question> questions = [];
   int currentIndex = 0;
@@ -47,6 +49,37 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
   bool _isLoading = true;
   bool _isSubmitting = false;
   String? _error;
+
+  bool get _isSavedMode => widget.mode == 3;
+  bool get _isWrongMode => widget.mode == 4;
+  bool get _isCollectionMode => _isSavedMode || _isWrongMode;
+
+  String get _screenTitle {
+    final customTitle = widget.topicTitle?.trim();
+    if (customTitle != null && customTitle.isNotEmpty) {
+      return customTitle;
+    }
+    if (_isSavedMode) return 'Câu đã lưu';
+    if (_isWrongMode) return 'Câu làm sai';
+    if (widget.mode == 2 && widget.topicId <= 0) return 'Câu hỏi điểm liệt';
+    return 'Ôn luyện theo chủ đề';
+  }
+
+  String get _emptyTitle {
+    if (_isSavedMode) return 'Chưa có câu đã lưu';
+    if (_isWrongMode) return 'Chưa có câu sai';
+    return 'Không có câu hỏi';
+  }
+
+  String get _emptyMessage {
+    if (_isSavedMode) {
+      return 'Nhấn biểu tượng bookmark ở câu hỏi bất kỳ để lưu lại và ôn sau.';
+    }
+    if (_isWrongMode) {
+      return 'Các câu trả lời sai trong lúc ôn luyện hoặc thi thử sẽ xuất hiện ở đây.';
+    }
+    return 'Không có câu hỏi cho chủ đề này.';
+  }
 
   @override
   void initState() {
@@ -76,11 +109,13 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
         final all = await repo.getAllQuestions();
         data = all.where((q) => q.isCritical == 1).toList();
       } else {
-        data = widget.topicId > 0 ? await repo.getQuestionsByTopic(widget.topicId) : await repo.getAllQuestions();
+        data = widget.topicId > 0
+            ? await repo.getQuestionsByTopic(widget.topicId)
+            : await repo.getAllQuestions();
       }
 
       final filtered = _applyMode(data, widget.mode);
-      
+
       // Load bookmarked status
       final savedQuestions = await userProgressRepo.getSavedQuestions();
       bookmarkedQuestionIds.clear();
@@ -98,7 +133,9 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _error = 'Không tải được câu hỏi theo chủ đề.';
+        _error = _isCollectionMode
+            ? 'Không tải được danh sách $_screenTitle.'
+            : 'Không tải được câu hỏi theo chủ đề.';
       });
     }
   }
@@ -165,6 +202,41 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     return _normalize(q.correctAnswer) == _normalize(selectedLabel);
   }
 
+  void _removeQuestionFromCurrentList(int questionId) {
+    final removedIndex = questions.indexWhere((q) => q.id == questionId);
+    if (removedIndex == -1) return;
+
+    questions.removeAt(removedIndex);
+    selectedAnswers.remove(questionId);
+    judgedQuestionIds.remove(questionId);
+
+    if (questions.isEmpty) {
+      currentIndex = 0;
+    } else if (currentIndex >= questions.length) {
+      currentIndex = questions.length - 1;
+    }
+  }
+
+  Future<void> _toggleBookmark(int questionId, bool isBookmarked) async {
+    await userProgressRepo.toggleSavedQuestion(questionId);
+    if (!mounted) return;
+
+    setState(() {
+      if (isBookmarked) {
+        bookmarkedQuestionIds.remove(questionId);
+        if (_isSavedMode) {
+          _removeQuestionFromCurrentList(questionId);
+        }
+      } else {
+        bookmarkedQuestionIds.add(questionId);
+      }
+    });
+
+    if (questions.isNotEmpty) {
+      _scheduleStripScroll();
+    }
+  }
+
   int _countCorrectAnswers() {
     var correct = 0;
     for (final q in questions) {
@@ -190,7 +262,10 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
         .toList();
   }
 
-  String _optionTextByLabel(List<MapEntry<String, String>> options, String label) {
+  String _optionTextByLabel(
+    List<MapEntry<String, String>> options,
+    String label,
+  ) {
     for (final opt in options) {
       if (_normalize(opt.key) == _normalize(label)) return opt.value;
     }
@@ -204,12 +279,19 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     final total = questions.length;
     final answered = selectedAnswers.length;
     final correct = _countCorrectAnswers();
+    final correctedWrongQuestionIds = <int>{};
 
     // Lưu vào database
     for (final q in questions) {
       final selected = selectedAnswers[q.id];
       if (selected != null) {
         final ok = _isCorrect(q, selected);
+        if (_isWrongMode && ok) {
+          correctedWrongQuestionIds.add(q.id);
+        }
+        if (widget.gradeInstantly && judgedQuestionIds.contains(q.id)) {
+          continue;
+        }
         await userProgressRepo.logAnswer(q.id, selected, ok);
         if (!ok) {
           await userProgressRepo.logWrongAnswer(q.id);
@@ -228,7 +310,7 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
         title: const Text('Kết quả ôn luyện'),
         content: Text(
           'Đã làm: $answered/$total câu\n'
-              'Đúng: $correct/$total câu',
+          'Đúng: $correct/$total câu',
         ),
         actions: [
           TextButton(
@@ -247,6 +329,17 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     );
 
     _isSubmitting = false;
+
+    if (!mounted || correctedWrongQuestionIds.isEmpty) return;
+
+    setState(() {
+      for (final questionId in correctedWrongQuestionIds) {
+        _removeQuestionFromCurrentList(questionId);
+      }
+    });
+    if (questions.isNotEmpty) {
+      _scheduleStripScroll();
+    }
   }
 
   void _onSelectAnswer(Question q, String label) {
@@ -264,7 +357,7 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
 
     if (widget.gradeInstantly) {
       final ok = _isCorrect(q, label);
-      
+
       // Lưu vào database ngay lập tức
       userProgressRepo.logAnswer(q.id, label, ok);
       if (!ok) {
@@ -285,19 +378,15 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.topicTitle?.trim().isNotEmpty == true
-        ? widget.topicTitle!.trim()
-        : 'Ôn luyện theo chủ đề';
+    final title = _screenTitle;
 
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Ôn luyện theo chủ đề')),
+        appBar: AppBar(title: Text(title)),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -319,9 +408,13 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
 
     if (questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Ôn luyện theo chủ đề')),
-        body: const Center(
-          child: Text('Không có câu hỏi cho chủ đề này.'),
+        appBar: AppBar(title: Text(title)),
+        body: _EmptyQuestionState(
+          icon: _isSavedMode
+              ? Icons.bookmark_border_rounded
+              : (_isWrongMode ? Icons.close_rounded : Icons.quiz_outlined),
+          title: _emptyTitle,
+          message: _emptyMessage,
         ),
       );
     }
@@ -337,8 +430,9 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     final correctText = _optionTextByLabel(opts, correctLabel);
     final explanation = (q.explanation ?? '').trim();
     final selectedLabel = selected ?? '';
-    final selectedText =
-    selectedLabel.isEmpty ? '' : _optionTextByLabel(opts, selectedLabel);
+    final selectedText = selectedLabel.isEmpty
+        ? ''
+        : _optionTextByLabel(opts, selectedLabel);
 
     final showInstantReview = widget.gradeInstantly && isJudged;
     final isLastQuestion = currentIndex == questions.length - 1;
@@ -388,7 +482,10 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                       onPressed: _submitExam,
                       child: const Text(
                         'Nộp bài',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -403,10 +500,13 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 scrollDirection: Axis.horizontal,
                 itemCount: questions.length,
-                separatorBuilder: (_, __) => const SizedBox(width: _numberItemGap),
+                separatorBuilder: (_, _) =>
+                    const SizedBox(width: _numberItemGap),
                 itemBuilder: (_, i) {
                   final active = i == currentIndex;
-                  final hasAnswer = selectedAnswers.containsKey(questions[i].id);
+                  final hasAnswer = selectedAnswers.containsKey(
+                    questions[i].id,
+                  );
 
                   return GestureDetector(
                     onTap: () => _setCurrentIndex(i),
@@ -418,16 +518,21 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                         color: active
                             ? Colors.white
                             : (hasAnswer
-                            ? const Color(0xFFEAF3FF)
-                            : const Color(0xFFF0F0F0)),
+                                  ? const Color(0xFFEAF3FF)
+                                  : const Color(0xFFF0F0F0)),
                         border: Border.all(
-                          color: active ? AppColors.primary : Colors.transparent,
+                          color: active
+                              ? AppColors.primary
+                              : Colors.transparent,
                           width: 2,
                         ),
                       ),
                       child: Text(
                         '${i + 1}',
-                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   );
@@ -455,18 +560,11 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                         ),
                         const Spacer(),
                         IconButton(
-                          onPressed: () async {
-                            await userProgressRepo.toggleSavedQuestion(qId);
-                            setState(() {
-                              if (isBookmarked) {
-                                bookmarkedQuestionIds.remove(qId);
-                              } else {
-                                bookmarkedQuestionIds.add(qId);
-                              }
-                            });
-                          },
+                          onPressed: () => _toggleBookmark(qId, isBookmarked),
                           icon: Icon(
-                            isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                            isBookmarked
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
                             color: const Color(0xFF9E9E9E),
                           ),
                         ),
@@ -511,7 +609,9 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                           borderColor = Colors.black45;
                         }
                       } else {
-                        borderColor = checked ? AppColors.primary : Colors.black;
+                        borderColor = checked
+                            ? AppColors.primary
+                            : Colors.black;
                         stateIcon = checked ? Icons.check : null;
                       }
 
@@ -535,11 +635,13 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                                         width: 2.1,
                                       ),
                                     ),
-                                    child: stateIcon != null ? Icon(
-                                      stateIcon,
-                                      color: iconColor,
-                                      size: 12,
-                                    ) : null,
+                                    child: stateIcon != null
+                                        ? Icon(
+                                            stateIcon,
+                                            color: iconColor,
+                                            size: 12,
+                                          )
+                                        : null,
                                   ),
 
                                   const SizedBox(width: 12),
@@ -586,7 +688,10 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                             const SizedBox(height: 8),
                             Text(
                               'Bạn chọn: ${selectedLabel.isEmpty ? "Chưa chọn" : "$selectedLabel. $selectedText"}',
-                              style: const TextStyle(fontSize: 16, color: Colors.black87),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             Text(
@@ -631,14 +736,16 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
               child: isFirstQuestion
                   ? const SizedBox()
                   : TextButton.icon(
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-                onPressed: () => _setCurrentIndex(currentIndex - 1),
-                icon: const Icon(Icons.chevron_left),
-                label: const Text(
-                  'CÂU TRƯỚC',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => _setCurrentIndex(currentIndex - 1),
+                      icon: const Icon(Icons.chevron_left),
+                      label: const Text(
+                        'CÂU TRƯỚC',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
             ),
             IconButton(
               onPressed: () => _openQuestionSheet(context),
@@ -652,20 +759,22 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
               child: isLastQuestion
                   ? const SizedBox()
                   : TextButton(
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-                onPressed: () => _setCurrentIndex(currentIndex + 1),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'CÂU SAU',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => _setCurrentIndex(currentIndex + 1),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'CÂU SAU',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(width: 4),
+                          Icon(Icons.chevron_right),
+                        ],
+                      ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(Icons.chevron_right),
-                  ],
-                ),
-              ),
             ),
           ],
         ),
@@ -685,12 +794,19 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
             children: [
               Container(
                 color: AppColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 child: Row(
                   children: [
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 28,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     const Text(
@@ -707,7 +823,7 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
               Expanded(
                 child: ListView.separated(
                   itemCount: questions.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (_, i) {
                     final q = questions[i];
                     final opts = _optionsOf(q);
@@ -736,8 +852,9 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                           final chosen = selectedAnswers[q.id] == label;
                           return CircleAvatar(
                             radius: 14,
-                            backgroundColor:
-                            chosen ? AppColors.primary : const Color(0xFFEFEFEF),
+                            backgroundColor: chosen
+                                ? AppColors.primary
+                                : const Color(0xFFEFEFEF),
                             child: Text(
                               label,
                               style: TextStyle(
@@ -757,6 +874,57 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class _EmptyQuestionState extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String message;
+
+  const _EmptyQuestionState({
+    required this.icon,
+    required this.title,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 68,
+              height: 68,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: AppColors.primary, size: 34),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.35,
+                color: Colors.grey.shade700,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

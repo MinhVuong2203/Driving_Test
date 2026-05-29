@@ -1,8 +1,8 @@
 import 'package:driving_test_prep/features/home/screens/traffic_sign_screen.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_list_screens.dart';
+import 'package:driving_test_prep/features/practice/screens/exam_topic_quets_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-
 
 class MenuGrid extends StatelessWidget {
   const MenuGrid({super.key});
@@ -20,16 +20,33 @@ class MenuGrid extends StatelessWidget {
         icon: Icons.close_rounded,
         text: 'Câu sai',
         color: const Color(0xFFEF4444),
+        route: const ExamTopicQuetsScreen(
+          topicId: -1,
+          mode: 4,
+          gradeInstantly: true,
+          topicTitle: 'Câu làm sai',
+        ),
       ),
       _MenuItem(
         icon: Icons.bookmark_rounded,
         text: 'Đã lưu',
         color: const Color(0xFFF59E0B),
+        route: const ExamTopicQuetsScreen(
+          topicId: -1,
+          mode: 3,
+          gradeInstantly: true,
+          topicTitle: 'Câu đã lưu',
+        ),
       ),
       _MenuItem(
         icon: Icons.menu_book_rounded,
         text: 'Câu khó',
         color: const Color(0xFF16A34A),
+        route: const ExamTopicQuetsScreen(
+          topicId: -1,
+          mode: 2,
+          topicTitle: 'Câu hỏi điểm liệt',
+        ),
       ),
       _MenuItem(
         icon: Icons.change_history_rounded,
