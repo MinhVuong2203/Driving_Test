@@ -10,6 +10,8 @@ import '../../../data/repository/exam_sets_quest_repository.dart';
 import '../../../data/repository/user_progress_repository.dart';
 import '../../../shared/utils/constants/app_colors.dart';
 import '../../../shared/widgets/question_image.dart';
+import '../../../shared/widgets/interstitial_ad_helper.dart';
+import '../../../data/repository/admob_config_repository.dart';
 
 class ExamSetsQuestScreen extends StatefulWidget {
   final int examSetId;
@@ -33,6 +35,8 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   late final db = DBProvider().db;
   late final ExamSetsQuestRepository repo;
   late final UserProgressRepository userProgressRepo;
+  final _adHelper = InterstitialAdHelper();
+  final _adMobRepo = AdMobConfigRepository();
 
   List<ExamQuestionView> questions = [];
   int currentIndex = 0;
@@ -56,17 +60,23 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     remaining = Duration(minutes: widget.durationMinutes);
     _loadData();
     _startTimer();
+    _initAd();
   }
 
   @override
   void dispose() {
     timer?.cancel();
+    _adHelper.dispose();
     super.dispose();
   }
-
+  Future<void> _initAd() async {
+    final config = await _adMobRepo.getConfig();
+    _adHelper.setAdUnitId(config.interstitialId);
+    _adHelper.loadAd();
+  }
   Future<void> _loadData() async {
     final data = await repo.getQuestionsByExamSet(widget.examSetId);
-    
+
     final savedQuestions = await userProgressRepo.getSavedQuestions();
     bookmarkedQuestionIds.clear();
     bookmarkedQuestionIds.addAll(savedQuestions.map((q) => q.id));
@@ -169,6 +179,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     }
 
     if (!mounted) return;
+    await _adHelper.showAd();
 
     await showDialog<void>(
       context: context,
@@ -215,7 +226,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
     if (widget.gradeInstantly) {
       final ok = _isCorrect(q, label);
-      
+
       userProgressRepo.logAnswer(q.id, label, ok);
       if (!ok) {
         userProgressRepo.logWrongAnswer(q.id);
