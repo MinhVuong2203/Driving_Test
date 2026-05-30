@@ -11,6 +11,8 @@ class GoogleAuthService {
 
   static Future<UserCredential> signInWithGoogle() async {
     try {
+      await _googleSignIn.signOut();
+
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         throw FirebaseAuthException(
