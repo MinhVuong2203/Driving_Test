@@ -7,6 +7,7 @@ import 'package:driving_test_prep/features/social_network/widgets/login_action_b
 import 'package:driving_test_prep/features/social_network/widgets/login_text_field.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_ui_parts.dart';
 import 'package:driving_test_prep/features/social_network/utils/auth_validators.dart';
+import 'package:driving_test_prep/shared/widgets/account_status_gate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -143,7 +144,10 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
         final User? user = snapshot.data;
         if (user != null) {
-          return const HomeFeedScreen();
+          return const AccountStatusGate(
+            featureName: 'Mang xa hoi',
+            child: HomeFeedScreen(),
+          );
         }
 
         return Scaffold(
