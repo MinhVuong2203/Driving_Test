@@ -6,14 +6,21 @@ class UserProgressRepository {
   UserProgressRepository(this.dao);
 
   Future<List<Question>> getSavedQuestions() => dao.getSavedQuestions();
-  Future<bool> isQuestionSaved(int questionId) => dao.isQuestionSaved(questionId);
-  Future<void> toggleSavedQuestion(int questionId) => dao.toggleSavedQuestion(questionId);
+  Future<bool> isQuestionSaved(int questionId) =>
+      dao.isQuestionSaved(questionId);
+  Future<void> toggleSavedQuestion(int questionId) =>
+      dao.toggleSavedQuestion(questionId);
 
   Future<List<Question>> getWrongQuestions() => dao.getWrongQuestions();
   Future<void> logWrongAnswer(int questionId) => dao.logWrongAnswer(questionId);
-  Future<void> removeWrongQuestion(int questionId) => dao.removeWrongQuestion(questionId);
+  Future<void> removeWrongQuestion(int questionId) =>
+      dao.removeWrongQuestion(questionId);
 
-  Future<void> logAnswer(int questionId, String selectedAnswer, bool isCorrect) {
+  Future<void> logAnswer(
+    int questionId,
+    String selectedAnswer,
+    bool isCorrect,
+  ) {
     return dao.logAnswer(questionId, selectedAnswer, isCorrect);
   }
 
