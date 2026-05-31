@@ -109,6 +109,49 @@ class _InfoScreenState extends State<InfoScreen> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  List<VipPackageModel> _filterPackagesForCurrentVip(
+    List<VipPackageModel> packages,
+    UserVipModel? currentVip,
+  ) {
+    if (currentVip == null || !currentVip.isActive || currentVip.vipId.isEmpty) {
+      return packages;
+    }
+
+    final currentPackage = _findCurrentPackage(packages, currentVip.vipId);
+    if (currentPackage == null) return packages;
+
+    final currentDays = _packageDays(currentPackage);
+
+    return packages.where((package) {
+      final packageDays = _packageDays(package);
+
+      if (packageDays < currentDays) return false;
+
+      if (packageDays == currentDays &&
+          package.vipPrice > currentPackage.vipPrice) {
+        return false;
+      }
+
+      return true;
+    }).toList();
+  }
+
+  VipPackageModel? _findCurrentPackage(
+    List<VipPackageModel> packages,
+    String vipId,
+  ) {
+    for (final package in packages) {
+      if (package.id == vipId) return package;
+    }
+
+    return null;
+  }
+
+  int _packageDays(VipPackageModel package) {
+    if (package.isPeriod) return 1 << 30;
+    return package.vipTime ?? 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -175,84 +218,94 @@ class _InfoScreenState extends State<InfoScreen> {
               ],
             ),
             const SizedBox(height: 10),
-            FutureBuilder<List<VipPackageModel>>(
-              future: _vipPackagesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Padding(
-                    padding: EdgeInsets.only(top: 56),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
+            FutureBuilder<UserVipModel?>(
+              future: _currentVipFuture,
+              builder: (context, vipSnapshot) {
+                return FutureBuilder<List<VipPackageModel>>(
+                  future: _vipPackagesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 56),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
 
-                if (snapshot.hasError) {
-                  return _ErrorState(
-                    message: 'Không tải được gói VIP.',
-                    onRetry: _refreshPackages,
-                  );
-                }
+                    if (snapshot.hasError) {
+                      return _ErrorState(
+                        message: 'Không tải được gói VIP.',
+                        onRetry: _refreshPackages,
+                      );
+                    }
 
-                final packages = snapshot.data ?? [];
-                if (packages.isEmpty) {
-                  return const _EmptyState();
-                }
+                    final packages = _filterPackagesForCurrentVip(
+                      snapshot.data ?? [],
+                      vipSnapshot.data,
+                    );
+                    if (packages.isEmpty) {
+                      return const _EmptyState();
+                    }
 
-                final activeIndex = _currentPackageIndex.clamp(
-                  0,
-                  packages.length - 1,
-                );
+                    final activeIndex = _currentPackageIndex.clamp(
+                      0,
+                      packages.length - 1,
+                    );
 
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 350,
-                      child: PageView.builder(
-                        itemCount: packages.length,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPackageIndex = index;
-                            _selectedPackageId = packages[index].id;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          final package = packages[index];
-
-                          return VipPackageCard(
-                            package: package,
-                            isSelected: true,
-                            isLoading:
-                                _isCreatingPayment &&
-                                (_selectedPackageId == null
-                                    ? index == activeIndex
-                                    : _selectedPackageId == package.id),
-                            onTap: () {
-                              setState(() => _selectedPackageId = package.id);
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 350,
+                          child: PageView.builder(
+                            itemCount: packages.length,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentPackageIndex = index;
+                                _selectedPackageId = packages[index].id;
+                              });
                             },
-                            onPay: () => _pay(package),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        packages.length,
-                        (index) => AnimatedContainer(
-                          duration: const Duration(milliseconds: 180),
-                          width: index == _currentPackageIndex ? 18 : 7,
-                          height: 7,
-                          margin: const EdgeInsets.symmetric(horizontal: 3),
-                          decoration: BoxDecoration(
-                            color: index == activeIndex
-                                ? AppColors.primary
-                                : AppColors.lightBorder,
-                            borderRadius: BorderRadius.circular(99),
+                            itemBuilder: (context, index) {
+                              final package = packages[index];
+
+                              return VipPackageCard(
+                                package: package,
+                                isSelected: true,
+                                isLoading:
+                                    _isCreatingPayment &&
+                                    (_selectedPackageId == null
+                                        ? index == activeIndex
+                                        : _selectedPackageId == package.id),
+                                onTap: () {
+                                  setState(
+                                    () => _selectedPackageId = package.id,
+                                  );
+                                },
+                                onPay: () => _pay(package),
+                              );
+                            },
                           ),
                         ),
-                      ),
-                    ),
-                  ],
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            packages.length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              width: index == activeIndex ? 18 : 7,
+                              height: 7,
+                              margin: const EdgeInsets.symmetric(horizontal: 3),
+                              decoration: BoxDecoration(
+                                color: index == activeIndex
+                                    ? AppColors.primary
+                                    : AppColors.lightBorder,
+                                borderRadius: BorderRadius.circular(99),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
             ),
