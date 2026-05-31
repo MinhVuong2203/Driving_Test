@@ -5,7 +5,9 @@ import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class MenuGrid extends StatelessWidget {
-  const MenuGrid({super.key});
+  final VoidCallback? onNavigationComplete;
+
+  const MenuGrid({super.key, this.onNavigationComplete});
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +99,13 @@ class MenuGrid extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () {
+              onTap: () async {
                 if (item.route != null) {
-                  Navigator.push(
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => item.route!),
                   );
+                  onNavigationComplete?.call();
                 }
               },
               child: Padding(

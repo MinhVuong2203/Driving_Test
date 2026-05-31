@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final Future<bool> _shouldShowProBanner;
+  int _progressRefreshTrigger = 0;
 
   @override
   void initState() {
@@ -32,6 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (_) {
       return false;
     }
+  }
+
+  void _refreshProgress() {
+    if (!mounted) return;
+    setState(() {
+      _progressRefreshTrigger++;
+    });
+  }
+
+  Future<void> _openPage(Widget page) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+    _refreshProgress();
   }
 
   @override
@@ -92,9 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-                  const MenuGrid(),
+                  MenuGrid(onNavigationComplete: _refreshProgress),
                   const SizedBox(height: 16),
-                  ProgressCard(),
+                  ProgressCard(refreshTrigger: _progressRefreshTrigger),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,9 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         'Ôn tập theo chủ đề',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0,
-                            ),
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0,
+                        ),
                       ),
                       TextButton(
                         onPressed: () {},
@@ -122,12 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     accentColor: const Color(0xFF2F80ED),
                     icon: Icons.route_rounded,
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ExamTopicScreen(topicId: 1),
-                        ),
-                      );
+                      _openPage(const ExamTopicScreen(topicId: 1));
                     },
                   ),
                   TopicCard(
@@ -140,12 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     accentColor: const Color(0xFFFF7A45),
                     icon: Icons.volunteer_activism_rounded,
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ExamTopicScreen(topicId: 2),
-                        ),
-                      );
+                      _openPage(const ExamTopicScreen(topicId: 2));
                     },
                   ),
                   TopicCard(
@@ -157,12 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     accentColor: const Color(0xFF14B8A6),
                     icon: Icons.sports_motorsports_rounded,
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ExamTopicScreen(topicId: 3),
-                        ),
-                      );
+                      _openPage(const ExamTopicScreen(topicId: 3));
                     },
                   ),
                   TopicCard(
@@ -174,12 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     accentColor: const Color(0xFF8B5CF6),
                     icon: Icons.build_circle_rounded,
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ExamTopicScreen(topicId: 4),
-                        ),
-                      );
+                      _openPage(const ExamTopicScreen(topicId: 4));
                     },
                   ),
                   TopicCard(
@@ -191,12 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     accentColor: const Color(0xFFEF4444),
                     icon: Icons.traffic_rounded,
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ExamTopicScreen(topicId: 5),
-                        ),
-                      );
+                      _openPage(const ExamTopicScreen(topicId: 5));
                     },
                   ),
                   TopicCard(
@@ -208,12 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     accentColor: const Color(0xFF06B6D4),
                     icon: Icons.map_rounded,
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ExamTopicScreen(topicId: 6),
-                        ),
-                      );
+                      _openPage(const ExamTopicScreen(topicId: 6));
                     },
                   ),
                   const TopicCard(
@@ -261,7 +244,10 @@ class _HeroHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(10),
@@ -324,10 +310,7 @@ class _GlassIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const _GlassIconButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _GlassIconButton({required this.icon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
