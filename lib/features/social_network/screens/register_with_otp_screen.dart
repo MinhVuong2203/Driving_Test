@@ -163,6 +163,9 @@ class _RegisterWithOtpScreenState extends State<RegisterWithOtpScreen> {
         'displayName': displayName,
         'role': 'user',
         'status': 'active',
+        'reminder_wrong': false,
+        'wrong_reminder_enabled': true,
+        'fcm_tokens': <String>[],
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
