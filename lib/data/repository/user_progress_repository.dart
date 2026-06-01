@@ -25,4 +25,8 @@ class UserProgressRepository {
   }
 
   Future<Map<String, int>> getProgressStats() => dao.getProgressStats();
+  Future<Map<int, Map<String, int>>> getTopicProgressStats() =>
+      dao.getTopicProgressStats();
+  Future<Map<String, int>> getCriticalProgressStats() =>
+      dao.getCriticalProgressStats();
 }

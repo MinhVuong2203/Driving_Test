@@ -1,11 +1,12 @@
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_list_screen.dart';
 import 'package:driving_test_prep/features/home/screens/home_screen.dart';
 import 'package:driving_test_prep/features/profile/screens/info_screen.dart';
 import 'package:driving_test_prep/features/recognition_ai/screens/recognition_home_screen.dart';
+import 'package:driving_test_prep/shared/widgets/account_status_gate.dart';
 import '../../features/social_network/screens/email_login_screen.dart';
+import '../../features/social_network/screens/home_feed_screen.dart';
 import '../screen/login_view.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -20,16 +21,23 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   List<Widget> get screens => [
     const CenterListScreen(),
-    FirebaseAuth.instance.currentUser == null
-        ? LoginScreen(
+    AccountStatusGate(
+      featureName: 'Nhận dạng biển báo',
+      unauthenticatedChild: LoginScreen(
       onLoginSuccess: (_) async {
         if (!mounted) return;
         setState(() {}); // login xong -> rebuild để hiện RecognitionHomeScreen
       },
       fallbackSuccessScreen: const SizedBox.shrink(),
-    ) : RecognitionHomeScreen(onUpgradeVip: () => _onItemTapped(4)),
+      ),
+      child: RecognitionHomeScreen(onUpgradeVip: () => _onItemTapped(4)),
+    ),
     HomeScreen(onUpgradeVip: () => _onItemTapped(4)),
-    EmailLoginScreen(),
+    const AccountStatusGate(
+      featureName: 'Diễn đàn',
+      unauthenticatedChild: EmailLoginScreen(),
+      child: HomeFeedScreen(),
+    ),
     const InfoScreen(),
   ];
 
@@ -46,7 +54,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     'Đào tạo',
     'Quét',
     'Ôn thi',
-    'Mạng xã hội',
+    'Diễn đàn',
     'Thông tin',
   ];
 
