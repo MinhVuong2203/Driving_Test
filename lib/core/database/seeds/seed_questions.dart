@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
-import 'package:driving_test_prep/data/services/question_image_cache_service.dart';
+import 'package:driving_test_prep/data/services/sqlite/question_image_cache_service.dart';
 import 'package:flutter/services.dart';
 
 class SeedsQuestions {

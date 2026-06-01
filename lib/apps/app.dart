@@ -1,7 +1,9 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
-import 'package:driving_test_prep/data/services/question_image_cache_service.dart';
+import 'package:driving_test_prep/data/services/sqlite/question_image_cache_service.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
+import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
+import 'package:driving_test_prep/features/overlay/screens/wrong_question_reminder_overlay.dart';
 import 'package:driving_test_prep/shared/widgets/bottom_nav_bar.dart';
 import 'package:driving_test_prep/shared/widgets/question_data_download_banner.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,18 @@ class _MyAppState extends State<MyApp> {
     }
 
     setState(() => _loaded = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 260), () {
+      if (!mounted) return;
+
+      final shouldOpen =
+          WrongQuestionNotificationService.instance.consumePendingOpenOverlay();
+
+      if (shouldOpen) {
+        wrongQuestionReminderOverlayKey.currentState?.showFromNotification();
+      }
+        });
+      });
   }
 
   @override
@@ -66,6 +80,7 @@ class _MyAppState extends State<MyApp> {
               children: [
                 if (child != null) child,
                 const QuestionDataDownloadBanner(),
+                WrongQuestionReminderOverlay(key: wrongQuestionReminderOverlayKey)
               ],
             );
           },

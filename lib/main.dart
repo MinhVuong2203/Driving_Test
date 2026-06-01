@@ -1,6 +1,7 @@
 import 'package:driving_test_prep/UserListPage.dart';
 import 'package:driving_test_prep/apps/app.dart';
 import 'package:driving_test_prep/apps/app_test.dart';
+import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,18 +14,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await WrongQuestionNotificationService.instance.init();
+
+  await WrongQuestionNotificationService.instance
+      .scheduleIfHasWrongQuestionsAfter(const Duration(seconds: 10));
+
   //Luồng chính
   runApp(const MyApp());
-
-  // Để test UserListPage
-  // runApp(
-  //   const MaterialApp(
-  //     home: UserListPage(),
-  //   ),
-  // );
-
-
-
-  //runApp(const MyAppTest());
 
 }
