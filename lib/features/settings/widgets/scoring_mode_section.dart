@@ -39,7 +39,9 @@ class ScoringModeSection extends StatelessWidget {
           textColor: primaryTextColor,
         ),
         Container(
-          color: cardColor,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.cardDark
+              : AppColors.cardLight,
 
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
           child: Column(
@@ -90,7 +92,9 @@ class _ScoringOptionTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: cardColor,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.cardDark
+            : AppColors.cardLight,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

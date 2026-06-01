@@ -19,6 +19,9 @@ class SettingDao {
         models: const Value(0),
         vibration: const Value(1),
         mode: const Value(1),
+        wrongReminderEnabled: const Value(1),
+        reminderSyncDirty: const Value(1),
+        lastSyncedReminderWrong: const Value(0),
       ),
       mode: InsertMode.insertOrIgnore, // ✅ Không ghi đè nếu đã tồn tại
     );
@@ -42,5 +45,40 @@ class SettingDao {
   Future<void> updateRankId(String rankId) async {
     await (db.update(db.setting)..where((s) => s.SettingId.equals(1)))
         .write(SettingCompanion(rankId: Value(rankId)));
+  }
+
+  Future<bool> isWrongReminderEnabled() async {
+    final setting = await getSetting();
+    return (setting?.wrongReminderEnabled ?? 1) == 1;
+  }
+
+  Future<void> updateWrongReminderEnabled(bool enabled) async {
+    await (db.update(db.setting)..where((s) => s.SettingId.equals(1))).write(
+      SettingCompanion(
+        wrongReminderEnabled: Value(enabled ? 1 : 0),
+        reminderSyncDirty: const Value(1),
+      ),
+    );
+  }
+
+  Future<void> markReminderSyncDirty() async {
+    await (db.update(db.setting)..where((s) => s.SettingId.equals(1))).write(
+      const SettingCompanion(reminderSyncDirty: Value(1)),
+    );
+  }
+
+  Future<void> markReminderSyncClean() async {
+    await (db.update(db.setting)..where((s) => s.SettingId.equals(1))).write(
+      const SettingCompanion(reminderSyncDirty: Value(0)),
+    );
+  }
+
+  Future<void> markReminderSyncCleanWithValue(bool reminderWrong) async {
+    await (db.update(db.setting)..where((s) => s.SettingId.equals(1))).write(
+      SettingCompanion(
+        reminderSyncDirty: const Value(0),
+        lastSyncedReminderWrong: Value(reminderWrong ? 1 : 0),
+      ),
+    );
   }
 }

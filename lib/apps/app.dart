@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/services/sqlite/question_image_cache_service.dart';
@@ -18,22 +20,30 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _loaded = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     QuestionImageCacheService.instance.startBackgroundDownload();
     _warmUpTrafficViolations();
     loadSetting();
   }
 
-  Future<void> _warmUpTrafficViolations() async {
-    try {
-      await TrafficViolationRepository.localFirst().syncIfNeeded();
-    } catch (_) {
-      // Lần đầu chưa có mạng/backend thì màn tra cứu sẽ thử sync lại khi cần.
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(
+        WrongQuestionNotificationService.instance.syncCurrentReminderState(),
+      );
     }
   }
 
@@ -51,17 +61,21 @@ class _MyAppState extends State<MyApp> {
 
     setState(() => _loaded = true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 260), () {
-      if (!mounted) return;
+      unawaited(Future.delayed(const Duration(milliseconds: 260), () {
+        if (!mounted) return;
 
-      final shouldOpen =
-          WrongQuestionNotificationService.instance.consumePendingOpenOverlay();
+        final shouldOpen =
+            WrongQuestionNotificationService.instance.consumePendingOpenOverlay();
 
-      if (shouldOpen) {
-        wrongQuestionReminderOverlayKey.currentState?.showFromNotification();
-      }
-        });
-      });
+        if (shouldOpen) {
+          wrongQuestionReminderOverlayKey.currentState?.showFromNotification();
+        }
+
+        unawaited(
+          WrongQuestionNotificationService.instance.syncCurrentReminderState(),
+        );
+      }));
+    });
   }
 
   @override
@@ -90,7 +104,9 @@ class _MyAppState extends State<MyApp> {
               children: [
                 if (child != null) child,
                 const QuestionDataDownloadBanner(),
-                WrongQuestionReminderOverlay(key: wrongQuestionReminderOverlayKey)
+                WrongQuestionReminderOverlay(
+                  key: wrongQuestionReminderOverlayKey,
+                ),
               ],
             );
           },

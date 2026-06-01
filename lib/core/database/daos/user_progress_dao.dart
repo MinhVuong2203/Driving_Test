@@ -55,6 +55,11 @@ class UserProgressDao {
     return rows.map((row) => row.readTable(db.questions)).toList();
   }
 
+  Future<int> countWrongQuestions() async {
+    final rows = await db.select(db.wrongQuestions).get();
+    return rows.length;
+  }
+
   Future<void> logWrongAnswer(int questionId) async {
     final existing = await (db.select(
       db.wrongQuestions,
