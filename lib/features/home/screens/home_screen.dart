@@ -1,8 +1,12 @@
+import 'package:driving_test_prep/core/database/DBProvider.dart';
+import 'package:driving_test_prep/core/database/daos/user_progress_dao.dart';
+import 'package:driving_test_prep/data/repository/user_progress_repository.dart';
 import 'package:driving_test_prep/features/home/widgets/menu_grid.dart';
 import 'package:driving_test_prep/features/home/widgets/pro_banner.dart';
 import 'package:driving_test_prep/features/home/widgets/progress_card.dart';
 import 'package:driving_test_prep/features/home/widgets/topic_card.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_topic_screen.dart';
+import 'package:driving_test_prep/features/practice/screens/exam_topic_quets_screen.dart';
 import 'package:driving_test_prep/features/settings/screens/settings_screens.dart';
 import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
 import 'package:flutter/material.dart';
@@ -19,11 +23,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final Future<bool> _shouldShowProBanner;
   int _progressRefreshTrigger = 0;
+  Map<int, Map<String, int>> _topicProgressStats = {};
+  Map<String, int> _criticalProgressStats = {};
 
   @override
   void initState() {
     super.initState();
     _shouldShowProBanner = _loadProBannerVisibility();
+    _loadTopicProgress();
   }
 
   Future<bool> _loadProBannerVisibility() async {
@@ -40,11 +47,39 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _progressRefreshTrigger++;
     });
+    _loadTopicProgress();
   }
 
   Future<void> _openPage(Widget page) async {
     await Navigator.push(context, MaterialPageRoute(builder: (_) => page));
     _refreshProgress();
+  }
+
+  Future<void> _loadTopicProgress() async {
+    try {
+      final repo = UserProgressRepository(UserProgressDao(DBProvider().db));
+      final stats = await repo.getTopicProgressStats();
+      final criticalStats = await repo.getCriticalProgressStats();
+      if (!mounted) return;
+      setState(() {
+        _topicProgressStats = stats;
+        _criticalProgressStats = criticalStats;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _topicProgressStats = {};
+        _criticalProgressStats = {};
+      });
+    }
+  }
+
+  int _topicStat(int topicId, String key) {
+    return _topicProgressStats[topicId]?[key] ?? 0;
+  }
+
+  int _criticalStat(String key) {
+    return _criticalProgressStats[key] ?? 0;
   }
 
   @override
@@ -128,10 +163,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   TopicCard(
                     title: 'Quy định chung và quy tắc giao thông đường bộ',
-                    done: 14,
-                    total: 60,
-                    correct: 1,
-                    wrong: 13,
+                    done: _topicStat(1, 'answered'),
+                    total: _topicStat(1, 'total'),
+                    correct: _topicStat(1, 'correct'),
+                    wrong: _topicStat(1, 'wrong'),
                     accentColor: const Color(0xFF2F80ED),
                     icon: Icons.route_rounded,
                     onPress: () {
@@ -141,10 +176,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   TopicCard(
                     title:
                         'Văn hóa giao thông, đạo đức người lái xe, kỹ năng phòng cháy, chữa cháy và cứu hộ, cứu nạn',
-                    done: 38,
-                    total: 180,
-                    correct: 9,
-                    wrong: 29,
+                    done: _topicStat(2, 'answered'),
+                    total: _topicStat(2, 'total'),
+                    correct: _topicStat(2, 'correct'),
+                    wrong: _topicStat(2, 'wrong'),
                     accentColor: const Color(0xFFFF7A45),
                     icon: Icons.volunteer_activism_rounded,
                     onPress: () {
@@ -153,10 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TopicCard(
                     title: 'Kỹ thuật lái xe',
-                    done: 14,
-                    total: 60,
-                    correct: 1,
-                    wrong: 13,
+                    done: _topicStat(3, 'answered'),
+                    total: _topicStat(3, 'total'),
+                    correct: _topicStat(3, 'correct'),
+                    wrong: _topicStat(3, 'wrong'),
                     accentColor: const Color(0xFF14B8A6),
                     icon: Icons.sports_motorsports_rounded,
                     onPress: () {
@@ -165,10 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TopicCard(
                     title: 'Cấu tạo và sửa chữa',
-                    done: 38,
-                    total: 180,
-                    correct: 9,
-                    wrong: 29,
+                    done: _topicStat(4, 'answered'),
+                    total: _topicStat(4, 'total'),
+                    correct: _topicStat(4, 'correct'),
+                    wrong: _topicStat(4, 'wrong'),
                     accentColor: const Color(0xFF8B5CF6),
                     icon: Icons.build_circle_rounded,
                     onPress: () {
@@ -177,10 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TopicCard(
                     title: 'Báo hiệu đường bộ',
-                    done: 14,
-                    total: 60,
-                    correct: 1,
-                    wrong: 13,
+                    done: _topicStat(5, 'answered'),
+                    total: _topicStat(5, 'total'),
+                    correct: _topicStat(5, 'correct'),
+                    wrong: _topicStat(5, 'wrong'),
                     accentColor: const Color(0xFFEF4444),
                     icon: Icons.traffic_rounded,
                     onPress: () {
@@ -189,24 +224,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TopicCard(
                     title: 'Sa hình và kỹ năng xử lý tình huống giao thông',
-                    done: 38,
-                    total: 180,
-                    correct: 9,
-                    wrong: 29,
+                    done: _topicStat(6, 'answered'),
+                    total: _topicStat(6, 'total'),
+                    correct: _topicStat(6, 'correct'),
+                    wrong: _topicStat(6, 'wrong'),
                     accentColor: const Color(0xFF06B6D4),
                     icon: Icons.map_rounded,
                     onPress: () {
                       _openPage(const ExamTopicScreen(topicId: 6));
                     },
                   ),
-                  const TopicCard(
+                  TopicCard(
                     title: 'Câu hỏi điểm liệt',
-                    done: 14,
-                    total: 60,
-                    correct: 1,
-                    wrong: 13,
-                    accentColor: Color(0xFFE11D48),
+                    done: _criticalStat('answered'),
+                    total: _criticalStat('total'),
+                    correct: _criticalStat('correct'),
+                    wrong: _criticalStat('wrong'),
+                    accentColor: const Color(0xFFE11D48),
                     icon: Icons.warning_amber_rounded,
+                    onPress: () {
+                      _openPage(
+                        const ExamTopicQuetsScreen(
+                          topicId: -1,
+                          mode: 2,
+                          topicTitle: 'Câu hỏi điểm liệt',
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

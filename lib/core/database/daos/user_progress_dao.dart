@@ -133,4 +133,76 @@ class UserProgressDao {
       'wrong': wrongAnswers,
     };
   }
+
+  Future<Map<int, Map<String, int>>> getTopicProgressStats() async {
+    final questionsResult = await db.select(db.questions).get();
+    final userAnswersResult = await db.select(db.userAnswers).get();
+
+    final answersByQuestionId = <int, UserAnswer>{};
+    for (final answer in userAnswersResult) {
+      final questionId = answer.questionId;
+      if (questionId != null) {
+        answersByQuestionId[questionId] = answer;
+      }
+    }
+
+    final statsByTopic = <int, Map<String, int>>{};
+
+    for (final question in questionsResult) {
+      final topicId = question.topicId;
+      if (topicId == null) continue;
+
+      final stats = statsByTopic.putIfAbsent(
+        topicId,
+        () => {'total': 0, 'answered': 0, 'correct': 0, 'wrong': 0},
+      );
+
+      stats['total'] = stats['total']! + 1;
+
+      final answer = answersByQuestionId[question.id];
+      if (answer == null) continue;
+
+      stats['answered'] = stats['answered']! + 1;
+      if (answer.isCorrect == 1) {
+        stats['correct'] = stats['correct']! + 1;
+      } else {
+        stats['wrong'] = stats['wrong']! + 1;
+      }
+    }
+
+    return statsByTopic;
+  }
+
+  Future<Map<String, int>> getCriticalProgressStats() async {
+    final questionsResult = await db.select(db.questions).get();
+    final userAnswersResult = await db.select(db.userAnswers).get();
+
+    final answersByQuestionId = <int, UserAnswer>{};
+    for (final answer in userAnswersResult) {
+      final questionId = answer.questionId;
+      if (questionId != null) {
+        answersByQuestionId[questionId] = answer;
+      }
+    }
+
+    final stats = {'total': 0, 'answered': 0, 'correct': 0, 'wrong': 0};
+
+    for (final question in questionsResult) {
+      if (question.isCritical != 1) continue;
+
+      stats['total'] = stats['total']! + 1;
+
+      final answer = answersByQuestionId[question.id];
+      if (answer == null) continue;
+
+      stats['answered'] = stats['answered']! + 1;
+      if (answer.isCorrect == 1) {
+        stats['correct'] = stats['correct']! + 1;
+      } else {
+        stats['wrong'] = stats['wrong']! + 1;
+      }
+    }
+
+    return stats;
+  }
 }

@@ -83,7 +83,9 @@ class TopicCard extends StatelessWidget {
                           value: progress.clamp(0.0, 1.0).toDouble(),
                           minHeight: 7,
                           backgroundColor: accentColor.withValues(alpha: 0.12),
-                          valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            accentColor,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -92,11 +94,9 @@ class TopicCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.color
-                              ?.withValues(alpha: 0.72),
+                          color: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.color?.withValues(alpha: 0.72),
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                         ),
@@ -105,11 +105,7 @@ class TopicCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: accentColor,
-                  size: 28,
-                ),
+                Icon(Icons.chevron_right_rounded, color: accentColor, size: 28),
               ],
             ),
           ),
