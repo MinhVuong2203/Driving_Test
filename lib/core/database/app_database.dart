@@ -53,7 +53,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 4;
 
   bool get logStatements => kDebugMode;
 
@@ -86,6 +86,35 @@ class AppDatabase extends _$AppDatabase {
         }
         if (!tableNames.contains('saved_questions')) {
           await m.createTable(savedQuestions);
+        }
+      }
+      if (from < 3) {
+        final settingColumns = await customSelect(
+          "PRAGMA table_info(setting)",
+        ).get();
+        final columnNames = settingColumns
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!columnNames.contains('wrong_reminder_enabled')) {
+          await m.addColumn(setting, setting.wrongReminderEnabled);
+        }
+        if (!columnNames.contains('reminder_sync_dirty')) {
+          await m.addColumn(setting, setting.reminderSyncDirty);
+        }
+      }
+      if (from < 4) {
+        final settingColumns = await customSelect(
+          "PRAGMA table_info(setting)",
+        ).get();
+        final columnNames = settingColumns
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!columnNames.contains('last_synced_reminder_wrong')) {
+          await m.addColumn(setting, setting.lastSyncedReminderWrong);
         }
       }
     },

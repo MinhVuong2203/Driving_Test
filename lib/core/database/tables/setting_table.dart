@@ -6,4 +6,10 @@ class Setting extends Table {
   IntColumn get models       => integer().withDefault(const Constant(0))();
   IntColumn get mode         => integer().withDefault(const Constant(0))();
   IntColumn get vibration    => integer().withDefault(const Constant(0))();
+  IntColumn get wrongReminderEnabled =>
+      integer().withDefault(const Constant(1))();
+  IntColumn get reminderSyncDirty =>
+      integer().withDefault(const Constant(1))();
+  IntColumn get lastSyncedReminderWrong =>
+      integer().withDefault(const Constant(0))();
 }

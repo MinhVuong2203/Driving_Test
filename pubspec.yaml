@@ -45,15 +45,13 @@ dependencies:
   firebase_core: ^4.6.0
   firebase_auth: ^6.3.0
   cloud_firestore: ^6.2.0
+  firebase_messaging: ^16.0.0
   app_links: ^7.0.0
   url_launcher: ^6.3.1
   shared_preferences: ^2.5.5
   mailer: ^6.1.0
 
   # Thông báo
-  flutter_local_notifications: ^21.0.0
-  flutter_timezone: ^5.1.0
-  timezone: ^0.11.0
 
 
 dev_dependencies:

@@ -8,6 +8,7 @@ import '../../../core/database/daos/exam_sets_quest_dao.dart';
 import '../../../core/database/daos/user_progress_dao.dart';
 import '../../../data/repository/exam_sets_quest_repository.dart';
 import '../../../data/repository/user_progress_repository.dart';
+import '../../../data/services/sqlite/wrong_question_notification_service.dart';
 import '../../../shared/utils/constants/app_colors.dart';
 import '../../../shared/widgets/question_image.dart';
 import '../../../shared/widgets/interstitial_ad_helper.dart';
@@ -163,6 +164,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final correct = _countCorrectAnswers();
     final passNeed = widget.passScore > 0 ? widget.passScore : total;
     final passed = correct >= passNeed;
+    var reminderStateChanged = false;
 
     // Lưu vào database
     for (final item in questions) {
@@ -173,10 +175,16 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         await userProgressRepo.logAnswer(q.id, selected, ok);
         if (!ok) {
           await userProgressRepo.logWrongAnswer(q.id);
+          reminderStateChanged = true;
         } else {
           await userProgressRepo.removeWrongQuestion(q.id);
+          reminderStateChanged = true;
         }
       }
+    }
+
+    if (reminderStateChanged) {
+      await WrongQuestionNotificationService.instance.syncCurrentReminderState();
     }
 
     if (!mounted) return;
@@ -212,7 +220,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     _isSubmitting = false;
   }
 
-  void _onSelectAnswer(Question q, String label) {
+  Future<void> _onSelectAnswer(Question q, String label) async {
     final qId = q.id;
     final isJudged = judgedQuestionIds.contains(qId);
 
@@ -228,13 +236,16 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     if (widget.gradeInstantly) {
       final ok = _isCorrect(q, label);
 
-      userProgressRepo.logAnswer(q.id, label, ok);
+      await userProgressRepo.logAnswer(q.id, label, ok);
       if (!ok) {
-        userProgressRepo.logWrongAnswer(q.id);
+        await userProgressRepo.logWrongAnswer(q.id);
       } else {
-        userProgressRepo.removeWrongQuestion(q.id);
+        await userProgressRepo.removeWrongQuestion(q.id);
       }
 
+      await WrongQuestionNotificationService.instance.syncCurrentReminderState();
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(ok ? 'Chính xác' : 'Sai rồi'),
