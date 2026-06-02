@@ -6,6 +6,7 @@ import 'package:driving_test_prep/data/services/sqlite/question_image_cache_serv
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/features/overlay/screens/wrong_question_reminder_overlay.dart';
+import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
 import 'package:driving_test_prep/shared/widgets/bottom_nav_bar.dart';
 import 'package:driving_test_prep/shared/widgets/question_data_download_banner.dart';
 import 'package:flutter/material.dart';
@@ -53,26 +54,32 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (setting == null) {
       await repo.insertDefault();
       themeNotifier.value = 1;
+      rankNotifier.value = 'B';
     } else {
       themeNotifier.value = setting.mode; // 👈 gán vào notifier
+      rankNotifier.value = setting.rankId.trim().toUpperCase();
     }
 
     setState(() => _loaded = true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(Future.delayed(const Duration(milliseconds: 260), () {
-        if (!mounted) return;
+      unawaited(
+        Future.delayed(const Duration(milliseconds: 260), () {
+          if (!mounted) return;
 
-        final shouldOpen =
-            WrongQuestionNotificationService.instance.consumePendingOpenOverlay();
+          final shouldOpen = WrongQuestionNotificationService.instance
+              .consumePendingOpenOverlay();
 
-        if (shouldOpen) {
-          wrongQuestionReminderOverlayKey.currentState?.showFromNotification();
-        }
+          if (shouldOpen) {
+            wrongQuestionReminderOverlayKey.currentState
+                ?.showFromNotification();
+          }
 
-        unawaited(
-          WrongQuestionNotificationService.instance.syncCurrentReminderState(),
-        );
-      }));
+          unawaited(
+            WrongQuestionNotificationService.instance
+                .syncCurrentReminderState(),
+          );
+        }),
+      );
     });
   }
 
@@ -80,9 +87,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     if (!_loaded) {
       return const MaterialApp(
-        home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
       );
     }
 
@@ -100,7 +105,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           builder: (context, child) {
             return Stack(
               children: [
-                if (child != null) child,
+                ?child,
                 const QuestionDataDownloadBanner(),
                 WrongQuestionReminderOverlay(
                   key: wrongQuestionReminderOverlayKey,

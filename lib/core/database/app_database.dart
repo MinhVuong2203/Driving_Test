@@ -53,7 +53,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   bool get logStatements => kDebugMode;
 
@@ -116,6 +116,28 @@ class AppDatabase extends _$AppDatabase {
         if (!columnNames.contains('last_synced_reminder_wrong')) {
           await m.addColumn(setting, setting.lastSyncedReminderWrong);
         }
+      }
+      if (from < 5) {
+        final userAnswerColumns = await customSelect(
+          "PRAGMA table_info(user_answers)",
+        ).get();
+        final columnNames = userAnswerColumns
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!columnNames.contains('rank_id')) {
+          await m.addColumn(userAnswers, userAnswers.rankId);
+        }
+        await customStatement("""
+          UPDATE user_answers
+          SET rank_id = (
+            SELECT rank_id
+            FROM setting
+            WHERE setting_id = 1
+          )
+          WHERE rank_id IS NULL
+          """);
       }
     },
   );
