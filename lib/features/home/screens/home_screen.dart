@@ -9,6 +9,7 @@ import 'package:driving_test_prep/features/practice/screens/exam_topic_screen.da
 import 'package:driving_test_prep/features/practice/screens/exam_topic_quets_screen.dart';
 import 'package:driving_test_prep/features/settings/screens/settings_screens.dart';
 import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
+import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,7 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _shouldShowProBanner = _loadProBannerVisibility();
+    rankNotifier.addListener(_refreshProgress);
     _loadTopicProgress();
+  }
+
+  @override
+  void dispose() {
+    rankNotifier.removeListener(_refreshProgress);
+    super.dispose();
   }
 
   Future<bool> _loadProBannerVisibility() async {

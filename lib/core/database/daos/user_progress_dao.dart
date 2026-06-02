@@ -5,6 +5,26 @@ class UserProgressDao {
   final AppDatabase db;
   UserProgressDao(this.db);
 
+  Future<String> _currentRankId() async {
+    final setting = await (db.select(
+      db.setting,
+    )..where((s) => s.SettingId.equals(1))).getSingleOrNull();
+
+    return (setting?.rankId ?? 'B').trim().toUpperCase();
+  }
+
+  bool _questionMatchesRank(Question question, String rankId) {
+    switch (rankId) {
+      case 'A1':
+      case 'A':
+        return question.ofRankA == 1;
+      case 'B1':
+        return question.ofRankB1 == 1;
+      default:
+        return true;
+    }
+  }
+
   // 1. Saved Questions (Câu đã lưu)
   Future<List<Question>> getSavedQuestions() async {
     final query = db.select(db.questions).join([
@@ -94,24 +114,30 @@ class UserProgressDao {
     String selectedAnswer,
     bool isCorrect,
   ) async {
-    final existing = await (db.select(
-      db.userAnswers,
-    )..where((t) => t.questionId.equals(questionId))).getSingleOrNull();
+    final rankId = await _currentRankId();
+    final existing =
+        await (db.select(db.userAnswers)..where(
+              (t) => t.questionId.equals(questionId) & t.rankId.equals(rankId),
+            ))
+            .getSingleOrNull();
     if (existing != null) {
-      await (db.update(
-        db.userAnswers,
-      )..where((t) => t.questionId.equals(questionId))).write(
-        UserAnswersCompanion(
-          selectedAnswer: Value(selectedAnswer),
-          isCorrect: Value(isCorrect ? 1 : 0),
-        ),
-      );
+      await (db.update(db.userAnswers)..where(
+            (t) => t.questionId.equals(questionId) & t.rankId.equals(rankId),
+          ))
+          .write(
+            UserAnswersCompanion(
+              rankId: Value(rankId),
+              selectedAnswer: Value(selectedAnswer),
+              isCorrect: Value(isCorrect ? 1 : 0),
+            ),
+          );
     } else {
       await db
           .into(db.userAnswers)
           .insert(
             UserAnswersCompanion.insert(
               questionId: Value(questionId),
+              rankId: Value(rankId),
               selectedAnswer: Value(selectedAnswer),
               isCorrect: Value(isCorrect ? 1 : 0),
             ),
@@ -121,14 +147,22 @@ class UserProgressDao {
 
   // 4. Progress Stats
   Future<Map<String, int>> getProgressStats() async {
+    final rankId = await _currentRankId();
     final totalQuestionsResult = await db.select(db.questions).get();
-    final totalQuestions = totalQuestionsResult.length;
+    final rankQuestions = totalQuestionsResult
+        .where((q) => _questionMatchesRank(q, rankId))
+        .toList();
+    final rankQuestionIds = rankQuestions.map((q) => q.id).toSet();
+    final totalQuestions = rankQuestions.length;
 
-    final userAnswersResult = await db.select(db.userAnswers).get();
-    final answeredQuestions = userAnswersResult.length;
-    final correctAnswers = userAnswersResult
-        .where((a) => a.isCorrect == 1)
-        .length;
+    final userAnswersResult = await (db.select(
+      db.userAnswers,
+    )..where((t) => t.rankId.equals(rankId))).get();
+    final rankAnswers = userAnswersResult
+        .where((answer) => rankQuestionIds.contains(answer.questionId))
+        .toList();
+    final answeredQuestions = rankAnswers.length;
+    final correctAnswers = rankAnswers.where((a) => a.isCorrect == 1).length;
     final wrongAnswers = answeredQuestions - correctAnswers;
 
     return {
@@ -140,8 +174,11 @@ class UserProgressDao {
   }
 
   Future<Map<int, Map<String, int>>> getTopicProgressStats() async {
+    final rankId = await _currentRankId();
     final questionsResult = await db.select(db.questions).get();
-    final userAnswersResult = await db.select(db.userAnswers).get();
+    final userAnswersResult = await (db.select(
+      db.userAnswers,
+    )..where((t) => t.rankId.equals(rankId))).get();
 
     final answersByQuestionId = <int, UserAnswer>{};
     for (final answer in userAnswersResult) {
@@ -154,6 +191,7 @@ class UserProgressDao {
     final statsByTopic = <int, Map<String, int>>{};
 
     for (final question in questionsResult) {
+      if (!_questionMatchesRank(question, rankId)) continue;
       final topicId = question.topicId;
       if (topicId == null) continue;
 
@@ -179,8 +217,11 @@ class UserProgressDao {
   }
 
   Future<Map<String, int>> getCriticalProgressStats() async {
+    final rankId = await _currentRankId();
     final questionsResult = await db.select(db.questions).get();
-    final userAnswersResult = await db.select(db.userAnswers).get();
+    final userAnswersResult = await (db.select(
+      db.userAnswers,
+    )..where((t) => t.rankId.equals(rankId))).get();
 
     final answersByQuestionId = <int, UserAnswer>{};
     for (final answer in userAnswersResult) {
@@ -193,6 +234,7 @@ class UserProgressDao {
     final stats = {'total': 0, 'answered': 0, 'correct': 0, 'wrong': 0};
 
     for (final question in questionsResult) {
+      if (!_questionMatchesRank(question, rankId)) continue;
       if (question.isCritical != 1) continue;
 
       stats['total'] = stats['total']! + 1;
