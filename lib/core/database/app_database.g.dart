@@ -2982,6 +2982,15 @@ class $UserAnswersTable extends UserAnswers
       'REFERENCES questions (id)',
     ),
   );
+  static const VerificationMeta _rankIdMeta = const VerificationMeta('rankId');
+  @override
+  late final GeneratedColumn<String> rankId = GeneratedColumn<String>(
+    'rank_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _selectedAnswerMeta = const VerificationMeta(
     'selectedAnswer',
   );
@@ -3009,6 +3018,7 @@ class $UserAnswersTable extends UserAnswers
     id,
     sessionId,
     questionId,
+    rankId,
     selectedAnswer,
     isCorrect,
   ];
@@ -3037,6 +3047,12 @@ class $UserAnswersTable extends UserAnswers
       context.handle(
         _questionIdMeta,
         questionId.isAcceptableOrUnknown(data['question_id']!, _questionIdMeta),
+      );
+    }
+    if (data.containsKey('rank_id')) {
+      context.handle(
+        _rankIdMeta,
+        rankId.isAcceptableOrUnknown(data['rank_id']!, _rankIdMeta),
       );
     }
     if (data.containsKey('selected_answer')) {
@@ -3075,6 +3091,10 @@ class $UserAnswersTable extends UserAnswers
         DriftSqlType.int,
         data['${effectivePrefix}question_id'],
       ),
+      rankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rank_id'],
+      ),
       selectedAnswer: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}selected_answer'],
@@ -3096,12 +3116,14 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   final int id;
   final int? sessionId;
   final int? questionId;
+  final String? rankId;
   final String? selectedAnswer;
   final int? isCorrect;
   const UserAnswer({
     required this.id,
     this.sessionId,
     this.questionId,
+    this.rankId,
     this.selectedAnswer,
     this.isCorrect,
   });
@@ -3114,6 +3136,9 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     }
     if (!nullToAbsent || questionId != null) {
       map['question_id'] = Variable<int>(questionId);
+    }
+    if (!nullToAbsent || rankId != null) {
+      map['rank_id'] = Variable<String>(rankId);
     }
     if (!nullToAbsent || selectedAnswer != null) {
       map['selected_answer'] = Variable<String>(selectedAnswer);
@@ -3133,6 +3158,9 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       questionId: questionId == null && nullToAbsent
           ? const Value.absent()
           : Value(questionId),
+      rankId: rankId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rankId),
       selectedAnswer: selectedAnswer == null && nullToAbsent
           ? const Value.absent()
           : Value(selectedAnswer),
@@ -3151,6 +3179,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       id: serializer.fromJson<int>(json['id']),
       sessionId: serializer.fromJson<int?>(json['sessionId']),
       questionId: serializer.fromJson<int?>(json['questionId']),
+      rankId: serializer.fromJson<String?>(json['rankId']),
       selectedAnswer: serializer.fromJson<String?>(json['selectedAnswer']),
       isCorrect: serializer.fromJson<int?>(json['isCorrect']),
     );
@@ -3162,6 +3191,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       'id': serializer.toJson<int>(id),
       'sessionId': serializer.toJson<int?>(sessionId),
       'questionId': serializer.toJson<int?>(questionId),
+      'rankId': serializer.toJson<String?>(rankId),
       'selectedAnswer': serializer.toJson<String?>(selectedAnswer),
       'isCorrect': serializer.toJson<int?>(isCorrect),
     };
@@ -3171,12 +3201,14 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     int? id,
     Value<int?> sessionId = const Value.absent(),
     Value<int?> questionId = const Value.absent(),
+    Value<String?> rankId = const Value.absent(),
     Value<String?> selectedAnswer = const Value.absent(),
     Value<int?> isCorrect = const Value.absent(),
   }) => UserAnswer(
     id: id ?? this.id,
     sessionId: sessionId.present ? sessionId.value : this.sessionId,
     questionId: questionId.present ? questionId.value : this.questionId,
+    rankId: rankId.present ? rankId.value : this.rankId,
     selectedAnswer: selectedAnswer.present
         ? selectedAnswer.value
         : this.selectedAnswer,
@@ -3189,6 +3221,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       questionId: data.questionId.present
           ? data.questionId.value
           : this.questionId,
+      rankId: data.rankId.present ? data.rankId.value : this.rankId,
       selectedAnswer: data.selectedAnswer.present
           ? data.selectedAnswer.value
           : this.selectedAnswer,
@@ -3202,6 +3235,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('questionId: $questionId, ')
+          ..write('rankId: $rankId, ')
           ..write('selectedAnswer: $selectedAnswer, ')
           ..write('isCorrect: $isCorrect')
           ..write(')'))
@@ -3210,7 +3244,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
 
   @override
   int get hashCode =>
-      Object.hash(id, sessionId, questionId, selectedAnswer, isCorrect);
+      Object.hash(id, sessionId, questionId, rankId, selectedAnswer, isCorrect);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3218,6 +3252,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
           other.id == this.id &&
           other.sessionId == this.sessionId &&
           other.questionId == this.questionId &&
+          other.rankId == this.rankId &&
           other.selectedAnswer == this.selectedAnswer &&
           other.isCorrect == this.isCorrect);
 }
@@ -3226,12 +3261,14 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   final Value<int> id;
   final Value<int?> sessionId;
   final Value<int?> questionId;
+  final Value<String?> rankId;
   final Value<String?> selectedAnswer;
   final Value<int?> isCorrect;
   const UserAnswersCompanion({
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
     this.questionId = const Value.absent(),
+    this.rankId = const Value.absent(),
     this.selectedAnswer = const Value.absent(),
     this.isCorrect = const Value.absent(),
   });
@@ -3239,6 +3276,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
     this.questionId = const Value.absent(),
+    this.rankId = const Value.absent(),
     this.selectedAnswer = const Value.absent(),
     this.isCorrect = const Value.absent(),
   });
@@ -3246,6 +3284,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     Expression<int>? id,
     Expression<int>? sessionId,
     Expression<int>? questionId,
+    Expression<String>? rankId,
     Expression<String>? selectedAnswer,
     Expression<int>? isCorrect,
   }) {
@@ -3253,6 +3292,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
       if (id != null) 'id': id,
       if (sessionId != null) 'session_id': sessionId,
       if (questionId != null) 'question_id': questionId,
+      if (rankId != null) 'rank_id': rankId,
       if (selectedAnswer != null) 'selected_answer': selectedAnswer,
       if (isCorrect != null) 'is_correct': isCorrect,
     });
@@ -3262,6 +3302,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     Value<int>? id,
     Value<int?>? sessionId,
     Value<int?>? questionId,
+    Value<String?>? rankId,
     Value<String?>? selectedAnswer,
     Value<int?>? isCorrect,
   }) {
@@ -3269,6 +3310,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
       id: id ?? this.id,
       sessionId: sessionId ?? this.sessionId,
       questionId: questionId ?? this.questionId,
+      rankId: rankId ?? this.rankId,
       selectedAnswer: selectedAnswer ?? this.selectedAnswer,
       isCorrect: isCorrect ?? this.isCorrect,
     );
@@ -3286,6 +3328,9 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     if (questionId.present) {
       map['question_id'] = Variable<int>(questionId.value);
     }
+    if (rankId.present) {
+      map['rank_id'] = Variable<String>(rankId.value);
+    }
     if (selectedAnswer.present) {
       map['selected_answer'] = Variable<String>(selectedAnswer.value);
     }
@@ -3301,6 +3346,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('questionId: $questionId, ')
+          ..write('rankId: $rankId, ')
           ..write('selectedAnswer: $selectedAnswer, ')
           ..write('isCorrect: $isCorrect')
           ..write(')'))
@@ -9890,6 +9936,7 @@ typedef $$UserAnswersTableCreateCompanionBuilder =
       Value<int> id,
       Value<int?> sessionId,
       Value<int?> questionId,
+      Value<String?> rankId,
       Value<String?> selectedAnswer,
       Value<int?> isCorrect,
     });
@@ -9898,6 +9945,7 @@ typedef $$UserAnswersTableUpdateCompanionBuilder =
       Value<int> id,
       Value<int?> sessionId,
       Value<int?> questionId,
+      Value<String?> rankId,
       Value<String?> selectedAnswer,
       Value<int?> isCorrect,
     });
@@ -9956,6 +10004,11 @@ class $$UserAnswersTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rankId => $composableBuilder(
+    column: $table.rankId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10030,6 +10083,11 @@ class $$UserAnswersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get selectedAnswer => $composableBuilder(
     column: $table.selectedAnswer,
     builder: (column) => ColumnOrderings(column),
@@ -10098,6 +10156,9 @@ class $$UserAnswersTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get rankId =>
+      $composableBuilder(column: $table.rankId, builder: (column) => column);
 
   GeneratedColumn<String> get selectedAnswer => $composableBuilder(
     column: $table.selectedAnswer,
@@ -10185,12 +10246,14 @@ class $$UserAnswersTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int?> sessionId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
                 Value<String?> selectedAnswer = const Value.absent(),
                 Value<int?> isCorrect = const Value.absent(),
               }) => UserAnswersCompanion(
                 id: id,
                 sessionId: sessionId,
                 questionId: questionId,
+                rankId: rankId,
                 selectedAnswer: selectedAnswer,
                 isCorrect: isCorrect,
               ),
@@ -10199,12 +10262,14 @@ class $$UserAnswersTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int?> sessionId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
                 Value<String?> selectedAnswer = const Value.absent(),
                 Value<int?> isCorrect = const Value.absent(),
               }) => UserAnswersCompanion.insert(
                 id: id,
                 sessionId: sessionId,
                 questionId: questionId,
+                rankId: rankId,
                 selectedAnswer: selectedAnswer,
                 isCorrect: isCorrect,
               ),

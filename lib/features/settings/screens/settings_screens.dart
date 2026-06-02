@@ -4,6 +4,7 @@ import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/apps/app.dart';
+import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
 import '../widgets/exam_version_section.dart';
 import '../widgets/gplx_selector_tile.dart';
 import '../widgets/scoring_mode_section.dart';
@@ -38,21 +39,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSettings() async {
     final setting = await _repo.getSetting();
     if (setting != null) {
+      final rankId = setting.rankId.trim().toUpperCase();
       setState(() {
-        _selectedGplx = setting.rankId ?? 'B';
+        _selectedGplx = rankId;
         _scoringAfterSubmit = setting.models == 0;
         _vibrationEnabled = setting.vibration == 1;
         _wrongReminderEnabled = setting.wrongReminderEnabled == 1;
         _isLoaded = true;
       });
+      rankNotifier.value = rankId;
     } else {
       setState(() => _isLoaded = true);
     }
   }
 
   Future<void> _onGplxChanged(String value) async {
-    setState(() => _selectedGplx = value);
-    await _repo.updateRankId(value);
+    final rankId = value.trim().toUpperCase();
+    setState(() => _selectedGplx = rankId);
+    await _repo.updateRankId(rankId);
+    rankNotifier.value = rankId;
   }
 
   Future<void> _onScoringChanged(bool value) async {
@@ -142,7 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             value: _wrongReminderEnabled,
             onChanged: _onWrongReminderChanged,
-            activeColor: Colors.blue,
+            activeThumbColor: Colors.blue,
           ),
 
           const SizedBox(height: 16),
@@ -170,7 +175,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             value: _darkModeEnabled,
             onChanged: _onThemeChanged,
-            activeColor: Colors.blue,
+            activeThumbColor: Colors.blue,
           ),
 
           const SizedBox(height: 16),
