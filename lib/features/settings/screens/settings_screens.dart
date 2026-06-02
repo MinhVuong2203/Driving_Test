@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
+import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/apps/app.dart';
+import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
 import '../widgets/exam_version_section.dart';
 import '../widgets/gplx_selector_tile.dart';
 import '../widgets/scoring_mode_section.dart';
@@ -21,12 +23,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedGplx = 'B';
   bool _scoringAfterSubmit = true;
   bool _vibrationEnabled = true;
+  bool _wrongReminderEnabled = true;
   bool _isLoaded = false;
 
   bool get _darkModeEnabled => themeNotifier.value == 0;
 
-  SettingRepository get _repo =>
-      SettingRepository(SettingDao(DBProvider().db));
+  SettingRepository get _repo => SettingRepository(SettingDao(DBProvider().db));
 
   @override
   void initState() {
@@ -37,20 +39,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSettings() async {
     final setting = await _repo.getSetting();
     if (setting != null) {
+      final rankId = setting.rankId.trim().toUpperCase();
       setState(() {
-        _selectedGplx = setting.rankId ?? 'B';
+        _selectedGplx = rankId;
         _scoringAfterSubmit = setting.models == 0;
         _vibrationEnabled = setting.vibration == 1;
+        _wrongReminderEnabled = setting.wrongReminderEnabled == 1;
         _isLoaded = true;
       });
+      rankNotifier.value = rankId;
     } else {
       setState(() => _isLoaded = true);
     }
   }
 
   Future<void> _onGplxChanged(String value) async {
-    setState(() => _selectedGplx = value);
-    await _repo.updateRankId(value);
+    final rankId = value.trim().toUpperCase();
+    setState(() => _selectedGplx = rankId);
+    await _repo.updateRankId(rankId);
+    rankNotifier.value = rankId;
   }
 
   Future<void> _onScoringChanged(bool value) async {
@@ -63,6 +70,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _repo.updateVibration(value ? 1 : 0);
   }
 
+  Future<void> _onWrongReminderChanged(bool value) async {
+    setState(() => _wrongReminderEnabled = value);
+    await _repo.updateWrongReminderEnabled(value);
+    await WrongQuestionNotificationService.instance.syncCurrentReminderState();
+  }
+
   Future<void> _onThemeChanged(bool isDark) async {
     final newMode = isDark ? 0 : 1;
     themeNotifier.value = newMode;
@@ -73,9 +86,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_isLoaded) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -119,10 +130,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 16),
 
+          const SettingsSectionHeader(title: 'NHẮC NHỞ CÂU SAI'),
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 4,
+            ),
+            secondary: const Icon(Icons.notifications_active_rounded),
+            title: const Text(
+              'Nhắc nhở câu sai',
+              style: TextStyle(fontSize: 16),
+            ),
+            subtitle: const Text(
+              'Gửi thông báo khi bạn còn câu sai cần ôn lại',
+              style: TextStyle(fontSize: 12),
+            ),
+            value: _wrongReminderEnabled,
+            onChanged: _onWrongReminderChanged,
+            activeThumbColor: Colors.blue,
+          ),
+
+          const SizedBox(height: 16),
+
           const SettingsSectionHeader(title: 'GIAO DIỆN'),
           SwitchListTile(
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 4,
+            ),
             secondary: Icon(
               _darkModeEnabled
                   ? Icons.dark_mode_rounded
@@ -140,15 +175,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             value: _darkModeEnabled,
             onChanged: _onThemeChanged,
-            activeColor: Colors.blue,
+            activeThumbColor: Colors.blue,
           ),
 
           const SizedBox(height: 16),
 
           const SettingsSectionHeader(title: 'DỮ LIỆU'),
-          DeleteHistoryTile(
-            onTap: () => _showDeleteConfirmDialog(context),
-          ),
+          DeleteHistoryTile(onTap: () => _showDeleteConfirmDialog(context)),
         ],
       ),
     );

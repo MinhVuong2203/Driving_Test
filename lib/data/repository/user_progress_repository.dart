@@ -12,6 +12,7 @@ class UserProgressRepository {
       dao.toggleSavedQuestion(questionId);
 
   Future<List<Question>> getWrongQuestions() => dao.getWrongQuestions();
+  Future<int> countWrongQuestions() => dao.countWrongQuestions();
   Future<void> logWrongAnswer(int questionId) => dao.logWrongAnswer(questionId);
   Future<void> removeWrongQuestion(int questionId) =>
       dao.removeWrongQuestion(questionId);

@@ -28,4 +28,24 @@ class SettingRepository {
   Future<void> updateRankId(String rankId) async {
     await dao.updateRankId(rankId);
   }
+
+  Future<bool> isWrongReminderEnabled() {
+    return dao.isWrongReminderEnabled();
+  }
+
+  Future<void> updateWrongReminderEnabled(bool enabled) {
+    return dao.updateWrongReminderEnabled(enabled);
+  }
+
+  Future<void> markReminderSyncDirty() {
+    return dao.markReminderSyncDirty();
+  }
+
+  Future<void> markReminderSyncClean() {
+    return dao.markReminderSyncClean();
+  }
+
+  Future<void> markReminderSyncCleanWithValue(bool reminderWrong) {
+    return dao.markReminderSyncCleanWithValue(reminderWrong);
+  }
 }

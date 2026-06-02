@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/services/sqlite/question_image_cache_service.dart';
@@ -5,6 +7,7 @@ import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/data/repository/traffic_violation_repository.dart';
 import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/features/overlay/screens/wrong_question_reminder_overlay.dart';
+import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
 import 'package:driving_test_prep/shared/widgets/bottom_nav_bar.dart';
 import 'package:driving_test_prep/shared/widgets/question_data_download_banner.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +21,13 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _loaded = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     QuestionImageCacheService.instance.startBackgroundDownload();
     _warmUpTrafficViolations();
     loadSetting();
@@ -37,6 +41,21 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(
+        WrongQuestionNotificationService.instance.syncCurrentReminderState(),
+      );
+    }
+  }
+
   Future<void> loadSetting() async {
     final db = DBProvider().db;
     final SettingRepository repo = SettingRepository(SettingDao(db));
@@ -45,36 +64,43 @@ class _MyAppState extends State<MyApp> {
     if (setting == null) {
       await repo.insertDefault();
       themeNotifier.value = 1;
+      rankNotifier.value = 'B';
     } else {
-      themeNotifier.value = setting.mode; // 👈 gán vào notifier
+      themeNotifier.value = setting.mode;
+      rankNotifier.value = setting.rankId.trim().toUpperCase();
     }
 
     setState(() => _loaded = true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 260), () {
-      if (!mounted) return;
+      unawaited(
+        Future.delayed(const Duration(milliseconds: 260), () {
+          if (!mounted) return;
 
-      final shouldOpen =
-          WrongQuestionNotificationService.instance.consumePendingOpenOverlay();
+          final shouldOpen = WrongQuestionNotificationService.instance
+              .consumePendingOpenOverlay();
 
-      if (shouldOpen) {
-        wrongQuestionReminderOverlayKey.currentState?.showFromNotification();
-      }
-        });
-      });
+          if (shouldOpen) {
+            wrongQuestionReminderOverlayKey.currentState
+                ?.showFromNotification();
+          }
+
+          unawaited(
+            WrongQuestionNotificationService.instance
+                .syncCurrentReminderState(),
+          );
+        }),
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_loaded) {
       return const MaterialApp(
-        home: Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        home: Scaffold(body: Center(child: CircularProgressIndicator())),
       );
     }
 
-    // 👇 Lắng nghe thay đổi từ SettingsScreen
     return ValueListenableBuilder<int>(
       valueListenable: themeNotifier,
       builder: (context, modeValue, _) {
@@ -90,7 +116,9 @@ class _MyAppState extends State<MyApp> {
               children: [
                 if (child != null) child,
                 const QuestionDataDownloadBanner(),
-                WrongQuestionReminderOverlay(key: wrongQuestionReminderOverlayKey)
+                WrongQuestionReminderOverlay(
+                  key: wrongQuestionReminderOverlayKey,
+                ),
               ],
             );
           },

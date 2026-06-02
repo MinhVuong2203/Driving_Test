@@ -86,6 +86,9 @@ class GoogleAuthService {
       'providers': providerIds,
       'role': oldData?['role'] ?? 'user',
       'status': oldData?['status'] ?? 'active',
+      'reminder_wrong': oldData?['reminder_wrong'] ?? false,
+      'wrong_reminder_enabled': oldData?['wrong_reminder_enabled'] ?? true,
+      'fcm_tokens': oldData?['fcm_tokens'] ?? <String>[],
       'lastLoginAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     };

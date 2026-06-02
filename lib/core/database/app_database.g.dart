@@ -2982,6 +2982,15 @@ class $UserAnswersTable extends UserAnswers
       'REFERENCES questions (id)',
     ),
   );
+  static const VerificationMeta _rankIdMeta = const VerificationMeta('rankId');
+  @override
+  late final GeneratedColumn<String> rankId = GeneratedColumn<String>(
+    'rank_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _selectedAnswerMeta = const VerificationMeta(
     'selectedAnswer',
   );
@@ -3009,6 +3018,7 @@ class $UserAnswersTable extends UserAnswers
     id,
     sessionId,
     questionId,
+    rankId,
     selectedAnswer,
     isCorrect,
   ];
@@ -3037,6 +3047,12 @@ class $UserAnswersTable extends UserAnswers
       context.handle(
         _questionIdMeta,
         questionId.isAcceptableOrUnknown(data['question_id']!, _questionIdMeta),
+      );
+    }
+    if (data.containsKey('rank_id')) {
+      context.handle(
+        _rankIdMeta,
+        rankId.isAcceptableOrUnknown(data['rank_id']!, _rankIdMeta),
       );
     }
     if (data.containsKey('selected_answer')) {
@@ -3075,6 +3091,10 @@ class $UserAnswersTable extends UserAnswers
         DriftSqlType.int,
         data['${effectivePrefix}question_id'],
       ),
+      rankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rank_id'],
+      ),
       selectedAnswer: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}selected_answer'],
@@ -3096,12 +3116,14 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   final int id;
   final int? sessionId;
   final int? questionId;
+  final String? rankId;
   final String? selectedAnswer;
   final int? isCorrect;
   const UserAnswer({
     required this.id,
     this.sessionId,
     this.questionId,
+    this.rankId,
     this.selectedAnswer,
     this.isCorrect,
   });
@@ -3114,6 +3136,9 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     }
     if (!nullToAbsent || questionId != null) {
       map['question_id'] = Variable<int>(questionId);
+    }
+    if (!nullToAbsent || rankId != null) {
+      map['rank_id'] = Variable<String>(rankId);
     }
     if (!nullToAbsent || selectedAnswer != null) {
       map['selected_answer'] = Variable<String>(selectedAnswer);
@@ -3133,6 +3158,9 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       questionId: questionId == null && nullToAbsent
           ? const Value.absent()
           : Value(questionId),
+      rankId: rankId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rankId),
       selectedAnswer: selectedAnswer == null && nullToAbsent
           ? const Value.absent()
           : Value(selectedAnswer),
@@ -3151,6 +3179,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       id: serializer.fromJson<int>(json['id']),
       sessionId: serializer.fromJson<int?>(json['sessionId']),
       questionId: serializer.fromJson<int?>(json['questionId']),
+      rankId: serializer.fromJson<String?>(json['rankId']),
       selectedAnswer: serializer.fromJson<String?>(json['selectedAnswer']),
       isCorrect: serializer.fromJson<int?>(json['isCorrect']),
     );
@@ -3162,6 +3191,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       'id': serializer.toJson<int>(id),
       'sessionId': serializer.toJson<int?>(sessionId),
       'questionId': serializer.toJson<int?>(questionId),
+      'rankId': serializer.toJson<String?>(rankId),
       'selectedAnswer': serializer.toJson<String?>(selectedAnswer),
       'isCorrect': serializer.toJson<int?>(isCorrect),
     };
@@ -3171,12 +3201,14 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     int? id,
     Value<int?> sessionId = const Value.absent(),
     Value<int?> questionId = const Value.absent(),
+    Value<String?> rankId = const Value.absent(),
     Value<String?> selectedAnswer = const Value.absent(),
     Value<int?> isCorrect = const Value.absent(),
   }) => UserAnswer(
     id: id ?? this.id,
     sessionId: sessionId.present ? sessionId.value : this.sessionId,
     questionId: questionId.present ? questionId.value : this.questionId,
+    rankId: rankId.present ? rankId.value : this.rankId,
     selectedAnswer: selectedAnswer.present
         ? selectedAnswer.value
         : this.selectedAnswer,
@@ -3189,6 +3221,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       questionId: data.questionId.present
           ? data.questionId.value
           : this.questionId,
+      rankId: data.rankId.present ? data.rankId.value : this.rankId,
       selectedAnswer: data.selectedAnswer.present
           ? data.selectedAnswer.value
           : this.selectedAnswer,
@@ -3202,6 +3235,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('questionId: $questionId, ')
+          ..write('rankId: $rankId, ')
           ..write('selectedAnswer: $selectedAnswer, ')
           ..write('isCorrect: $isCorrect')
           ..write(')'))
@@ -3210,7 +3244,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
 
   @override
   int get hashCode =>
-      Object.hash(id, sessionId, questionId, selectedAnswer, isCorrect);
+      Object.hash(id, sessionId, questionId, rankId, selectedAnswer, isCorrect);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3218,6 +3252,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
           other.id == this.id &&
           other.sessionId == this.sessionId &&
           other.questionId == this.questionId &&
+          other.rankId == this.rankId &&
           other.selectedAnswer == this.selectedAnswer &&
           other.isCorrect == this.isCorrect);
 }
@@ -3226,12 +3261,14 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   final Value<int> id;
   final Value<int?> sessionId;
   final Value<int?> questionId;
+  final Value<String?> rankId;
   final Value<String?> selectedAnswer;
   final Value<int?> isCorrect;
   const UserAnswersCompanion({
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
     this.questionId = const Value.absent(),
+    this.rankId = const Value.absent(),
     this.selectedAnswer = const Value.absent(),
     this.isCorrect = const Value.absent(),
   });
@@ -3239,6 +3276,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
     this.questionId = const Value.absent(),
+    this.rankId = const Value.absent(),
     this.selectedAnswer = const Value.absent(),
     this.isCorrect = const Value.absent(),
   });
@@ -3246,6 +3284,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     Expression<int>? id,
     Expression<int>? sessionId,
     Expression<int>? questionId,
+    Expression<String>? rankId,
     Expression<String>? selectedAnswer,
     Expression<int>? isCorrect,
   }) {
@@ -3253,6 +3292,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
       if (id != null) 'id': id,
       if (sessionId != null) 'session_id': sessionId,
       if (questionId != null) 'question_id': questionId,
+      if (rankId != null) 'rank_id': rankId,
       if (selectedAnswer != null) 'selected_answer': selectedAnswer,
       if (isCorrect != null) 'is_correct': isCorrect,
     });
@@ -3262,6 +3302,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     Value<int>? id,
     Value<int?>? sessionId,
     Value<int?>? questionId,
+    Value<String?>? rankId,
     Value<String?>? selectedAnswer,
     Value<int?>? isCorrect,
   }) {
@@ -3269,6 +3310,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
       id: id ?? this.id,
       sessionId: sessionId ?? this.sessionId,
       questionId: questionId ?? this.questionId,
+      rankId: rankId ?? this.rankId,
       selectedAnswer: selectedAnswer ?? this.selectedAnswer,
       isCorrect: isCorrect ?? this.isCorrect,
     );
@@ -3286,6 +3328,9 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     if (questionId.present) {
       map['question_id'] = Variable<int>(questionId.value);
     }
+    if (rankId.present) {
+      map['rank_id'] = Variable<String>(rankId.value);
+    }
     if (selectedAnswer.present) {
       map['selected_answer'] = Variable<String>(selectedAnswer.value);
     }
@@ -3301,6 +3346,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
           ..write('questionId: $questionId, ')
+          ..write('rankId: $rankId, ')
           ..write('selectedAnswer: $selectedAnswer, ')
           ..write('isCorrect: $isCorrect')
           ..write(')'))
@@ -4529,6 +4575,41 @@ class $SettingTable extends Setting with TableInfo<$SettingTable, SettingData> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _wrongReminderEnabledMeta =
+      const VerificationMeta('wrongReminderEnabled');
+  @override
+  late final GeneratedColumn<int> wrongReminderEnabled = GeneratedColumn<int>(
+    'wrong_reminder_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _reminderSyncDirtyMeta = const VerificationMeta(
+    'reminderSyncDirty',
+  );
+  @override
+  late final GeneratedColumn<int> reminderSyncDirty = GeneratedColumn<int>(
+    'reminder_sync_dirty',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _lastSyncedReminderWrongMeta =
+      const VerificationMeta('lastSyncedReminderWrong');
+  @override
+  late final GeneratedColumn<int> lastSyncedReminderWrong =
+      GeneratedColumn<int>(
+        'last_synced_reminder_wrong',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(0),
+      );
   @override
   List<GeneratedColumn> get $columns => [
     SettingId,
@@ -4536,6 +4617,9 @@ class $SettingTable extends Setting with TableInfo<$SettingTable, SettingData> {
     models,
     mode,
     vibration,
+    wrongReminderEnabled,
+    reminderSyncDirty,
+    lastSyncedReminderWrong,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4581,6 +4665,33 @@ class $SettingTable extends Setting with TableInfo<$SettingTable, SettingData> {
         vibration.isAcceptableOrUnknown(data['vibration']!, _vibrationMeta),
       );
     }
+    if (data.containsKey('wrong_reminder_enabled')) {
+      context.handle(
+        _wrongReminderEnabledMeta,
+        wrongReminderEnabled.isAcceptableOrUnknown(
+          data['wrong_reminder_enabled']!,
+          _wrongReminderEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reminder_sync_dirty')) {
+      context.handle(
+        _reminderSyncDirtyMeta,
+        reminderSyncDirty.isAcceptableOrUnknown(
+          data['reminder_sync_dirty']!,
+          _reminderSyncDirtyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_synced_reminder_wrong')) {
+      context.handle(
+        _lastSyncedReminderWrongMeta,
+        lastSyncedReminderWrong.isAcceptableOrUnknown(
+          data['last_synced_reminder_wrong']!,
+          _lastSyncedReminderWrongMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -4610,6 +4721,18 @@ class $SettingTable extends Setting with TableInfo<$SettingTable, SettingData> {
         DriftSqlType.int,
         data['${effectivePrefix}vibration'],
       )!,
+      wrongReminderEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}wrong_reminder_enabled'],
+      )!,
+      reminderSyncDirty: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reminder_sync_dirty'],
+      )!,
+      lastSyncedReminderWrong: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_synced_reminder_wrong'],
+      )!,
     );
   }
 
@@ -4625,12 +4748,18 @@ class SettingData extends DataClass implements Insertable<SettingData> {
   final int models;
   final int mode;
   final int vibration;
+  final int wrongReminderEnabled;
+  final int reminderSyncDirty;
+  final int lastSyncedReminderWrong;
   const SettingData({
     required this.SettingId,
     required this.rankId,
     required this.models,
     required this.mode,
     required this.vibration,
+    required this.wrongReminderEnabled,
+    required this.reminderSyncDirty,
+    required this.lastSyncedReminderWrong,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4640,6 +4769,9 @@ class SettingData extends DataClass implements Insertable<SettingData> {
     map['models'] = Variable<int>(models);
     map['mode'] = Variable<int>(mode);
     map['vibration'] = Variable<int>(vibration);
+    map['wrong_reminder_enabled'] = Variable<int>(wrongReminderEnabled);
+    map['reminder_sync_dirty'] = Variable<int>(reminderSyncDirty);
+    map['last_synced_reminder_wrong'] = Variable<int>(lastSyncedReminderWrong);
     return map;
   }
 
@@ -4650,6 +4782,9 @@ class SettingData extends DataClass implements Insertable<SettingData> {
       models: Value(models),
       mode: Value(mode),
       vibration: Value(vibration),
+      wrongReminderEnabled: Value(wrongReminderEnabled),
+      reminderSyncDirty: Value(reminderSyncDirty),
+      lastSyncedReminderWrong: Value(lastSyncedReminderWrong),
     );
   }
 
@@ -4664,6 +4799,13 @@ class SettingData extends DataClass implements Insertable<SettingData> {
       models: serializer.fromJson<int>(json['models']),
       mode: serializer.fromJson<int>(json['mode']),
       vibration: serializer.fromJson<int>(json['vibration']),
+      wrongReminderEnabled: serializer.fromJson<int>(
+        json['wrongReminderEnabled'],
+      ),
+      reminderSyncDirty: serializer.fromJson<int>(json['reminderSyncDirty']),
+      lastSyncedReminderWrong: serializer.fromJson<int>(
+        json['lastSyncedReminderWrong'],
+      ),
     );
   }
   @override
@@ -4675,6 +4817,11 @@ class SettingData extends DataClass implements Insertable<SettingData> {
       'models': serializer.toJson<int>(models),
       'mode': serializer.toJson<int>(mode),
       'vibration': serializer.toJson<int>(vibration),
+      'wrongReminderEnabled': serializer.toJson<int>(wrongReminderEnabled),
+      'reminderSyncDirty': serializer.toJson<int>(reminderSyncDirty),
+      'lastSyncedReminderWrong': serializer.toJson<int>(
+        lastSyncedReminderWrong,
+      ),
     };
   }
 
@@ -4684,12 +4831,19 @@ class SettingData extends DataClass implements Insertable<SettingData> {
     int? models,
     int? mode,
     int? vibration,
+    int? wrongReminderEnabled,
+    int? reminderSyncDirty,
+    int? lastSyncedReminderWrong,
   }) => SettingData(
     SettingId: SettingId ?? this.SettingId,
     rankId: rankId ?? this.rankId,
     models: models ?? this.models,
     mode: mode ?? this.mode,
     vibration: vibration ?? this.vibration,
+    wrongReminderEnabled: wrongReminderEnabled ?? this.wrongReminderEnabled,
+    reminderSyncDirty: reminderSyncDirty ?? this.reminderSyncDirty,
+    lastSyncedReminderWrong:
+        lastSyncedReminderWrong ?? this.lastSyncedReminderWrong,
   );
   SettingData copyWithCompanion(SettingCompanion data) {
     return SettingData(
@@ -4698,6 +4852,15 @@ class SettingData extends DataClass implements Insertable<SettingData> {
       models: data.models.present ? data.models.value : this.models,
       mode: data.mode.present ? data.mode.value : this.mode,
       vibration: data.vibration.present ? data.vibration.value : this.vibration,
+      wrongReminderEnabled: data.wrongReminderEnabled.present
+          ? data.wrongReminderEnabled.value
+          : this.wrongReminderEnabled,
+      reminderSyncDirty: data.reminderSyncDirty.present
+          ? data.reminderSyncDirty.value
+          : this.reminderSyncDirty,
+      lastSyncedReminderWrong: data.lastSyncedReminderWrong.present
+          ? data.lastSyncedReminderWrong.value
+          : this.lastSyncedReminderWrong,
     );
   }
 
@@ -4708,13 +4871,25 @@ class SettingData extends DataClass implements Insertable<SettingData> {
           ..write('rankId: $rankId, ')
           ..write('models: $models, ')
           ..write('mode: $mode, ')
-          ..write('vibration: $vibration')
+          ..write('vibration: $vibration, ')
+          ..write('wrongReminderEnabled: $wrongReminderEnabled, ')
+          ..write('reminderSyncDirty: $reminderSyncDirty, ')
+          ..write('lastSyncedReminderWrong: $lastSyncedReminderWrong')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(SettingId, rankId, models, mode, vibration);
+  int get hashCode => Object.hash(
+    SettingId,
+    rankId,
+    models,
+    mode,
+    vibration,
+    wrongReminderEnabled,
+    reminderSyncDirty,
+    lastSyncedReminderWrong,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4723,7 +4898,10 @@ class SettingData extends DataClass implements Insertable<SettingData> {
           other.rankId == this.rankId &&
           other.models == this.models &&
           other.mode == this.mode &&
-          other.vibration == this.vibration);
+          other.vibration == this.vibration &&
+          other.wrongReminderEnabled == this.wrongReminderEnabled &&
+          other.reminderSyncDirty == this.reminderSyncDirty &&
+          other.lastSyncedReminderWrong == this.lastSyncedReminderWrong);
 }
 
 class SettingCompanion extends UpdateCompanion<SettingData> {
@@ -4732,6 +4910,9 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
   final Value<int> models;
   final Value<int> mode;
   final Value<int> vibration;
+  final Value<int> wrongReminderEnabled;
+  final Value<int> reminderSyncDirty;
+  final Value<int> lastSyncedReminderWrong;
   final Value<int> rowid;
   const SettingCompanion({
     this.SettingId = const Value.absent(),
@@ -4739,6 +4920,9 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
     this.models = const Value.absent(),
     this.mode = const Value.absent(),
     this.vibration = const Value.absent(),
+    this.wrongReminderEnabled = const Value.absent(),
+    this.reminderSyncDirty = const Value.absent(),
+    this.lastSyncedReminderWrong = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SettingCompanion.insert({
@@ -4747,6 +4931,9 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
     this.models = const Value.absent(),
     this.mode = const Value.absent(),
     this.vibration = const Value.absent(),
+    this.wrongReminderEnabled = const Value.absent(),
+    this.reminderSyncDirty = const Value.absent(),
+    this.lastSyncedReminderWrong = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : SettingId = Value(SettingId);
   static Insertable<SettingData> custom({
@@ -4755,6 +4942,9 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
     Expression<int>? models,
     Expression<int>? mode,
     Expression<int>? vibration,
+    Expression<int>? wrongReminderEnabled,
+    Expression<int>? reminderSyncDirty,
+    Expression<int>? lastSyncedReminderWrong,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4763,6 +4953,11 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
       if (models != null) 'models': models,
       if (mode != null) 'mode': mode,
       if (vibration != null) 'vibration': vibration,
+      if (wrongReminderEnabled != null)
+        'wrong_reminder_enabled': wrongReminderEnabled,
+      if (reminderSyncDirty != null) 'reminder_sync_dirty': reminderSyncDirty,
+      if (lastSyncedReminderWrong != null)
+        'last_synced_reminder_wrong': lastSyncedReminderWrong,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4773,6 +4968,9 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
     Value<int>? models,
     Value<int>? mode,
     Value<int>? vibration,
+    Value<int>? wrongReminderEnabled,
+    Value<int>? reminderSyncDirty,
+    Value<int>? lastSyncedReminderWrong,
     Value<int>? rowid,
   }) {
     return SettingCompanion(
@@ -4781,6 +4979,10 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
       models: models ?? this.models,
       mode: mode ?? this.mode,
       vibration: vibration ?? this.vibration,
+      wrongReminderEnabled: wrongReminderEnabled ?? this.wrongReminderEnabled,
+      reminderSyncDirty: reminderSyncDirty ?? this.reminderSyncDirty,
+      lastSyncedReminderWrong:
+          lastSyncedReminderWrong ?? this.lastSyncedReminderWrong,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4803,6 +5005,17 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
     if (vibration.present) {
       map['vibration'] = Variable<int>(vibration.value);
     }
+    if (wrongReminderEnabled.present) {
+      map['wrong_reminder_enabled'] = Variable<int>(wrongReminderEnabled.value);
+    }
+    if (reminderSyncDirty.present) {
+      map['reminder_sync_dirty'] = Variable<int>(reminderSyncDirty.value);
+    }
+    if (lastSyncedReminderWrong.present) {
+      map['last_synced_reminder_wrong'] = Variable<int>(
+        lastSyncedReminderWrong.value,
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4817,6 +5030,9 @@ class SettingCompanion extends UpdateCompanion<SettingData> {
           ..write('models: $models, ')
           ..write('mode: $mode, ')
           ..write('vibration: $vibration, ')
+          ..write('wrongReminderEnabled: $wrongReminderEnabled, ')
+          ..write('reminderSyncDirty: $reminderSyncDirty, ')
+          ..write('lastSyncedReminderWrong: $lastSyncedReminderWrong, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9720,6 +9936,7 @@ typedef $$UserAnswersTableCreateCompanionBuilder =
       Value<int> id,
       Value<int?> sessionId,
       Value<int?> questionId,
+      Value<String?> rankId,
       Value<String?> selectedAnswer,
       Value<int?> isCorrect,
     });
@@ -9728,6 +9945,7 @@ typedef $$UserAnswersTableUpdateCompanionBuilder =
       Value<int> id,
       Value<int?> sessionId,
       Value<int?> questionId,
+      Value<String?> rankId,
       Value<String?> selectedAnswer,
       Value<int?> isCorrect,
     });
@@ -9786,6 +10004,11 @@ class $$UserAnswersTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rankId => $composableBuilder(
+    column: $table.rankId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9860,6 +10083,11 @@ class $$UserAnswersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get selectedAnswer => $composableBuilder(
     column: $table.selectedAnswer,
     builder: (column) => ColumnOrderings(column),
@@ -9928,6 +10156,9 @@ class $$UserAnswersTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get rankId =>
+      $composableBuilder(column: $table.rankId, builder: (column) => column);
 
   GeneratedColumn<String> get selectedAnswer => $composableBuilder(
     column: $table.selectedAnswer,
@@ -10015,12 +10246,14 @@ class $$UserAnswersTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int?> sessionId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
                 Value<String?> selectedAnswer = const Value.absent(),
                 Value<int?> isCorrect = const Value.absent(),
               }) => UserAnswersCompanion(
                 id: id,
                 sessionId: sessionId,
                 questionId: questionId,
+                rankId: rankId,
                 selectedAnswer: selectedAnswer,
                 isCorrect: isCorrect,
               ),
@@ -10029,12 +10262,14 @@ class $$UserAnswersTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<int?> sessionId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
                 Value<String?> selectedAnswer = const Value.absent(),
                 Value<int?> isCorrect = const Value.absent(),
               }) => UserAnswersCompanion.insert(
                 id: id,
                 sessionId: sessionId,
                 questionId: questionId,
+                rankId: rankId,
                 selectedAnswer: selectedAnswer,
                 isCorrect: isCorrect,
               ),
@@ -10870,6 +11105,9 @@ typedef $$SettingTableCreateCompanionBuilder =
       Value<int> models,
       Value<int> mode,
       Value<int> vibration,
+      Value<int> wrongReminderEnabled,
+      Value<int> reminderSyncDirty,
+      Value<int> lastSyncedReminderWrong,
       Value<int> rowid,
     });
 typedef $$SettingTableUpdateCompanionBuilder =
@@ -10879,6 +11117,9 @@ typedef $$SettingTableUpdateCompanionBuilder =
       Value<int> models,
       Value<int> mode,
       Value<int> vibration,
+      Value<int> wrongReminderEnabled,
+      Value<int> reminderSyncDirty,
+      Value<int> lastSyncedReminderWrong,
       Value<int> rowid,
     });
 
@@ -10913,6 +11154,21 @@ class $$SettingTableFilterComposer
 
   ColumnFilters<int> get vibration => $composableBuilder(
     column: $table.vibration,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get wrongReminderEnabled => $composableBuilder(
+    column: $table.wrongReminderEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get reminderSyncDirty => $composableBuilder(
+    column: $table.reminderSyncDirty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastSyncedReminderWrong => $composableBuilder(
+    column: $table.lastSyncedReminderWrong,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -10950,6 +11206,21 @@ class $$SettingTableOrderingComposer
     column: $table.vibration,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get wrongReminderEnabled => $composableBuilder(
+    column: $table.wrongReminderEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get reminderSyncDirty => $composableBuilder(
+    column: $table.reminderSyncDirty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastSyncedReminderWrong => $composableBuilder(
+    column: $table.lastSyncedReminderWrong,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SettingTableAnnotationComposer
@@ -10975,6 +11246,21 @@ class $$SettingTableAnnotationComposer
 
   GeneratedColumn<int> get vibration =>
       $composableBuilder(column: $table.vibration, builder: (column) => column);
+
+  GeneratedColumn<int> get wrongReminderEnabled => $composableBuilder(
+    column: $table.wrongReminderEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get reminderSyncDirty => $composableBuilder(
+    column: $table.reminderSyncDirty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastSyncedReminderWrong => $composableBuilder(
+    column: $table.lastSyncedReminderWrong,
+    builder: (column) => column,
+  );
 }
 
 class $$SettingTableTableManager
@@ -11013,6 +11299,9 @@ class $$SettingTableTableManager
                 Value<int> models = const Value.absent(),
                 Value<int> mode = const Value.absent(),
                 Value<int> vibration = const Value.absent(),
+                Value<int> wrongReminderEnabled = const Value.absent(),
+                Value<int> reminderSyncDirty = const Value.absent(),
+                Value<int> lastSyncedReminderWrong = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SettingCompanion(
                 SettingId: SettingId,
@@ -11020,6 +11309,9 @@ class $$SettingTableTableManager
                 models: models,
                 mode: mode,
                 vibration: vibration,
+                wrongReminderEnabled: wrongReminderEnabled,
+                reminderSyncDirty: reminderSyncDirty,
+                lastSyncedReminderWrong: lastSyncedReminderWrong,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -11029,6 +11321,9 @@ class $$SettingTableTableManager
                 Value<int> models = const Value.absent(),
                 Value<int> mode = const Value.absent(),
                 Value<int> vibration = const Value.absent(),
+                Value<int> wrongReminderEnabled = const Value.absent(),
+                Value<int> reminderSyncDirty = const Value.absent(),
+                Value<int> lastSyncedReminderWrong = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SettingCompanion.insert(
                 SettingId: SettingId,
@@ -11036,6 +11331,9 @@ class $$SettingTableTableManager
                 models: models,
                 mode: mode,
                 vibration: vibration,
+                wrongReminderEnabled: wrongReminderEnabled,
+                reminderSyncDirty: reminderSyncDirty,
+                lastSyncedReminderWrong: lastSyncedReminderWrong,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
