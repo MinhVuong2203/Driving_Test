@@ -49,6 +49,7 @@ dependencies:
   url_launcher: ^6.3.1
   shared_preferences: ^2.5.5
   mailer: ^6.1.0
+  speech_to_text: ^7.0.0
 
   # Thông báo
   flutter_local_notifications: ^21.0.0

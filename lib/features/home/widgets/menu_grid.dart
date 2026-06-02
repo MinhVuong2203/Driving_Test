@@ -1,6 +1,8 @@
 import 'package:driving_test_prep/features/home/screens/traffic_sign_screen.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_list_screens.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_topic_quets_screen.dart';
+import 'package:driving_test_prep/features/home/screens/tips_screen.dart';
+import 'package:driving_test_prep/features/traffic_violations/screens/traffic_violation_search_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -67,9 +69,10 @@ class MenuGrid extends StatelessWidget {
         route: const TrafficSignsScreen(),
       ),
       _MenuItem(
-        icon: Icons.forum_rounded,
-        text: 'Hỏi đáp',
+        icon: Icons.manage_search_rounded,
+        text: 'Tra cứu lỗi',
         color: const Color(0xFF2563EB),
+        route: const TrafficViolationSearchScreen(),
       ),
     ];
 
