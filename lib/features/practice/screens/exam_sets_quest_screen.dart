@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/database/daos/exam_sets_quest_dao.dart';
+import '../../../core/database/daos/setting_dao.dart';
 import '../../../core/database/daos/user_progress_dao.dart';
 import '../../../data/repository/exam_sets_quest_repository.dart';
+import '../../../data/repository/setting_reponsitory.dart';
 import '../../../data/repository/user_progress_repository.dart';
 import '../../../data/services/sqlite/wrong_question_notification_service.dart';
 import '../../../shared/utils/constants/app_colors.dart';
@@ -35,8 +38,9 @@ class ExamSetsQuestScreen extends StatefulWidget {
 class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   late final db = DBProvider().db;
   late final ExamSetsQuestRepository repo;
-  
+
   late final UserProgressRepository userProgressRepo;
+  late final SettingRepository settingRepo;
   final _adHelper = InterstitialAdHelper();
   final _adMobRepo = AdMobConfigRepository();
 
@@ -44,6 +48,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   int currentIndex = 0;
   Duration remaining = Duration.zero;
   Timer? timer;
+  Timer? _autoNextTimer;
 
   // Luu dap an theo nhan A/B/C/D
   final Map<int, String> selectedAnswers = {};
@@ -53,13 +58,16 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   final Set<int> judgedQuestionIds = {};
 
   bool _isSubmitting = false;
+  bool _vibrationEnabled = true;
 
   @override
   void initState() {
     super.initState();
     repo = ExamSetsQuestRepository(ExamSetsQuestDao(db));
     userProgressRepo = UserProgressRepository(UserProgressDao(db));
+    settingRepo = SettingRepository(SettingDao(db));
     remaining = Duration(minutes: widget.durationMinutes);
+    _loadVibrationSetting();
     _loadData();
     _startTimer();
     _initAd();
@@ -68,14 +76,50 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   @override
   void dispose() {
     timer?.cancel();
+    _autoNextTimer?.cancel();
     _adHelper.dispose();
     super.dispose();
   }
+
+  Future<void> _loadVibrationSetting() async {
+    final setting = await settingRepo.getSetting();
+    if (!mounted) return;
+    setState(() {
+      _vibrationEnabled = (setting?.vibration ?? 1) == 1;
+    });
+  }
+
+  Future<void> _vibrateOnAnswerSelected() async {
+    if (!_vibrationEnabled) return;
+    await HapticFeedback.mediumImpact();
+  }
+
+  void _goToQuestion(int index) {
+    if (index < 0 || index >= questions.length) return;
+    _autoNextTimer?.cancel();
+    setState(() => currentIndex = index);
+  }
+
+  void _scheduleAutoNext(int selectedQuestionId, int selectedQuestionIndex) {
+    _autoNextTimer?.cancel();
+    if (selectedQuestionIndex >= questions.length - 1) return;
+
+    _autoNextTimer = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted || questions.isEmpty) return;
+      if (currentIndex != selectedQuestionIndex) return;
+      if (questions[currentIndex].question.id != selectedQuestionId) return;
+      setState(() {
+        currentIndex += 1;
+      });
+    });
+  }
+
   Future<void> _initAd() async {
     final config = await _adMobRepo.getConfig();
     _adHelper.setAdUnitId(config.interstitialId);
     _adHelper.loadAd();
   }
+
   Future<void> _loadData() async {
     final data = await repo.getQuestionsByExamSet(widget.examSetId);
 
@@ -129,7 +173,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     return _normalize(q.correctAnswer) == _normalize(selectedLabel);
   }
 
-  String _optionTextByLabel(List<MapEntry<String, String>> options, String label) {
+  String _optionTextByLabel(
+    List<MapEntry<String, String>> options,
+    String label,
+  ) {
     for (final opt in options) {
       if (_normalize(opt.key) == _normalize(label)) {
         return opt.value;
@@ -184,11 +231,13 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     }
 
     if (reminderStateChanged) {
-      await WrongQuestionNotificationService.instance.syncCurrentReminderState();
+      await WrongQuestionNotificationService.instance
+          .syncCurrentReminderState();
     }
 
     if (!mounted) return;
     await _adHelper.showAd();
+    if (!mounted) return;
 
     await showDialog<void>(
       context: context,
@@ -197,9 +246,9 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         title: Text(autoSubmit ? 'Hết giờ làm bài' : 'Kết quả bài thi'),
         content: Text(
           'Đã làm: $answered/$total câu\n'
-              'Đúng: $correct/$total câu\n'
-              'Điểm đậu tối thiểu: $passNeed\n'
-              'Kết quả: ${passed ? "ĐẠT" : "KHÔNG ĐẠT"}',
+          'Đúng: $correct/$total câu\n'
+          'Điểm đậu tối thiểu: $passNeed\n'
+          'Kết quả: ${passed ? "ĐẠT" : "KHÔNG ĐẠT"}',
         ),
         actions: [
           TextButton(
@@ -225,6 +274,8 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final isJudged = judgedQuestionIds.contains(qId);
 
     if (widget.gradeInstantly && isJudged) return;
+    final selectedQuestionIndex = currentIndex;
+    await _vibrateOnAnswerSelected();
 
     setState(() {
       selectedAnswers[qId] = label;
@@ -232,6 +283,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         judgedQuestionIds.add(qId);
       }
     });
+    _scheduleAutoNext(qId, selectedQuestionIndex);
 
     if (widget.gradeInstantly) {
       final ok = _isCorrect(q, label);
@@ -243,7 +295,8 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
         await userProgressRepo.removeWrongQuestion(q.id);
       }
 
-      await WrongQuestionNotificationService.instance.syncCurrentReminderState();
+      await WrongQuestionNotificationService.instance
+          .syncCurrentReminderState();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -259,9 +312,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   @override
   Widget build(BuildContext context) {
     if (questions.isEmpty) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final item = questions[currentIndex];
@@ -276,37 +327,88 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     final correctText = _optionTextByLabel(opts, correctLabel);
     final explanation = (q.explanation ?? '').trim();
     final selectedLabel = selected ?? '';
-    final selectedText = selectedLabel.isEmpty ? '' : _optionTextByLabel(opts, selectedLabel);
+    final selectedText = selectedLabel.isEmpty
+        ? ''
+        : _optionTextByLabel(opts, selectedLabel);
     final showInstantReview = widget.gradeInstantly && isJudged;
     final isLastQuestion = currentIndex == questions.length - 1;
     final isFirstQuestion = currentIndex == 0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark
+        ? AppColors.darkBackground
+        : AppColors.lightBackground;
+    final surfaceColor = isDark
+        ? AppColors.darkSurface
+        : AppColors.lightSurface;
+    final textPrimary = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final textSecondary = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
+    final borderColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
+    final selectedSurface = isDark
+        ? AppColors.darkButtonSecondary
+        : AppColors.primaryLight;
+    final neutralSurface = isDark
+        ? AppColors.darkInputBackground
+        : AppColors.lightSurface;
+    final answeredChipColor = isDark
+        ? AppColors.darkChipBackground
+        : AppColors.lightChipBackground;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
               child: Row(
                 children: [
                   InkWell(
                     onTap: () => Navigator.pop(context),
                     borderRadius: BorderRadius.circular(24),
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 24,
-                      backgroundColor: Color(0xFFF1F1F1),
-                      child: Icon(Icons.close, size: 30, color: Colors.black),
+                      backgroundColor: isDark
+                          ? AppColors.darkInputBackground
+                          : AppColors.primaryLight,
+                      child: const Icon(
+                        Icons.close_rounded,
+                        size: 28,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
                   Expanded(
                     child: Center(
-                      child: Text(
-                        _timeText(remaining),
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+   
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.timer_rounded,
+                              size: 18,
+                              color: AppColors.warning,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _timeText(remaining),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.warningDark,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -316,7 +418,8 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        foregroundColor: AppColors.white,
+                        elevation: 0,
                         shape: const StadiumBorder(),
                       ),
                       onPressed: () => _submitExam(),
@@ -339,28 +442,35 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 runSpacing: 6,
                 children: List.generate(questions.length, (i) {
                   final active = i == currentIndex;
-                  final hasAnswer = selectedAnswers.containsKey(questions[i].question.id);
+                  final hasAnswer = selectedAnswers.containsKey(
+                    questions[i].question.id,
+                  );
                   return GestureDetector(
-                    onTap: () => setState(() => currentIndex = i),
+                    onTap: () => _goToQuestion(i),
                     child: Container(
                       width: 38,
                       height: 32,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(10),
                         color: active
-                            ? Colors.white
-                            : (hasAnswer ? const Color(0xFFEAF3FF) : const Color(0xFFF0F0F0)),
+                            ? AppColors.primary
+                            : (hasAnswer ? answeredChipColor : surfaceColor),
                         border: Border.all(
-                          color: active ? AppColors.primary : Colors.transparent,
-                          width: 2,
+                          color: active
+                              ? AppColors.primary
+                              : (hasAnswer ? AppColors.primary : borderColor),
+                          width: active ? 2 : 1,
                         ),
                       ),
                       child: Text(
                         '${i + 1}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          color: Colors.black,
+                          fontWeight: FontWeight.w800,
+                          color: active
+                              ? AppColors.white
+                              : (hasAnswer ? AppColors.primary : textSecondary),
                         ),
                       ),
                     ),
@@ -379,10 +489,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                       children: [
                         Text(
                           'Câu ${currentIndex + 1}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                            fontWeight: FontWeight.w800,
+                            color: textPrimary,
                           ),
                         ),
                         const Spacer(),
@@ -398,8 +508,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             });
                           },
                           icon: Icon(
-                            isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                            color: const Color(0xFF9E9E9E),
+                            isBookmarked
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
+                            color: isBookmarked
+                                ? AppColors.warning
+                                : textSecondary,
                           ),
                         ),
                       ],
@@ -407,11 +521,11 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                     const SizedBox(height: 8),
                     Text(
                       q.question,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
-                        color: Colors.black,
+                        color: textPrimary,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -425,73 +539,111 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                       final text = opts[i].value;
                       final checked = selected == label;
 
-                      Color borderColor = Colors.black;
+                      Color optionBorderColor = borderColor;
+                      Color optionBackground = neutralSurface;
                       IconData? stateIcon;
                       Color iconColor = AppColors.primary;
 
                       if (widget.gradeInstantly && isJudged) {
                         if (label == correctLabel) {
-                          borderColor = Colors.green;
+                          optionBorderColor = AppColors.success;
+                          optionBackground = isDark
+                              ? AppColors.successDark.withValues(alpha: 0.18)
+                              : AppColors.successLight;
                           stateIcon = Icons.check;
-                          iconColor = Colors.green;
+                          iconColor = AppColors.success;
                         } else if (checked && label != correctLabel) {
-                          borderColor = Colors.red;
+                          optionBorderColor = AppColors.danger;
+                          optionBackground = isDark
+                              ? AppColors.dangerDark.withValues(alpha: 0.18)
+                              : AppColors.dangerLight;
                           stateIcon = Icons.close;
-                          iconColor = Colors.red;
+                          iconColor = AppColors.danger;
                         } else {
-                          borderColor = Colors.black45;
+                          optionBorderColor = borderColor;
                         }
                       } else {
-                        borderColor = checked ? AppColors.primary : Colors.black;
+                        optionBorderColor = checked
+                            ? AppColors.primary
+                            : borderColor;
+                        optionBackground = checked
+                            ? selectedSurface
+                            : neutralSurface;
                         stateIcon = checked ? Icons.check : null;
                         iconColor = AppColors.primary;
                       }
 
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () => _onSelectAnswer(q, label),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: borderColor,
-                                        width: 2.1,
-                                      ),
-                                    ),
-                                    child: stateIcon != null
-                                        ? Icon(
-                                      stateIcon,
-                                      color: iconColor,
-                                      size: 12,
-                                    )
-                                        : null,
-                                  ),
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Text(
-                                      '$label. $text',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        height: 1.35,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () => _onSelectAnswer(q, label),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 13,
+                            ),
+                            decoration: BoxDecoration(
+                              color: optionBackground,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: optionBorderColor,
+                                width: checked || stateIcon != null ? 1.8 : 1,
                               ),
                             ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: checked || stateIcon != null
+                                        ? iconColor
+                                        : AppColors.transparent,
+                                    border: Border.all(
+                                      color: optionBorderColor,
+                                      width: 1.8,
+                                    ),
+                                  ),
+                                  child: stateIcon != null
+                                      ? Icon(
+                                          stateIcon,
+                                          color: AppColors.white,
+                                          size: 16,
+                                        )
+                                      : Text(
+                                          label,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w900,
+                                            color: checked
+                                                ? AppColors.white
+                                                : textSecondary,
+                                          ),
+                                        ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    text,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: checked
+                                          ? FontWeight.w700
+                                          : FontWeight.w500,
+                                      height: 1.35,
+                                      color: textPrimary,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const Divider(height: 10),
-                        ],
+                        ),
                       );
                     }),
                     if (showInstantReview) ...[
@@ -500,25 +652,34 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF7FAFF),
+                          color: isDark
+                              ? AppColors.darkButtonSecondary
+                              : AppColors.infoLight,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFD6E6FF)),
+                          border: Border.all(
+                            color: isDark
+                                ? AppColors.darkBorderStrong
+                                : AppColors.info.withValues(alpha: 0.22),
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Giải thích',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.black,
+                                color: textPrimary,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Bạn chọn: ${selectedLabel.isEmpty ? "Chưa chọn" : "$selectedLabel. $selectedText"}',
-                              style: const TextStyle(fontSize: 16, color: Colors.black87),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: textSecondary,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             Text(
@@ -526,16 +687,18 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                color: Colors.green,
+                                color: AppColors.success,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              explanation.isEmpty ? 'Chưa có lời giải cho câu này.' : explanation,
-                              style: const TextStyle(
+                              explanation.isEmpty
+                                  ? 'Chưa có lời giải cho câu này.'
+                                  : explanation,
+                              style: TextStyle(
                                 fontSize: 16,
                                 height: 1.4,
-                                color: Colors.black87,
+                                color: textSecondary,
                               ),
                             ),
                           ],
@@ -552,7 +715,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       ),
       bottomNavigationBar: Container(
         height: 72,
-        color: AppColors.primary,
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          border: Border(top: BorderSide(color: borderColor)),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
@@ -563,8 +729,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 maintainAnimation: true,
                 maintainSize: true,
                 child: TextButton.icon(
-                  style: TextButton.styleFrom(foregroundColor: Colors.white),
-                  onPressed: () => setState(() => currentIndex -= 1),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.primary,
+                    backgroundColor: selectedSurface,
+                    shape: const StadiumBorder(),
+                  ),
+                  onPressed: () => _goToQuestion(currentIndex - 1),
                   icon: const Icon(Icons.chevron_left),
                   iconAlignment: IconAlignment.start,
                   label: const Text(
@@ -575,12 +745,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
               ),
             ),
             IconButton(
-              onPressed: () => _openQuestionSheet(context),
-              icon: const Icon(
-                Icons.keyboard_double_arrow_up,
-                color: Colors.white,
-                size: 36,
+              style: IconButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
               ),
+              onPressed: () => _openQuestionSheet(context),
+              icon: const Icon(Icons.keyboard_double_arrow_up, size: 36),
             ),
             Expanded(
               child: Visibility(
@@ -590,9 +760,11 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 maintainSize: true,
                 child: TextButton.icon(
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
+                    foregroundColor: AppColors.primary,
+                    backgroundColor: selectedSurface,
+                    shape: const StadiumBorder(),
                   ),
-                  onPressed: () => setState(() => currentIndex += 1),
+                  onPressed: () => _goToQuestion(currentIndex + 1),
                   iconAlignment: IconAlignment.end,
                   icon: const Icon(Icons.chevron_right),
                   label: const Text(
@@ -609,10 +781,24 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   }
 
   void _openQuestionSheet(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark
+        ? AppColors.darkSurface
+        : AppColors.lightSurface;
+    final textPrimary = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final textSecondary = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
+    final chipColor = isDark
+        ? AppColors.darkInputBackground
+        : AppColors.lightInputDisabledBackground;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: surfaceColor,
       builder: (_) {
         return SizedBox(
           height: MediaQuery.of(context).size.height * 0.72,
@@ -620,7 +806,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
             children: [
               Container(
                 color: AppColors.primary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
                 child: const Row(
                   children: [
                     Icon(Icons.close, color: Colors.white, size: 30),
@@ -639,27 +828,27 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
               Expanded(
                 child: ListView.separated(
                   itemCount: questions.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (_, i) {
                     final q = questions[i].question;
                     final opts = _optionsOf(q);
                     return ListTile(
                       onTap: () {
                         Navigator.pop(context);
-                        setState(() => currentIndex = i);
+                        _goToQuestion(i);
                       },
                       title: Text(
                         'Câu ${i + 1}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                          color: textPrimary,
                         ),
                       ),
                       subtitle: Text(
                         q.question,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.black54),
+                        style: TextStyle(color: textSecondary),
                       ),
                       trailing: Wrap(
                         spacing: 6,
@@ -670,11 +859,11 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                             radius: 16,
                             backgroundColor: chosen
                                 ? AppColors.primary
-                                : const Color(0xFFEFEFEF),
+                                : chipColor,
                             child: Text(
                               label,
                               style: TextStyle(
-                                color: chosen ? Colors.white : Colors.black,
+                                color: chosen ? AppColors.white : textPrimary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
