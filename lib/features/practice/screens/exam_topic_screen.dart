@@ -1,7 +1,9 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/exam_sets_quest_dao.dart';
+import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/repository/exam_sets_quest_repository.dart';
+import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +24,9 @@ class ExamTopicScreen extends StatefulWidget {
 class _ExamTopicScreenState extends State<ExamTopicScreen> {
   late final ExamSetsQuestRepository _repo = ExamSetsQuestRepository(
     ExamSetsQuestDao(DBProvider().db),
+  );
+  late final SettingRepository _settingRepository = SettingRepository(
+    SettingDao(DBProvider().db),
   );
   bool _gradeAfterSubmit = true; // true: chấm sau khi nộp
   bool _gradeInstantly = false;  // true: chấm nhanh khi chọn đáp án
@@ -49,13 +54,22 @@ class _ExamTopicScreenState extends State<ExamTopicScreen> {
     try {
       final topicFuture = _repo.getTopicInfo(widget.topicId);
       final questionsFuture = _repo.getQuestionsByTopic(widget.topicId);
-      final results = await Future.wait([topicFuture, questionsFuture]);
+      final settingFuture = _settingRepository.getSetting();
+      final results = await Future.wait([
+        topicFuture,
+        questionsFuture,
+        settingFuture,
+      ]);
+      final setting = results[2] as SettingData?;
+      final gradeInstantly = setting?.models == 1;
 
       if (!mounted) return;
 
       setState(() {
         _topic = results[0] as Topic?;
         _questions = results[1] as List<Question>;
+        _gradeAfterSubmit = !gradeInstantly;
+        _gradeInstantly = gradeInstantly;
         _isLoading = false;
       });
     } catch (e) {
@@ -240,11 +254,12 @@ class _ExamTopicScreenState extends State<ExamTopicScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     setState(() {
                       _gradeAfterSubmit = true;
                       _gradeInstantly = false;
                     });
+                    await _settingRepository.updateModels(0);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -266,11 +281,12 @@ class _ExamTopicScreenState extends State<ExamTopicScreen> {
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     setState(() {
                       _gradeAfterSubmit = false;
                       _gradeInstantly = true;
                     });
+                    await _settingRepository.updateModels(1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

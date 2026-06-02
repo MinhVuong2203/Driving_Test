@@ -5484,6 +5484,971 @@ class SavedQuestionsCompanion extends UpdateCompanion<SavedQuestion> {
   }
 }
 
+class $TrafficViolationRecordsTable extends TrafficViolationRecords
+    with TableInfo<$TrafficViolationRecordsTable, TrafficViolationRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TrafficViolationRecordsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _vehicleTypesJsonMeta = const VerificationMeta(
+    'vehicleTypesJson',
+  );
+  @override
+  late final GeneratedColumn<String> vehicleTypesJson = GeneratedColumn<String>(
+    'vehicle_types_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _subjectTextMeta = const VerificationMeta(
+    'subjectText',
+  );
+  @override
+  late final GeneratedColumn<String> subjectText = GeneratedColumn<String>(
+    'subject_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _penaltyTextMeta = const VerificationMeta(
+    'penaltyText',
+  );
+  @override
+  late final GeneratedColumn<String> penaltyText = GeneratedColumn<String>(
+    'penalty_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _penaltyLegalBasisMeta = const VerificationMeta(
+    'penaltyLegalBasis',
+  );
+  @override
+  late final GeneratedColumn<String> penaltyLegalBasis =
+      GeneratedColumn<String>(
+        'penalty_legal_basis',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _additionalPenaltyTextMeta =
+      const VerificationMeta('additionalPenaltyText');
+  @override
+  late final GeneratedColumn<String> additionalPenaltyText =
+      GeneratedColumn<String>(
+        'additional_penalty_text',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _additionalPenaltyLegalBasisMeta =
+      const VerificationMeta('additionalPenaltyLegalBasis');
+  @override
+  late final GeneratedColumn<String> additionalPenaltyLegalBasis =
+      GeneratedColumn<String>(
+        'additional_penalty_legal_basis',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _fineMinMeta = const VerificationMeta(
+    'fineMin',
+  );
+  @override
+  late final GeneratedColumn<int> fineMin = GeneratedColumn<int>(
+    'fine_min',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _fineMaxMeta = const VerificationMeta(
+    'fineMax',
+  );
+  @override
+  late final GeneratedColumn<int> fineMax = GeneratedColumn<int>(
+    'fine_max',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _aliasesJsonMeta = const VerificationMeta(
+    'aliasesJson',
+  );
+  @override
+  late final GeneratedColumn<String> aliasesJson = GeneratedColumn<String>(
+    'aliases_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _keywordsJsonMeta = const VerificationMeta(
+    'keywordsJson',
+  );
+  @override
+  late final GeneratedColumn<String> keywordsJson = GeneratedColumn<String>(
+    'keywords_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _searchTextMeta = const VerificationMeta(
+    'searchText',
+  );
+  @override
+  late final GeneratedColumn<String> searchText = GeneratedColumn<String>(
+    'search_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _relatedViolationIdsJsonMeta =
+      const VerificationMeta('relatedViolationIdsJson');
+  @override
+  late final GeneratedColumn<String> relatedViolationIdsJson =
+      GeneratedColumn<String>(
+        'related_violation_ids_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('active'),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    vehicleTypesJson,
+    subjectText,
+    penaltyText,
+    penaltyLegalBasis,
+    additionalPenaltyText,
+    additionalPenaltyLegalBasis,
+    fineMin,
+    fineMax,
+    aliasesJson,
+    keywordsJson,
+    searchText,
+    relatedViolationIdsJson,
+    status,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'traffic_violation_records';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<TrafficViolationRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('vehicle_types_json')) {
+      context.handle(
+        _vehicleTypesJsonMeta,
+        vehicleTypesJson.isAcceptableOrUnknown(
+          data['vehicle_types_json']!,
+          _vehicleTypesJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_vehicleTypesJsonMeta);
+    }
+    if (data.containsKey('subject_text')) {
+      context.handle(
+        _subjectTextMeta,
+        subjectText.isAcceptableOrUnknown(
+          data['subject_text']!,
+          _subjectTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_subjectTextMeta);
+    }
+    if (data.containsKey('penalty_text')) {
+      context.handle(
+        _penaltyTextMeta,
+        penaltyText.isAcceptableOrUnknown(
+          data['penalty_text']!,
+          _penaltyTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_penaltyTextMeta);
+    }
+    if (data.containsKey('penalty_legal_basis')) {
+      context.handle(
+        _penaltyLegalBasisMeta,
+        penaltyLegalBasis.isAcceptableOrUnknown(
+          data['penalty_legal_basis']!,
+          _penaltyLegalBasisMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_penaltyLegalBasisMeta);
+    }
+    if (data.containsKey('additional_penalty_text')) {
+      context.handle(
+        _additionalPenaltyTextMeta,
+        additionalPenaltyText.isAcceptableOrUnknown(
+          data['additional_penalty_text']!,
+          _additionalPenaltyTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_additionalPenaltyTextMeta);
+    }
+    if (data.containsKey('additional_penalty_legal_basis')) {
+      context.handle(
+        _additionalPenaltyLegalBasisMeta,
+        additionalPenaltyLegalBasis.isAcceptableOrUnknown(
+          data['additional_penalty_legal_basis']!,
+          _additionalPenaltyLegalBasisMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_additionalPenaltyLegalBasisMeta);
+    }
+    if (data.containsKey('fine_min')) {
+      context.handle(
+        _fineMinMeta,
+        fineMin.isAcceptableOrUnknown(data['fine_min']!, _fineMinMeta),
+      );
+    }
+    if (data.containsKey('fine_max')) {
+      context.handle(
+        _fineMaxMeta,
+        fineMax.isAcceptableOrUnknown(data['fine_max']!, _fineMaxMeta),
+      );
+    }
+    if (data.containsKey('aliases_json')) {
+      context.handle(
+        _aliasesJsonMeta,
+        aliasesJson.isAcceptableOrUnknown(
+          data['aliases_json']!,
+          _aliasesJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_aliasesJsonMeta);
+    }
+    if (data.containsKey('keywords_json')) {
+      context.handle(
+        _keywordsJsonMeta,
+        keywordsJson.isAcceptableOrUnknown(
+          data['keywords_json']!,
+          _keywordsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_keywordsJsonMeta);
+    }
+    if (data.containsKey('search_text')) {
+      context.handle(
+        _searchTextMeta,
+        searchText.isAcceptableOrUnknown(data['search_text']!, _searchTextMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_searchTextMeta);
+    }
+    if (data.containsKey('related_violation_ids_json')) {
+      context.handle(
+        _relatedViolationIdsJsonMeta,
+        relatedViolationIdsJson.isAcceptableOrUnknown(
+          data['related_violation_ids_json']!,
+          _relatedViolationIdsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_relatedViolationIdsJsonMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TrafficViolationRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TrafficViolationRecord(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      vehicleTypesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}vehicle_types_json'],
+      )!,
+      subjectText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}subject_text'],
+      )!,
+      penaltyText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}penalty_text'],
+      )!,
+      penaltyLegalBasis: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}penalty_legal_basis'],
+      )!,
+      additionalPenaltyText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}additional_penalty_text'],
+      )!,
+      additionalPenaltyLegalBasis: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}additional_penalty_legal_basis'],
+      )!,
+      fineMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}fine_min'],
+      )!,
+      fineMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}fine_max'],
+      )!,
+      aliasesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}aliases_json'],
+      )!,
+      keywordsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}keywords_json'],
+      )!,
+      searchText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}search_text'],
+      )!,
+      relatedViolationIdsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}related_violation_ids_json'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      )!,
+    );
+  }
+
+  @override
+  $TrafficViolationRecordsTable createAlias(String alias) {
+    return $TrafficViolationRecordsTable(attachedDatabase, alias);
+  }
+}
+
+class TrafficViolationRecord extends DataClass
+    implements Insertable<TrafficViolationRecord> {
+  final String id;
+  final String title;
+  final String vehicleTypesJson;
+  final String subjectText;
+  final String penaltyText;
+  final String penaltyLegalBasis;
+  final String additionalPenaltyText;
+  final String additionalPenaltyLegalBasis;
+  final int fineMin;
+  final int fineMax;
+  final String aliasesJson;
+  final String keywordsJson;
+  final String searchText;
+  final String relatedViolationIdsJson;
+  final String status;
+  final DateTime syncedAt;
+  const TrafficViolationRecord({
+    required this.id,
+    required this.title,
+    required this.vehicleTypesJson,
+    required this.subjectText,
+    required this.penaltyText,
+    required this.penaltyLegalBasis,
+    required this.additionalPenaltyText,
+    required this.additionalPenaltyLegalBasis,
+    required this.fineMin,
+    required this.fineMax,
+    required this.aliasesJson,
+    required this.keywordsJson,
+    required this.searchText,
+    required this.relatedViolationIdsJson,
+    required this.status,
+    required this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['vehicle_types_json'] = Variable<String>(vehicleTypesJson);
+    map['subject_text'] = Variable<String>(subjectText);
+    map['penalty_text'] = Variable<String>(penaltyText);
+    map['penalty_legal_basis'] = Variable<String>(penaltyLegalBasis);
+    map['additional_penalty_text'] = Variable<String>(additionalPenaltyText);
+    map['additional_penalty_legal_basis'] = Variable<String>(
+      additionalPenaltyLegalBasis,
+    );
+    map['fine_min'] = Variable<int>(fineMin);
+    map['fine_max'] = Variable<int>(fineMax);
+    map['aliases_json'] = Variable<String>(aliasesJson);
+    map['keywords_json'] = Variable<String>(keywordsJson);
+    map['search_text'] = Variable<String>(searchText);
+    map['related_violation_ids_json'] = Variable<String>(
+      relatedViolationIdsJson,
+    );
+    map['status'] = Variable<String>(status);
+    map['synced_at'] = Variable<DateTime>(syncedAt);
+    return map;
+  }
+
+  TrafficViolationRecordsCompanion toCompanion(bool nullToAbsent) {
+    return TrafficViolationRecordsCompanion(
+      id: Value(id),
+      title: Value(title),
+      vehicleTypesJson: Value(vehicleTypesJson),
+      subjectText: Value(subjectText),
+      penaltyText: Value(penaltyText),
+      penaltyLegalBasis: Value(penaltyLegalBasis),
+      additionalPenaltyText: Value(additionalPenaltyText),
+      additionalPenaltyLegalBasis: Value(additionalPenaltyLegalBasis),
+      fineMin: Value(fineMin),
+      fineMax: Value(fineMax),
+      aliasesJson: Value(aliasesJson),
+      keywordsJson: Value(keywordsJson),
+      searchText: Value(searchText),
+      relatedViolationIdsJson: Value(relatedViolationIdsJson),
+      status: Value(status),
+      syncedAt: Value(syncedAt),
+    );
+  }
+
+  factory TrafficViolationRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TrafficViolationRecord(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      vehicleTypesJson: serializer.fromJson<String>(json['vehicleTypesJson']),
+      subjectText: serializer.fromJson<String>(json['subjectText']),
+      penaltyText: serializer.fromJson<String>(json['penaltyText']),
+      penaltyLegalBasis: serializer.fromJson<String>(json['penaltyLegalBasis']),
+      additionalPenaltyText: serializer.fromJson<String>(
+        json['additionalPenaltyText'],
+      ),
+      additionalPenaltyLegalBasis: serializer.fromJson<String>(
+        json['additionalPenaltyLegalBasis'],
+      ),
+      fineMin: serializer.fromJson<int>(json['fineMin']),
+      fineMax: serializer.fromJson<int>(json['fineMax']),
+      aliasesJson: serializer.fromJson<String>(json['aliasesJson']),
+      keywordsJson: serializer.fromJson<String>(json['keywordsJson']),
+      searchText: serializer.fromJson<String>(json['searchText']),
+      relatedViolationIdsJson: serializer.fromJson<String>(
+        json['relatedViolationIdsJson'],
+      ),
+      status: serializer.fromJson<String>(json['status']),
+      syncedAt: serializer.fromJson<DateTime>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'vehicleTypesJson': serializer.toJson<String>(vehicleTypesJson),
+      'subjectText': serializer.toJson<String>(subjectText),
+      'penaltyText': serializer.toJson<String>(penaltyText),
+      'penaltyLegalBasis': serializer.toJson<String>(penaltyLegalBasis),
+      'additionalPenaltyText': serializer.toJson<String>(additionalPenaltyText),
+      'additionalPenaltyLegalBasis': serializer.toJson<String>(
+        additionalPenaltyLegalBasis,
+      ),
+      'fineMin': serializer.toJson<int>(fineMin),
+      'fineMax': serializer.toJson<int>(fineMax),
+      'aliasesJson': serializer.toJson<String>(aliasesJson),
+      'keywordsJson': serializer.toJson<String>(keywordsJson),
+      'searchText': serializer.toJson<String>(searchText),
+      'relatedViolationIdsJson': serializer.toJson<String>(
+        relatedViolationIdsJson,
+      ),
+      'status': serializer.toJson<String>(status),
+      'syncedAt': serializer.toJson<DateTime>(syncedAt),
+    };
+  }
+
+  TrafficViolationRecord copyWith({
+    String? id,
+    String? title,
+    String? vehicleTypesJson,
+    String? subjectText,
+    String? penaltyText,
+    String? penaltyLegalBasis,
+    String? additionalPenaltyText,
+    String? additionalPenaltyLegalBasis,
+    int? fineMin,
+    int? fineMax,
+    String? aliasesJson,
+    String? keywordsJson,
+    String? searchText,
+    String? relatedViolationIdsJson,
+    String? status,
+    DateTime? syncedAt,
+  }) => TrafficViolationRecord(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    vehicleTypesJson: vehicleTypesJson ?? this.vehicleTypesJson,
+    subjectText: subjectText ?? this.subjectText,
+    penaltyText: penaltyText ?? this.penaltyText,
+    penaltyLegalBasis: penaltyLegalBasis ?? this.penaltyLegalBasis,
+    additionalPenaltyText: additionalPenaltyText ?? this.additionalPenaltyText,
+    additionalPenaltyLegalBasis:
+        additionalPenaltyLegalBasis ?? this.additionalPenaltyLegalBasis,
+    fineMin: fineMin ?? this.fineMin,
+    fineMax: fineMax ?? this.fineMax,
+    aliasesJson: aliasesJson ?? this.aliasesJson,
+    keywordsJson: keywordsJson ?? this.keywordsJson,
+    searchText: searchText ?? this.searchText,
+    relatedViolationIdsJson:
+        relatedViolationIdsJson ?? this.relatedViolationIdsJson,
+    status: status ?? this.status,
+    syncedAt: syncedAt ?? this.syncedAt,
+  );
+  TrafficViolationRecord copyWithCompanion(
+    TrafficViolationRecordsCompanion data,
+  ) {
+    return TrafficViolationRecord(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      vehicleTypesJson: data.vehicleTypesJson.present
+          ? data.vehicleTypesJson.value
+          : this.vehicleTypesJson,
+      subjectText: data.subjectText.present
+          ? data.subjectText.value
+          : this.subjectText,
+      penaltyText: data.penaltyText.present
+          ? data.penaltyText.value
+          : this.penaltyText,
+      penaltyLegalBasis: data.penaltyLegalBasis.present
+          ? data.penaltyLegalBasis.value
+          : this.penaltyLegalBasis,
+      additionalPenaltyText: data.additionalPenaltyText.present
+          ? data.additionalPenaltyText.value
+          : this.additionalPenaltyText,
+      additionalPenaltyLegalBasis: data.additionalPenaltyLegalBasis.present
+          ? data.additionalPenaltyLegalBasis.value
+          : this.additionalPenaltyLegalBasis,
+      fineMin: data.fineMin.present ? data.fineMin.value : this.fineMin,
+      fineMax: data.fineMax.present ? data.fineMax.value : this.fineMax,
+      aliasesJson: data.aliasesJson.present
+          ? data.aliasesJson.value
+          : this.aliasesJson,
+      keywordsJson: data.keywordsJson.present
+          ? data.keywordsJson.value
+          : this.keywordsJson,
+      searchText: data.searchText.present
+          ? data.searchText.value
+          : this.searchText,
+      relatedViolationIdsJson: data.relatedViolationIdsJson.present
+          ? data.relatedViolationIdsJson.value
+          : this.relatedViolationIdsJson,
+      status: data.status.present ? data.status.value : this.status,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TrafficViolationRecord(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('vehicleTypesJson: $vehicleTypesJson, ')
+          ..write('subjectText: $subjectText, ')
+          ..write('penaltyText: $penaltyText, ')
+          ..write('penaltyLegalBasis: $penaltyLegalBasis, ')
+          ..write('additionalPenaltyText: $additionalPenaltyText, ')
+          ..write('additionalPenaltyLegalBasis: $additionalPenaltyLegalBasis, ')
+          ..write('fineMin: $fineMin, ')
+          ..write('fineMax: $fineMax, ')
+          ..write('aliasesJson: $aliasesJson, ')
+          ..write('keywordsJson: $keywordsJson, ')
+          ..write('searchText: $searchText, ')
+          ..write('relatedViolationIdsJson: $relatedViolationIdsJson, ')
+          ..write('status: $status, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    title,
+    vehicleTypesJson,
+    subjectText,
+    penaltyText,
+    penaltyLegalBasis,
+    additionalPenaltyText,
+    additionalPenaltyLegalBasis,
+    fineMin,
+    fineMax,
+    aliasesJson,
+    keywordsJson,
+    searchText,
+    relatedViolationIdsJson,
+    status,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TrafficViolationRecord &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.vehicleTypesJson == this.vehicleTypesJson &&
+          other.subjectText == this.subjectText &&
+          other.penaltyText == this.penaltyText &&
+          other.penaltyLegalBasis == this.penaltyLegalBasis &&
+          other.additionalPenaltyText == this.additionalPenaltyText &&
+          other.additionalPenaltyLegalBasis ==
+              this.additionalPenaltyLegalBasis &&
+          other.fineMin == this.fineMin &&
+          other.fineMax == this.fineMax &&
+          other.aliasesJson == this.aliasesJson &&
+          other.keywordsJson == this.keywordsJson &&
+          other.searchText == this.searchText &&
+          other.relatedViolationIdsJson == this.relatedViolationIdsJson &&
+          other.status == this.status &&
+          other.syncedAt == this.syncedAt);
+}
+
+class TrafficViolationRecordsCompanion
+    extends UpdateCompanion<TrafficViolationRecord> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> vehicleTypesJson;
+  final Value<String> subjectText;
+  final Value<String> penaltyText;
+  final Value<String> penaltyLegalBasis;
+  final Value<String> additionalPenaltyText;
+  final Value<String> additionalPenaltyLegalBasis;
+  final Value<int> fineMin;
+  final Value<int> fineMax;
+  final Value<String> aliasesJson;
+  final Value<String> keywordsJson;
+  final Value<String> searchText;
+  final Value<String> relatedViolationIdsJson;
+  final Value<String> status;
+  final Value<DateTime> syncedAt;
+  final Value<int> rowid;
+  const TrafficViolationRecordsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.vehicleTypesJson = const Value.absent(),
+    this.subjectText = const Value.absent(),
+    this.penaltyText = const Value.absent(),
+    this.penaltyLegalBasis = const Value.absent(),
+    this.additionalPenaltyText = const Value.absent(),
+    this.additionalPenaltyLegalBasis = const Value.absent(),
+    this.fineMin = const Value.absent(),
+    this.fineMax = const Value.absent(),
+    this.aliasesJson = const Value.absent(),
+    this.keywordsJson = const Value.absent(),
+    this.searchText = const Value.absent(),
+    this.relatedViolationIdsJson = const Value.absent(),
+    this.status = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TrafficViolationRecordsCompanion.insert({
+    required String id,
+    required String title,
+    required String vehicleTypesJson,
+    required String subjectText,
+    required String penaltyText,
+    required String penaltyLegalBasis,
+    required String additionalPenaltyText,
+    required String additionalPenaltyLegalBasis,
+    this.fineMin = const Value.absent(),
+    this.fineMax = const Value.absent(),
+    required String aliasesJson,
+    required String keywordsJson,
+    required String searchText,
+    required String relatedViolationIdsJson,
+    this.status = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       title = Value(title),
+       vehicleTypesJson = Value(vehicleTypesJson),
+       subjectText = Value(subjectText),
+       penaltyText = Value(penaltyText),
+       penaltyLegalBasis = Value(penaltyLegalBasis),
+       additionalPenaltyText = Value(additionalPenaltyText),
+       additionalPenaltyLegalBasis = Value(additionalPenaltyLegalBasis),
+       aliasesJson = Value(aliasesJson),
+       keywordsJson = Value(keywordsJson),
+       searchText = Value(searchText),
+       relatedViolationIdsJson = Value(relatedViolationIdsJson);
+  static Insertable<TrafficViolationRecord> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? vehicleTypesJson,
+    Expression<String>? subjectText,
+    Expression<String>? penaltyText,
+    Expression<String>? penaltyLegalBasis,
+    Expression<String>? additionalPenaltyText,
+    Expression<String>? additionalPenaltyLegalBasis,
+    Expression<int>? fineMin,
+    Expression<int>? fineMax,
+    Expression<String>? aliasesJson,
+    Expression<String>? keywordsJson,
+    Expression<String>? searchText,
+    Expression<String>? relatedViolationIdsJson,
+    Expression<String>? status,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (vehicleTypesJson != null) 'vehicle_types_json': vehicleTypesJson,
+      if (subjectText != null) 'subject_text': subjectText,
+      if (penaltyText != null) 'penalty_text': penaltyText,
+      if (penaltyLegalBasis != null) 'penalty_legal_basis': penaltyLegalBasis,
+      if (additionalPenaltyText != null)
+        'additional_penalty_text': additionalPenaltyText,
+      if (additionalPenaltyLegalBasis != null)
+        'additional_penalty_legal_basis': additionalPenaltyLegalBasis,
+      if (fineMin != null) 'fine_min': fineMin,
+      if (fineMax != null) 'fine_max': fineMax,
+      if (aliasesJson != null) 'aliases_json': aliasesJson,
+      if (keywordsJson != null) 'keywords_json': keywordsJson,
+      if (searchText != null) 'search_text': searchText,
+      if (relatedViolationIdsJson != null)
+        'related_violation_ids_json': relatedViolationIdsJson,
+      if (status != null) 'status': status,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TrafficViolationRecordsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? title,
+    Value<String>? vehicleTypesJson,
+    Value<String>? subjectText,
+    Value<String>? penaltyText,
+    Value<String>? penaltyLegalBasis,
+    Value<String>? additionalPenaltyText,
+    Value<String>? additionalPenaltyLegalBasis,
+    Value<int>? fineMin,
+    Value<int>? fineMax,
+    Value<String>? aliasesJson,
+    Value<String>? keywordsJson,
+    Value<String>? searchText,
+    Value<String>? relatedViolationIdsJson,
+    Value<String>? status,
+    Value<DateTime>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return TrafficViolationRecordsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      vehicleTypesJson: vehicleTypesJson ?? this.vehicleTypesJson,
+      subjectText: subjectText ?? this.subjectText,
+      penaltyText: penaltyText ?? this.penaltyText,
+      penaltyLegalBasis: penaltyLegalBasis ?? this.penaltyLegalBasis,
+      additionalPenaltyText:
+          additionalPenaltyText ?? this.additionalPenaltyText,
+      additionalPenaltyLegalBasis:
+          additionalPenaltyLegalBasis ?? this.additionalPenaltyLegalBasis,
+      fineMin: fineMin ?? this.fineMin,
+      fineMax: fineMax ?? this.fineMax,
+      aliasesJson: aliasesJson ?? this.aliasesJson,
+      keywordsJson: keywordsJson ?? this.keywordsJson,
+      searchText: searchText ?? this.searchText,
+      relatedViolationIdsJson:
+          relatedViolationIdsJson ?? this.relatedViolationIdsJson,
+      status: status ?? this.status,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (vehicleTypesJson.present) {
+      map['vehicle_types_json'] = Variable<String>(vehicleTypesJson.value);
+    }
+    if (subjectText.present) {
+      map['subject_text'] = Variable<String>(subjectText.value);
+    }
+    if (penaltyText.present) {
+      map['penalty_text'] = Variable<String>(penaltyText.value);
+    }
+    if (penaltyLegalBasis.present) {
+      map['penalty_legal_basis'] = Variable<String>(penaltyLegalBasis.value);
+    }
+    if (additionalPenaltyText.present) {
+      map['additional_penalty_text'] = Variable<String>(
+        additionalPenaltyText.value,
+      );
+    }
+    if (additionalPenaltyLegalBasis.present) {
+      map['additional_penalty_legal_basis'] = Variable<String>(
+        additionalPenaltyLegalBasis.value,
+      );
+    }
+    if (fineMin.present) {
+      map['fine_min'] = Variable<int>(fineMin.value);
+    }
+    if (fineMax.present) {
+      map['fine_max'] = Variable<int>(fineMax.value);
+    }
+    if (aliasesJson.present) {
+      map['aliases_json'] = Variable<String>(aliasesJson.value);
+    }
+    if (keywordsJson.present) {
+      map['keywords_json'] = Variable<String>(keywordsJson.value);
+    }
+    if (searchText.present) {
+      map['search_text'] = Variable<String>(searchText.value);
+    }
+    if (relatedViolationIdsJson.present) {
+      map['related_violation_ids_json'] = Variable<String>(
+        relatedViolationIdsJson.value,
+      );
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TrafficViolationRecordsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('vehicleTypesJson: $vehicleTypesJson, ')
+          ..write('subjectText: $subjectText, ')
+          ..write('penaltyText: $penaltyText, ')
+          ..write('penaltyLegalBasis: $penaltyLegalBasis, ')
+          ..write('additionalPenaltyText: $additionalPenaltyText, ')
+          ..write('additionalPenaltyLegalBasis: $additionalPenaltyLegalBasis, ')
+          ..write('fineMin: $fineMin, ')
+          ..write('fineMax: $fineMax, ')
+          ..write('aliasesJson: $aliasesJson, ')
+          ..write('keywordsJson: $keywordsJson, ')
+          ..write('searchText: $searchText, ')
+          ..write('relatedViolationIdsJson: $relatedViolationIdsJson, ')
+          ..write('status: $status, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5506,6 +6471,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RecognitionHistoryTableTable recognitionHistoryTable =
       $RecognitionHistoryTableTable(this);
   late final $SavedQuestionsTable savedQuestions = $SavedQuestionsTable(this);
+  late final $TrafficViolationRecordsTable trafficViolationRecords =
+      $TrafficViolationRecordsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5525,6 +6492,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     setting,
     recognitionHistoryTable,
     savedQuestions,
+    trafficViolationRecords,
   ];
 }
 
@@ -10606,6 +11574,455 @@ typedef $$SavedQuestionsTableProcessedTableManager =
       SavedQuestion,
       PrefetchHooks Function({bool questionId})
     >;
+typedef $$TrafficViolationRecordsTableCreateCompanionBuilder =
+    TrafficViolationRecordsCompanion Function({
+      required String id,
+      required String title,
+      required String vehicleTypesJson,
+      required String subjectText,
+      required String penaltyText,
+      required String penaltyLegalBasis,
+      required String additionalPenaltyText,
+      required String additionalPenaltyLegalBasis,
+      Value<int> fineMin,
+      Value<int> fineMax,
+      required String aliasesJson,
+      required String keywordsJson,
+      required String searchText,
+      required String relatedViolationIdsJson,
+      Value<String> status,
+      Value<DateTime> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$TrafficViolationRecordsTableUpdateCompanionBuilder =
+    TrafficViolationRecordsCompanion Function({
+      Value<String> id,
+      Value<String> title,
+      Value<String> vehicleTypesJson,
+      Value<String> subjectText,
+      Value<String> penaltyText,
+      Value<String> penaltyLegalBasis,
+      Value<String> additionalPenaltyText,
+      Value<String> additionalPenaltyLegalBasis,
+      Value<int> fineMin,
+      Value<int> fineMax,
+      Value<String> aliasesJson,
+      Value<String> keywordsJson,
+      Value<String> searchText,
+      Value<String> relatedViolationIdsJson,
+      Value<String> status,
+      Value<DateTime> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$TrafficViolationRecordsTableFilterComposer
+    extends Composer<_$AppDatabase, $TrafficViolationRecordsTable> {
+  $$TrafficViolationRecordsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get vehicleTypesJson => $composableBuilder(
+    column: $table.vehicleTypesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get subjectText => $composableBuilder(
+    column: $table.subjectText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get penaltyText => $composableBuilder(
+    column: $table.penaltyText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get penaltyLegalBasis => $composableBuilder(
+    column: $table.penaltyLegalBasis,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get additionalPenaltyText => $composableBuilder(
+    column: $table.additionalPenaltyText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get additionalPenaltyLegalBasis => $composableBuilder(
+    column: $table.additionalPenaltyLegalBasis,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fineMin => $composableBuilder(
+    column: $table.fineMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get fineMax => $composableBuilder(
+    column: $table.fineMax,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get aliasesJson => $composableBuilder(
+    column: $table.aliasesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get keywordsJson => $composableBuilder(
+    column: $table.keywordsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get searchText => $composableBuilder(
+    column: $table.searchText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get relatedViolationIdsJson => $composableBuilder(
+    column: $table.relatedViolationIdsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TrafficViolationRecordsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TrafficViolationRecordsTable> {
+  $$TrafficViolationRecordsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get vehicleTypesJson => $composableBuilder(
+    column: $table.vehicleTypesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get subjectText => $composableBuilder(
+    column: $table.subjectText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get penaltyText => $composableBuilder(
+    column: $table.penaltyText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get penaltyLegalBasis => $composableBuilder(
+    column: $table.penaltyLegalBasis,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get additionalPenaltyText => $composableBuilder(
+    column: $table.additionalPenaltyText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get additionalPenaltyLegalBasis => $composableBuilder(
+    column: $table.additionalPenaltyLegalBasis,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fineMin => $composableBuilder(
+    column: $table.fineMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get fineMax => $composableBuilder(
+    column: $table.fineMax,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get aliasesJson => $composableBuilder(
+    column: $table.aliasesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get keywordsJson => $composableBuilder(
+    column: $table.keywordsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get searchText => $composableBuilder(
+    column: $table.searchText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get relatedViolationIdsJson => $composableBuilder(
+    column: $table.relatedViolationIdsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TrafficViolationRecordsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TrafficViolationRecordsTable> {
+  $$TrafficViolationRecordsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get vehicleTypesJson => $composableBuilder(
+    column: $table.vehicleTypesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get subjectText => $composableBuilder(
+    column: $table.subjectText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get penaltyText => $composableBuilder(
+    column: $table.penaltyText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get penaltyLegalBasis => $composableBuilder(
+    column: $table.penaltyLegalBasis,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get additionalPenaltyText => $composableBuilder(
+    column: $table.additionalPenaltyText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get additionalPenaltyLegalBasis => $composableBuilder(
+    column: $table.additionalPenaltyLegalBasis,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get fineMin =>
+      $composableBuilder(column: $table.fineMin, builder: (column) => column);
+
+  GeneratedColumn<int> get fineMax =>
+      $composableBuilder(column: $table.fineMax, builder: (column) => column);
+
+  GeneratedColumn<String> get aliasesJson => $composableBuilder(
+    column: $table.aliasesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get keywordsJson => $composableBuilder(
+    column: $table.keywordsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get searchText => $composableBuilder(
+    column: $table.searchText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get relatedViolationIdsJson => $composableBuilder(
+    column: $table.relatedViolationIdsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$TrafficViolationRecordsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TrafficViolationRecordsTable,
+          TrafficViolationRecord,
+          $$TrafficViolationRecordsTableFilterComposer,
+          $$TrafficViolationRecordsTableOrderingComposer,
+          $$TrafficViolationRecordsTableAnnotationComposer,
+          $$TrafficViolationRecordsTableCreateCompanionBuilder,
+          $$TrafficViolationRecordsTableUpdateCompanionBuilder,
+          (
+            TrafficViolationRecord,
+            BaseReferences<
+              _$AppDatabase,
+              $TrafficViolationRecordsTable,
+              TrafficViolationRecord
+            >,
+          ),
+          TrafficViolationRecord,
+          PrefetchHooks Function()
+        > {
+  $$TrafficViolationRecordsTableTableManager(
+    _$AppDatabase db,
+    $TrafficViolationRecordsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TrafficViolationRecordsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$TrafficViolationRecordsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$TrafficViolationRecordsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> vehicleTypesJson = const Value.absent(),
+                Value<String> subjectText = const Value.absent(),
+                Value<String> penaltyText = const Value.absent(),
+                Value<String> penaltyLegalBasis = const Value.absent(),
+                Value<String> additionalPenaltyText = const Value.absent(),
+                Value<String> additionalPenaltyLegalBasis =
+                    const Value.absent(),
+                Value<int> fineMin = const Value.absent(),
+                Value<int> fineMax = const Value.absent(),
+                Value<String> aliasesJson = const Value.absent(),
+                Value<String> keywordsJson = const Value.absent(),
+                Value<String> searchText = const Value.absent(),
+                Value<String> relatedViolationIdsJson = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<DateTime> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TrafficViolationRecordsCompanion(
+                id: id,
+                title: title,
+                vehicleTypesJson: vehicleTypesJson,
+                subjectText: subjectText,
+                penaltyText: penaltyText,
+                penaltyLegalBasis: penaltyLegalBasis,
+                additionalPenaltyText: additionalPenaltyText,
+                additionalPenaltyLegalBasis: additionalPenaltyLegalBasis,
+                fineMin: fineMin,
+                fineMax: fineMax,
+                aliasesJson: aliasesJson,
+                keywordsJson: keywordsJson,
+                searchText: searchText,
+                relatedViolationIdsJson: relatedViolationIdsJson,
+                status: status,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String title,
+                required String vehicleTypesJson,
+                required String subjectText,
+                required String penaltyText,
+                required String penaltyLegalBasis,
+                required String additionalPenaltyText,
+                required String additionalPenaltyLegalBasis,
+                Value<int> fineMin = const Value.absent(),
+                Value<int> fineMax = const Value.absent(),
+                required String aliasesJson,
+                required String keywordsJson,
+                required String searchText,
+                required String relatedViolationIdsJson,
+                Value<String> status = const Value.absent(),
+                Value<DateTime> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TrafficViolationRecordsCompanion.insert(
+                id: id,
+                title: title,
+                vehicleTypesJson: vehicleTypesJson,
+                subjectText: subjectText,
+                penaltyText: penaltyText,
+                penaltyLegalBasis: penaltyLegalBasis,
+                additionalPenaltyText: additionalPenaltyText,
+                additionalPenaltyLegalBasis: additionalPenaltyLegalBasis,
+                fineMin: fineMin,
+                fineMax: fineMax,
+                aliasesJson: aliasesJson,
+                keywordsJson: keywordsJson,
+                searchText: searchText,
+                relatedViolationIdsJson: relatedViolationIdsJson,
+                status: status,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TrafficViolationRecordsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TrafficViolationRecordsTable,
+      TrafficViolationRecord,
+      $$TrafficViolationRecordsTableFilterComposer,
+      $$TrafficViolationRecordsTableOrderingComposer,
+      $$TrafficViolationRecordsTableAnnotationComposer,
+      $$TrafficViolationRecordsTableCreateCompanionBuilder,
+      $$TrafficViolationRecordsTableUpdateCompanionBuilder,
+      (
+        TrafficViolationRecord,
+        BaseReferences<
+          _$AppDatabase,
+          $TrafficViolationRecordsTable,
+          TrafficViolationRecord
+        >,
+      ),
+      TrafficViolationRecord,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -10641,4 +12058,9 @@ class $AppDatabaseManager {
       );
   $$SavedQuestionsTableTableManager get savedQuestions =>
       $$SavedQuestionsTableTableManager(_db, _db.savedQuestions);
+  $$TrafficViolationRecordsTableTableManager get trafficViolationRecords =>
+      $$TrafficViolationRecordsTableTableManager(
+        _db,
+        _db.trafficViolationRecords,
+      );
 }

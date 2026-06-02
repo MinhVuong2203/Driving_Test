@@ -13,6 +13,7 @@ import 'package:driving_test_prep/core/database/tables/recognition_history_table
 import 'package:driving_test_prep/core/database/tables/setting_table.dart';
 import 'package:driving_test_prep/core/database/tables/saved_questions_table.dart';
 import 'package:driving_test_prep/core/database/tables/traffic_signs_table.dart';
+import 'package:driving_test_prep/core/database/tables/traffic_violations_table.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
@@ -47,13 +48,14 @@ part 'app_database.g.dart';
     Setting,
     RecognitionHistoryTable,
     SavedQuestions,
+    TrafficViolationRecords,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   bool get logStatements => kDebugMode;
 
@@ -86,6 +88,19 @@ class AppDatabase extends _$AppDatabase {
         }
         if (!tableNames.contains('saved_questions')) {
           await m.createTable(savedQuestions);
+        }
+      }
+      if (from < 3) {
+        final tableRows = await customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table'",
+        ).get();
+        final tableNames = tableRows
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!tableNames.contains('traffic_violation_records')) {
+          await m.createTable(trafficViolationRecords);
         }
       }
     },

@@ -1,7 +1,9 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/ranks_dao.dart';
+import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/repository/ranks_repository.dart';
+import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_sets_quest_screen.dart';
 import 'package:driving_test_prep/features/practice/widgets/start_button.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
@@ -21,6 +23,9 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
   late final RanksRepository _ranksRepository = RanksRepository(
     RanksDao(DBProvider().db),
   );
+  late final SettingRepository _settingRepository = SettingRepository(
+    SettingDao(DBProvider().db),
+  );
   bool isChecked1 = true;
   bool isChecked2 = false;
   Rank? rank;
@@ -33,8 +38,14 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
 
   Future<void> loadRanks() async {
     final rs = await _ranksRepository.getRankById(widget.rankId);
+    final setting = await _settingRepository.getSetting();
+    final gradeInstantly = setting?.models == 1;
+
+    if (!mounted) return;
     setState(() {
       rank = rs;
+      isChecked1 = !gradeInstantly;
+      isChecked2 = gradeInstantly;
     });
   }
 
@@ -144,11 +155,12 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
               child: Column(
                 children: [
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         isChecked1 = true;
                         isChecked2 = false;
                       });
+                      await _settingRepository.updateModels(0);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,11 +184,12 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
                   SizedBox(height: 10),
 
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         isChecked1 = false;
                         isChecked2 = true;
                       });
+                      await _settingRepository.updateModels(1);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
