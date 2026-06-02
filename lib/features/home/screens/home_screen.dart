@@ -1,6 +1,9 @@
 import 'package:driving_test_prep/core/database/DBProvider.dart';
+import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/core/database/daos/user_progress_dao.dart';
+import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/data/repository/user_progress_repository.dart';
+import 'package:driving_test_prep/apps/app.dart';
 import 'package:driving_test_prep/features/home/widgets/menu_grid.dart';
 import 'package:driving_test_prep/features/home/widgets/pro_banner.dart';
 import 'package:driving_test_prep/features/home/widgets/progress_card.dart';
@@ -26,6 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   int _progressRefreshTrigger = 0;
   Map<int, Map<String, int>> _topicProgressStats = {};
   Map<String, int> _criticalProgressStats = {};
+
+  late final SettingRepository _settingRepository = SettingRepository(
+    SettingDao(DBProvider().db),
+  );
 
   @override
   void initState() {
@@ -63,6 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _refreshProgress();
   }
 
+  Future<void> _toggleThemeMode() async {
+    final newMode = themeNotifier.value == 0 ? 1 : 0;
+    themeNotifier.value = newMode;
+    await _settingRepository.updateMode(newMode);
+    if (!mounted) return;
+    setState(() {});
+  }
+
   Future<void> _loadTopicProgress() async {
     try {
       final repo = UserProgressRepository(UserProgressDao(DBProvider().db));
@@ -98,11 +113,12 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leadingWidth: 64,
+        // leadingWidth: 54,
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: _GlassIconButton(
-            icon: Icons.tune_rounded,
+            icon: Icons.settings_rounded,
+            iconSize: 21,
             onPressed: () {
               Navigator.push(
                 context,
@@ -119,9 +135,17 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: _GlassIconButton(
-              icon: Icons.search_rounded,
-              onPressed: () {},
+            child: ValueListenableBuilder<int>(
+              valueListenable: themeNotifier,
+              builder: (context, modeValue, _) {
+                final isDark = modeValue == 0;
+                return _GlassIconButton(
+                  icon: isDark
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  onPressed: _toggleThemeMode,
+                );
+              },
             ),
           ),
         ],
@@ -360,21 +384,26 @@ class _HeroHeader extends StatelessWidget {
 
 class _GlassIconButton extends StatelessWidget {
   final IconData icon;
+  final double iconSize;
   final VoidCallback onPressed;
 
-  const _GlassIconButton({required this.icon, required this.onPressed});
+  const _GlassIconButton({
+    required this.icon,
+    this.iconSize = 24,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return IconButton.filled(
       style: IconButton.styleFrom(
-        backgroundColor: Colors.white.withValues(alpha: 0.1),
+        backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).brightness == Brightness.dark
             ? Colors.white
             : const Color(0xFF0F172A),
       ),
       onPressed: onPressed,
-      icon: Icon(icon),
+      icon: Icon(icon, size: iconSize),
     );
   }
 }
