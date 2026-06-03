@@ -80,48 +80,65 @@ class UserProgressDao {
 
   // 2. Wrong Questions (Câu sai)
   Future<List<Question>> getWrongQuestions() async {
-    final query = db.select(db.questions).join([
-      innerJoin(
-        db.wrongQuestions,
-        db.wrongQuestions.questionId.equalsExp(db.questions.id),
-      ),
-    ])..orderBy([OrderingTerm.desc(db.wrongQuestions.lastWrongAt)]);
+    final rankId = await _currentRankId();
+    final query =
+        db.select(db.questions).join([
+            innerJoin(
+              db.wrongQuestions,
+              db.wrongQuestions.questionId.equalsExp(db.questions.id),
+            ),
+          ])
+          ..where(db.wrongQuestions.rankId.equals(rankId))
+          ..orderBy([OrderingTerm.desc(db.wrongQuestions.lastWrongAt)]);
 
     final rows = await query.get();
     return rows.map((row) => row.readTable(db.questions)).toList();
   }
 
   Future<int> countWrongQuestions() async {
-    final rows = await db.select(db.wrongQuestions).get();
+    final rankId = await _currentRankId();
+    final rows = await (db.select(
+      db.wrongQuestions,
+    )..where((t) => t.rankId.equals(rankId))).get();
     return rows.length;
   }
 
   Future<void> logWrongAnswer(int questionId) async {
-    final existing = await (db.select(
-      db.wrongQuestions,
-    )..where((t) => t.questionId.equals(questionId))).getSingleOrNull();
+    final rankId = await _currentRankId();
+    final existing =
+        await (db.select(db.wrongQuestions)..where(
+              (t) => t.questionId.equals(questionId) & t.rankId.equals(rankId),
+            ))
+            .getSingleOrNull();
     if (existing != null) {
-      await (db.update(
-        db.wrongQuestions,
-      )..where((t) => t.questionId.equals(questionId))).write(
-        WrongQuestionsCompanion(
-          wrongCount: Value(existing.wrongCount + 1),
-          lastWrongAt: Value(DateTime.now()),
-        ),
-      );
+      await (db.update(db.wrongQuestions)..where(
+            (t) => t.questionId.equals(questionId) & t.rankId.equals(rankId),
+          ))
+          .write(
+            WrongQuestionsCompanion(
+              rankId: Value(rankId),
+              wrongCount: Value(existing.wrongCount + 1),
+              lastWrongAt: Value(DateTime.now()),
+            ),
+          );
     } else {
       await db
           .into(db.wrongQuestions)
           .insert(
-            WrongQuestionsCompanion.insert(questionId: Value(questionId)),
+            WrongQuestionsCompanion.insert(
+              questionId: Value(questionId),
+              rankId: Value(rankId),
+            ),
           );
     }
   }
 
   Future<void> removeWrongQuestion(int questionId) async {
-    await (db.delete(
-      db.wrongQuestions,
-    )..where((t) => t.questionId.equals(questionId))).go();
+    final rankId = await _currentRankId();
+    await (db.delete(db.wrongQuestions)..where(
+          (t) => t.questionId.equals(questionId) & t.rankId.equals(rankId),
+        ))
+        .go();
   }
 
   // 3. User Answers (Câu trả lời để tính tiến độ)

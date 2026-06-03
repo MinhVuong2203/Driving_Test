@@ -60,7 +60,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   bool get logStatements => kDebugMode;
 
@@ -230,6 +230,83 @@ class AppDatabase extends _$AppDatabase {
         }
         if (!columnNames.contains('submitted_at')) {
           await m.addColumn(examSetProgress, examSetProgress.submittedAt);
+        }
+      }
+
+      if (from < 11) {
+        final tableRows = await customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table'",
+        ).get();
+        final tableNames = tableRows
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (tableNames.contains('wrong_questions')) {
+          final wrongQuestionColumns = await customSelect(
+            "PRAGMA table_info(wrong_questions)",
+          ).get();
+          final wrongQuestionColumnNames = wrongQuestionColumns
+              .map((row) => row.data['name'] as String?)
+              .whereType<String>()
+              .toSet();
+          final rankValueSql = wrongQuestionColumnNames.contains('rank_id')
+              ? """
+                COALESCE(
+                  rank_id,
+                  (
+                    SELECT rank_id
+                    FROM setting
+                    WHERE setting_id = 1
+                  ),
+                  'B'
+                )
+              """
+              : """
+                COALESCE(
+                  (
+                    SELECT rank_id
+                    FROM setting
+                    WHERE setting_id = 1
+                  ),
+                  'B'
+                )
+              """;
+
+          await customStatement("""
+            CREATE TABLE wrong_questions_new (
+              id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+              question_id INTEGER NULL REFERENCES questions (id),
+              rank_id TEXT NULL,
+              wrong_count INTEGER NOT NULL DEFAULT 1,
+              last_wrong_at INTEGER NOT NULL DEFAULT (strftime('%s', CURRENT_TIMESTAMP)),
+              UNIQUE (question_id, rank_id)
+            )
+          """);
+
+          await customStatement("""
+            INSERT OR IGNORE INTO wrong_questions_new (
+              id,
+              question_id,
+              rank_id,
+              wrong_count,
+              last_wrong_at
+            )
+            SELECT
+              id,
+              question_id,
+              $rankValueSql,
+              wrong_count,
+              last_wrong_at
+            FROM wrong_questions
+          """);
+
+          await customStatement("DROP TABLE wrong_questions");
+          await customStatement(
+            "ALTER TABLE wrong_questions_new RENAME TO wrong_questions",
+          );
+        } else {
+          await m.createTable(wrongQuestions);
         }
       }
     },
