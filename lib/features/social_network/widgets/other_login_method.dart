@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 class OtherLoginMethod extends StatelessWidget {
-  const OtherLoginMethod({
-    super.key,
-    this.onGoogleTap,
-  });
+  const OtherLoginMethod({super.key, this.onGoogleTap, this.onFacebookTap});
 
   final VoidCallback? onGoogleTap;
+  final VoidCallback? onFacebookTap;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final textColor = isDark ? const Color(0xFFE5E7EB) : const Color(0xFF374151);
-    final subTextColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF6B7280);
-    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE5E7EB);
+    final textColor = isDark
+        ? const Color(0xFFE5E7EB)
+        : const Color(0xFF374151);
+    final subTextColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF6B7280);
+    final borderColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFE5E7EB);
     final buttonBg = isDark ? const Color(0xFF1F2937) : Colors.white;
 
     return Column(
@@ -44,6 +48,17 @@ class OtherLoginMethod extends StatelessWidget {
                 icon: Icons.g_mobiledata_rounded,
                 label: 'Google',
                 onTap: onGoogleTap,
+                backgroundColor: buttonBg,
+                textColor: textColor,
+                borderColor: borderColor,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _LoginMethodButton(
+                icon: Icons.facebook_rounded,
+                label: 'Facebook',
+                onTap: onFacebookTap,
                 backgroundColor: buttonBg,
                 textColor: textColor,
                 borderColor: borderColor,

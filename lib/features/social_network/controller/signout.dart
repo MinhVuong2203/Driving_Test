@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/repository/google_auth_repository.dart';
+import '../../../data/repository/social_auth_repository.dart';
 
 class SignOutController {
   static Future<void> signOut({
@@ -8,13 +8,14 @@ class SignOutController {
     required void Function(bool) setSigningOut,
     required bool Function() isMounted,
   }) async {
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
     setSigningOut(true);
     try {
-      await GoogleAuthRepository.instance.signOut();
+      await SocialAuthRepository.instance.signOut();
     } catch (_) {
       if (!isMounted()) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đăng xuất thất bại, thử lại nhé.')),
+      messenger.showSnackBar(
+        const SnackBar(content: Text('Dang xuat that bai, thu lai nhe.')),
       );
     } finally {
       if (isMounted()) setSigningOut(false);
