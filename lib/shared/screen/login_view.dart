@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driving_test_prep/data/services/firebase/google_auth_service.dart';
 import 'package:driving_test_prep/features/social_network/screens/home_feed_screen.dart';
 import 'package:driving_test_prep/features/social_network/screens/register_with_otp_screen.dart';
 import 'package:driving_test_prep/features/social_network/widgets/login_action_buttons.dart';
@@ -12,8 +10,8 @@ import 'package:driving_test_prep/features/social_network/utils/auth_validators.
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../data/repository/social_auth_repository.dart';
 import '../../features/social_network/widgets/other_login_method.dart';
-
 
 const Color _kNavy = Color(0xFF0D1B3E);
 const Color _kAmber = Color(0xFFF5A623);
@@ -42,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
+  final SocialAuthRepository _socialAuthRepo = SocialAuthRepository.instance;
   late final Stream<User?> _authStateStream;
 
   bool _isLoading = false;
@@ -60,7 +59,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _linkSubscription = _appLinks.uriLinkStream.listen((_) {});
   }
 
-
   @override
   void dispose() {
     _emailCtrl.dispose();
@@ -76,7 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -88,11 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final String email = _emailCtrl.text.trim();
 
     try {
-      final UserCredential credential =
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: _passwordCtrl.text,
-      );
+      final UserCredential credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: email,
+            password: _passwordCtrl.text,
+          );
 
       final User? user = credential.user;
       if (user != null) {
@@ -110,17 +107,18 @@ class _LoginScreenState extends State<LoginScreen> {
         };
       });
     } on FirebaseException catch (e) {
-      setState(() => _error = 'Cập nhật hồ sơ thất bại: ${e.message ?? e.code}');
+      setState(
+        () => _error = 'Cập nhật hồ sơ thất bại: ${e.message ?? e.code}',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-
   Future<void> _register() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const RegisterWithOtpScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const RegisterWithOtpScreen()));
   }
 
   // Future<void> _signOut() async {
@@ -166,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final credential = await GoogleAuthService.signInWithGoogle();
+      final credential = await _socialAuthRepo.signInWithGoogle();
       if (!mounted) return;
 
       final user = credential.user;
@@ -186,6 +184,34 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void facebookSignIn() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final credential = await _socialAuthRepo.signInWithFacebook();
+      if (!mounted) return;
+
+      final user = credential.user;
+      if (user != null) {
+        await _handleLoginSuccess(user);
+        return;
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message ?? 'Đăng nhập Facebook thất bại.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,10 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: _kNavy,
-            elevation: 0,
-          ),
+          appBar: AppBar(backgroundColor: _kNavy, elevation: 0),
           backgroundColor: _kNavy,
           body: SafeArea(
             child: SingleChildScrollView(
@@ -274,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 6),
             ValueListenableBuilder<bool>(
               valueListenable: _obscurePassword,
-              builder: (_, bool isObscured, __) {
+              builder: (_, bool isObscured, child) {
                 return LoginTextField(
                   controller: _passwordCtrl,
                   hint: '••••••••',
@@ -315,6 +338,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 16),
             OtherLoginMethod(
               onGoogleTap: googleSignIn,
+              onFacebookTap: facebookSignIn,
             ),
             const OrDivider(grey: _kGrey),
             const SizedBox(height: 16),

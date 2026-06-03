@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:driving_test_prep/data/repository/google_auth_repository.dart';
+import 'package:driving_test_prep/data/repository/social_auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -163,7 +163,7 @@ class _AccountLockedScreenState extends State<AccountLockedScreen> {
     setState(() => _isSigningOut = true);
 
     try {
-      await GoogleAuthRepository.instance.signOut();
+      await SocialAuthRepository.instance.signOut();
     } catch (_) {
       if (!mounted) return;
 
@@ -180,10 +180,14 @@ class _AccountLockedScreenState extends State<AccountLockedScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final background = isDark ? const Color(0xFF111827) : const Color(0xFFF6F8FB);
+    final background = isDark
+        ? const Color(0xFF111827)
+        : const Color(0xFFF6F8FB);
     final surface = isDark ? const Color(0xFF1F2937) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF0D1B3E);
-    final mutedColor = isDark ? const Color(0xFFD1D5DB) : const Color(0xFF6B7280);
+    final mutedColor = isDark
+        ? const Color(0xFFD1D5DB)
+        : const Color(0xFF6B7280);
 
     return Scaffold(
       backgroundColor: background,
@@ -204,7 +208,9 @@ class _AccountLockedScreenState extends State<AccountLockedScreen> {
               color: surface,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
               ),
             ),
             child: Column(
@@ -286,9 +292,7 @@ class _AccountStatusLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 

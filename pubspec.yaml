@@ -25,6 +25,7 @@ dependencies:
 
   # Auth
   google_sign_in: ^6.2.1
+  flutter_facebook_auth: ^7.1.6
 
   # Database - Drift ORM
   drift: ^2.18.0
