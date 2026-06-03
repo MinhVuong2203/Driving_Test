@@ -6665,6 +6665,1523 @@ class TrafficViolationRecordsCompanion
   }
 }
 
+class $DrivingCenterRecordsTable extends DrivingCenterRecords
+    with TableInfo<$DrivingCenterRecordsTable, DrivingCenterRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DrivingCenterRecordsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _provinceMeta = const VerificationMeta(
+    'province',
+  );
+  @override
+  late final GeneratedColumn<String> province = GeneratedColumn<String>(
+    'province',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phoneNumberMeta = const VerificationMeta(
+    'phoneNumber',
+  );
+  @override
+  late final GeneratedColumn<String> phoneNumber = GeneratedColumn<String>(
+    'phone_number',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _photoUrlMeta = const VerificationMeta(
+    'photoUrl',
+  );
+  @override
+  late final GeneratedColumn<String> photoUrl = GeneratedColumn<String>(
+    'photo_url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _websiteMeta = const VerificationMeta(
+    'website',
+  );
+  @override
+  late final GeneratedColumn<String> website = GeneratedColumn<String>(
+    'website',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ratingMeta = const VerificationMeta('rating');
+  @override
+  late final GeneratedColumn<double> rating = GeneratedColumn<double>(
+    'rating',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _reviewCountMeta = const VerificationMeta(
+    'reviewCount',
+  );
+  @override
+  late final GeneratedColumn<int> reviewCount = GeneratedColumn<int>(
+    'review_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _businessStatusMeta = const VerificationMeta(
+    'businessStatus',
+  );
+  @override
+  late final GeneratedColumn<String> businessStatus = GeneratedColumn<String>(
+    'business_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
+  );
+  @override
+  late final GeneratedColumn<String> address = GeneratedColumn<String>(
+    'address',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _districtMeta = const VerificationMeta(
+    'district',
+  );
+  @override
+  late final GeneratedColumn<String> district = GeneratedColumn<String>(
+    'district',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cityMeta = const VerificationMeta('city');
+  @override
+  late final GeneratedColumn<String> city = GeneratedColumn<String>(
+    'city',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _openingStatusMeta = const VerificationMeta(
+    'openingStatus',
+  );
+  @override
+  late final GeneratedColumn<String> openingStatus = GeneratedColumn<String>(
+    'opening_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _searchQueryMeta = const VerificationMeta(
+    'searchQuery',
+  );
+  @override
+  late final GeneratedColumn<String> searchQuery = GeneratedColumn<String>(
+    'search_query',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cachedPageMeta = const VerificationMeta(
+    'cachedPage',
+  );
+  @override
+  late final GeneratedColumn<int> cachedPage = GeneratedColumn<int>(
+    'cached_page',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pageSizeMeta = const VerificationMeta(
+    'pageSize',
+  );
+  @override
+  late final GeneratedColumn<int> pageSize = GeneratedColumn<int>(
+    'page_size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    province,
+    name,
+    phoneNumber,
+    photoUrl,
+    website,
+    rating,
+    reviewCount,
+    businessStatus,
+    address,
+    district,
+    city,
+    openingStatus,
+    searchQuery,
+    createdAt,
+    updatedAt,
+    cachedPage,
+    pageSize,
+    sortOrder,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'driving_center_records';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DrivingCenterRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('province')) {
+      context.handle(
+        _provinceMeta,
+        province.isAcceptableOrUnknown(data['province']!, _provinceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_provinceMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('phone_number')) {
+      context.handle(
+        _phoneNumberMeta,
+        phoneNumber.isAcceptableOrUnknown(
+          data['phone_number']!,
+          _phoneNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_phoneNumberMeta);
+    }
+    if (data.containsKey('photo_url')) {
+      context.handle(
+        _photoUrlMeta,
+        photoUrl.isAcceptableOrUnknown(data['photo_url']!, _photoUrlMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_photoUrlMeta);
+    }
+    if (data.containsKey('website')) {
+      context.handle(
+        _websiteMeta,
+        website.isAcceptableOrUnknown(data['website']!, _websiteMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_websiteMeta);
+    }
+    if (data.containsKey('rating')) {
+      context.handle(
+        _ratingMeta,
+        rating.isAcceptableOrUnknown(data['rating']!, _ratingMeta),
+      );
+    }
+    if (data.containsKey('review_count')) {
+      context.handle(
+        _reviewCountMeta,
+        reviewCount.isAcceptableOrUnknown(
+          data['review_count']!,
+          _reviewCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('business_status')) {
+      context.handle(
+        _businessStatusMeta,
+        businessStatus.isAcceptableOrUnknown(
+          data['business_status']!,
+          _businessStatusMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_businessStatusMeta);
+    }
+    if (data.containsKey('address')) {
+      context.handle(
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_addressMeta);
+    }
+    if (data.containsKey('district')) {
+      context.handle(
+        _districtMeta,
+        district.isAcceptableOrUnknown(data['district']!, _districtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_districtMeta);
+    }
+    if (data.containsKey('city')) {
+      context.handle(
+        _cityMeta,
+        city.isAcceptableOrUnknown(data['city']!, _cityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cityMeta);
+    }
+    if (data.containsKey('opening_status')) {
+      context.handle(
+        _openingStatusMeta,
+        openingStatus.isAcceptableOrUnknown(
+          data['opening_status']!,
+          _openingStatusMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_openingStatusMeta);
+    }
+    if (data.containsKey('search_query')) {
+      context.handle(
+        _searchQueryMeta,
+        searchQuery.isAcceptableOrUnknown(
+          data['search_query']!,
+          _searchQueryMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_searchQueryMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('cached_page')) {
+      context.handle(
+        _cachedPageMeta,
+        cachedPage.isAcceptableOrUnknown(data['cached_page']!, _cachedPageMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cachedPageMeta);
+    }
+    if (data.containsKey('page_size')) {
+      context.handle(
+        _pageSizeMeta,
+        pageSize.isAcceptableOrUnknown(data['page_size']!, _pageSizeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageSizeMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sortOrderMeta);
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {province, id};
+  @override
+  DrivingCenterRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DrivingCenterRecord(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      province: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}province'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      phoneNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone_number'],
+      )!,
+      photoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}photo_url'],
+      )!,
+      website: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}website'],
+      )!,
+      rating: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}rating'],
+      )!,
+      reviewCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}review_count'],
+      )!,
+      businessStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}business_status'],
+      )!,
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      )!,
+      district: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}district'],
+      )!,
+      city: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}city'],
+      )!,
+      openingStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opening_status'],
+      )!,
+      searchQuery: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}search_query'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      cachedPage: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cached_page'],
+      )!,
+      pageSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_size'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DrivingCenterRecordsTable createAlias(String alias) {
+    return $DrivingCenterRecordsTable(attachedDatabase, alias);
+  }
+}
+
+class DrivingCenterRecord extends DataClass
+    implements Insertable<DrivingCenterRecord> {
+  final String id;
+  final String province;
+  final String name;
+  final String phoneNumber;
+  final String photoUrl;
+  final String website;
+  final double rating;
+  final int reviewCount;
+  final String businessStatus;
+  final String address;
+  final String district;
+  final String city;
+  final String openingStatus;
+  final String searchQuery;
+  final String createdAt;
+  final String updatedAt;
+  final int cachedPage;
+  final int pageSize;
+  final int sortOrder;
+  final DateTime syncedAt;
+  const DrivingCenterRecord({
+    required this.id,
+    required this.province,
+    required this.name,
+    required this.phoneNumber,
+    required this.photoUrl,
+    required this.website,
+    required this.rating,
+    required this.reviewCount,
+    required this.businessStatus,
+    required this.address,
+    required this.district,
+    required this.city,
+    required this.openingStatus,
+    required this.searchQuery,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.cachedPage,
+    required this.pageSize,
+    required this.sortOrder,
+    required this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['province'] = Variable<String>(province);
+    map['name'] = Variable<String>(name);
+    map['phone_number'] = Variable<String>(phoneNumber);
+    map['photo_url'] = Variable<String>(photoUrl);
+    map['website'] = Variable<String>(website);
+    map['rating'] = Variable<double>(rating);
+    map['review_count'] = Variable<int>(reviewCount);
+    map['business_status'] = Variable<String>(businessStatus);
+    map['address'] = Variable<String>(address);
+    map['district'] = Variable<String>(district);
+    map['city'] = Variable<String>(city);
+    map['opening_status'] = Variable<String>(openingStatus);
+    map['search_query'] = Variable<String>(searchQuery);
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    map['cached_page'] = Variable<int>(cachedPage);
+    map['page_size'] = Variable<int>(pageSize);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['synced_at'] = Variable<DateTime>(syncedAt);
+    return map;
+  }
+
+  DrivingCenterRecordsCompanion toCompanion(bool nullToAbsent) {
+    return DrivingCenterRecordsCompanion(
+      id: Value(id),
+      province: Value(province),
+      name: Value(name),
+      phoneNumber: Value(phoneNumber),
+      photoUrl: Value(photoUrl),
+      website: Value(website),
+      rating: Value(rating),
+      reviewCount: Value(reviewCount),
+      businessStatus: Value(businessStatus),
+      address: Value(address),
+      district: Value(district),
+      city: Value(city),
+      openingStatus: Value(openingStatus),
+      searchQuery: Value(searchQuery),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      cachedPage: Value(cachedPage),
+      pageSize: Value(pageSize),
+      sortOrder: Value(sortOrder),
+      syncedAt: Value(syncedAt),
+    );
+  }
+
+  factory DrivingCenterRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DrivingCenterRecord(
+      id: serializer.fromJson<String>(json['id']),
+      province: serializer.fromJson<String>(json['province']),
+      name: serializer.fromJson<String>(json['name']),
+      phoneNumber: serializer.fromJson<String>(json['phoneNumber']),
+      photoUrl: serializer.fromJson<String>(json['photoUrl']),
+      website: serializer.fromJson<String>(json['website']),
+      rating: serializer.fromJson<double>(json['rating']),
+      reviewCount: serializer.fromJson<int>(json['reviewCount']),
+      businessStatus: serializer.fromJson<String>(json['businessStatus']),
+      address: serializer.fromJson<String>(json['address']),
+      district: serializer.fromJson<String>(json['district']),
+      city: serializer.fromJson<String>(json['city']),
+      openingStatus: serializer.fromJson<String>(json['openingStatus']),
+      searchQuery: serializer.fromJson<String>(json['searchQuery']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      cachedPage: serializer.fromJson<int>(json['cachedPage']),
+      pageSize: serializer.fromJson<int>(json['pageSize']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      syncedAt: serializer.fromJson<DateTime>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'province': serializer.toJson<String>(province),
+      'name': serializer.toJson<String>(name),
+      'phoneNumber': serializer.toJson<String>(phoneNumber),
+      'photoUrl': serializer.toJson<String>(photoUrl),
+      'website': serializer.toJson<String>(website),
+      'rating': serializer.toJson<double>(rating),
+      'reviewCount': serializer.toJson<int>(reviewCount),
+      'businessStatus': serializer.toJson<String>(businessStatus),
+      'address': serializer.toJson<String>(address),
+      'district': serializer.toJson<String>(district),
+      'city': serializer.toJson<String>(city),
+      'openingStatus': serializer.toJson<String>(openingStatus),
+      'searchQuery': serializer.toJson<String>(searchQuery),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'cachedPage': serializer.toJson<int>(cachedPage),
+      'pageSize': serializer.toJson<int>(pageSize),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+      'syncedAt': serializer.toJson<DateTime>(syncedAt),
+    };
+  }
+
+  DrivingCenterRecord copyWith({
+    String? id,
+    String? province,
+    String? name,
+    String? phoneNumber,
+    String? photoUrl,
+    String? website,
+    double? rating,
+    int? reviewCount,
+    String? businessStatus,
+    String? address,
+    String? district,
+    String? city,
+    String? openingStatus,
+    String? searchQuery,
+    String? createdAt,
+    String? updatedAt,
+    int? cachedPage,
+    int? pageSize,
+    int? sortOrder,
+    DateTime? syncedAt,
+  }) => DrivingCenterRecord(
+    id: id ?? this.id,
+    province: province ?? this.province,
+    name: name ?? this.name,
+    phoneNumber: phoneNumber ?? this.phoneNumber,
+    photoUrl: photoUrl ?? this.photoUrl,
+    website: website ?? this.website,
+    rating: rating ?? this.rating,
+    reviewCount: reviewCount ?? this.reviewCount,
+    businessStatus: businessStatus ?? this.businessStatus,
+    address: address ?? this.address,
+    district: district ?? this.district,
+    city: city ?? this.city,
+    openingStatus: openingStatus ?? this.openingStatus,
+    searchQuery: searchQuery ?? this.searchQuery,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    cachedPage: cachedPage ?? this.cachedPage,
+    pageSize: pageSize ?? this.pageSize,
+    sortOrder: sortOrder ?? this.sortOrder,
+    syncedAt: syncedAt ?? this.syncedAt,
+  );
+  DrivingCenterRecord copyWithCompanion(DrivingCenterRecordsCompanion data) {
+    return DrivingCenterRecord(
+      id: data.id.present ? data.id.value : this.id,
+      province: data.province.present ? data.province.value : this.province,
+      name: data.name.present ? data.name.value : this.name,
+      phoneNumber: data.phoneNumber.present
+          ? data.phoneNumber.value
+          : this.phoneNumber,
+      photoUrl: data.photoUrl.present ? data.photoUrl.value : this.photoUrl,
+      website: data.website.present ? data.website.value : this.website,
+      rating: data.rating.present ? data.rating.value : this.rating,
+      reviewCount: data.reviewCount.present
+          ? data.reviewCount.value
+          : this.reviewCount,
+      businessStatus: data.businessStatus.present
+          ? data.businessStatus.value
+          : this.businessStatus,
+      address: data.address.present ? data.address.value : this.address,
+      district: data.district.present ? data.district.value : this.district,
+      city: data.city.present ? data.city.value : this.city,
+      openingStatus: data.openingStatus.present
+          ? data.openingStatus.value
+          : this.openingStatus,
+      searchQuery: data.searchQuery.present
+          ? data.searchQuery.value
+          : this.searchQuery,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      cachedPage: data.cachedPage.present
+          ? data.cachedPage.value
+          : this.cachedPage,
+      pageSize: data.pageSize.present ? data.pageSize.value : this.pageSize,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DrivingCenterRecord(')
+          ..write('id: $id, ')
+          ..write('province: $province, ')
+          ..write('name: $name, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('photoUrl: $photoUrl, ')
+          ..write('website: $website, ')
+          ..write('rating: $rating, ')
+          ..write('reviewCount: $reviewCount, ')
+          ..write('businessStatus: $businessStatus, ')
+          ..write('address: $address, ')
+          ..write('district: $district, ')
+          ..write('city: $city, ')
+          ..write('openingStatus: $openingStatus, ')
+          ..write('searchQuery: $searchQuery, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('cachedPage: $cachedPage, ')
+          ..write('pageSize: $pageSize, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    province,
+    name,
+    phoneNumber,
+    photoUrl,
+    website,
+    rating,
+    reviewCount,
+    businessStatus,
+    address,
+    district,
+    city,
+    openingStatus,
+    searchQuery,
+    createdAt,
+    updatedAt,
+    cachedPage,
+    pageSize,
+    sortOrder,
+    syncedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DrivingCenterRecord &&
+          other.id == this.id &&
+          other.province == this.province &&
+          other.name == this.name &&
+          other.phoneNumber == this.phoneNumber &&
+          other.photoUrl == this.photoUrl &&
+          other.website == this.website &&
+          other.rating == this.rating &&
+          other.reviewCount == this.reviewCount &&
+          other.businessStatus == this.businessStatus &&
+          other.address == this.address &&
+          other.district == this.district &&
+          other.city == this.city &&
+          other.openingStatus == this.openingStatus &&
+          other.searchQuery == this.searchQuery &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.cachedPage == this.cachedPage &&
+          other.pageSize == this.pageSize &&
+          other.sortOrder == this.sortOrder &&
+          other.syncedAt == this.syncedAt);
+}
+
+class DrivingCenterRecordsCompanion
+    extends UpdateCompanion<DrivingCenterRecord> {
+  final Value<String> id;
+  final Value<String> province;
+  final Value<String> name;
+  final Value<String> phoneNumber;
+  final Value<String> photoUrl;
+  final Value<String> website;
+  final Value<double> rating;
+  final Value<int> reviewCount;
+  final Value<String> businessStatus;
+  final Value<String> address;
+  final Value<String> district;
+  final Value<String> city;
+  final Value<String> openingStatus;
+  final Value<String> searchQuery;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<int> cachedPage;
+  final Value<int> pageSize;
+  final Value<int> sortOrder;
+  final Value<DateTime> syncedAt;
+  final Value<int> rowid;
+  const DrivingCenterRecordsCompanion({
+    this.id = const Value.absent(),
+    this.province = const Value.absent(),
+    this.name = const Value.absent(),
+    this.phoneNumber = const Value.absent(),
+    this.photoUrl = const Value.absent(),
+    this.website = const Value.absent(),
+    this.rating = const Value.absent(),
+    this.reviewCount = const Value.absent(),
+    this.businessStatus = const Value.absent(),
+    this.address = const Value.absent(),
+    this.district = const Value.absent(),
+    this.city = const Value.absent(),
+    this.openingStatus = const Value.absent(),
+    this.searchQuery = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.cachedPage = const Value.absent(),
+    this.pageSize = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DrivingCenterRecordsCompanion.insert({
+    required String id,
+    required String province,
+    required String name,
+    required String phoneNumber,
+    required String photoUrl,
+    required String website,
+    this.rating = const Value.absent(),
+    this.reviewCount = const Value.absent(),
+    required String businessStatus,
+    required String address,
+    required String district,
+    required String city,
+    required String openingStatus,
+    required String searchQuery,
+    required String createdAt,
+    required String updatedAt,
+    required int cachedPage,
+    required int pageSize,
+    required int sortOrder,
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       province = Value(province),
+       name = Value(name),
+       phoneNumber = Value(phoneNumber),
+       photoUrl = Value(photoUrl),
+       website = Value(website),
+       businessStatus = Value(businessStatus),
+       address = Value(address),
+       district = Value(district),
+       city = Value(city),
+       openingStatus = Value(openingStatus),
+       searchQuery = Value(searchQuery),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       cachedPage = Value(cachedPage),
+       pageSize = Value(pageSize),
+       sortOrder = Value(sortOrder);
+  static Insertable<DrivingCenterRecord> custom({
+    Expression<String>? id,
+    Expression<String>? province,
+    Expression<String>? name,
+    Expression<String>? phoneNumber,
+    Expression<String>? photoUrl,
+    Expression<String>? website,
+    Expression<double>? rating,
+    Expression<int>? reviewCount,
+    Expression<String>? businessStatus,
+    Expression<String>? address,
+    Expression<String>? district,
+    Expression<String>? city,
+    Expression<String>? openingStatus,
+    Expression<String>? searchQuery,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<int>? cachedPage,
+    Expression<int>? pageSize,
+    Expression<int>? sortOrder,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (province != null) 'province': province,
+      if (name != null) 'name': name,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      if (photoUrl != null) 'photo_url': photoUrl,
+      if (website != null) 'website': website,
+      if (rating != null) 'rating': rating,
+      if (reviewCount != null) 'review_count': reviewCount,
+      if (businessStatus != null) 'business_status': businessStatus,
+      if (address != null) 'address': address,
+      if (district != null) 'district': district,
+      if (city != null) 'city': city,
+      if (openingStatus != null) 'opening_status': openingStatus,
+      if (searchQuery != null) 'search_query': searchQuery,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (cachedPage != null) 'cached_page': cachedPage,
+      if (pageSize != null) 'page_size': pageSize,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DrivingCenterRecordsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? province,
+    Value<String>? name,
+    Value<String>? phoneNumber,
+    Value<String>? photoUrl,
+    Value<String>? website,
+    Value<double>? rating,
+    Value<int>? reviewCount,
+    Value<String>? businessStatus,
+    Value<String>? address,
+    Value<String>? district,
+    Value<String>? city,
+    Value<String>? openingStatus,
+    Value<String>? searchQuery,
+    Value<String>? createdAt,
+    Value<String>? updatedAt,
+    Value<int>? cachedPage,
+    Value<int>? pageSize,
+    Value<int>? sortOrder,
+    Value<DateTime>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return DrivingCenterRecordsCompanion(
+      id: id ?? this.id,
+      province: province ?? this.province,
+      name: name ?? this.name,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      photoUrl: photoUrl ?? this.photoUrl,
+      website: website ?? this.website,
+      rating: rating ?? this.rating,
+      reviewCount: reviewCount ?? this.reviewCount,
+      businessStatus: businessStatus ?? this.businessStatus,
+      address: address ?? this.address,
+      district: district ?? this.district,
+      city: city ?? this.city,
+      openingStatus: openingStatus ?? this.openingStatus,
+      searchQuery: searchQuery ?? this.searchQuery,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      cachedPage: cachedPage ?? this.cachedPage,
+      pageSize: pageSize ?? this.pageSize,
+      sortOrder: sortOrder ?? this.sortOrder,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (province.present) {
+      map['province'] = Variable<String>(province.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (phoneNumber.present) {
+      map['phone_number'] = Variable<String>(phoneNumber.value);
+    }
+    if (photoUrl.present) {
+      map['photo_url'] = Variable<String>(photoUrl.value);
+    }
+    if (website.present) {
+      map['website'] = Variable<String>(website.value);
+    }
+    if (rating.present) {
+      map['rating'] = Variable<double>(rating.value);
+    }
+    if (reviewCount.present) {
+      map['review_count'] = Variable<int>(reviewCount.value);
+    }
+    if (businessStatus.present) {
+      map['business_status'] = Variable<String>(businessStatus.value);
+    }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
+    }
+    if (district.present) {
+      map['district'] = Variable<String>(district.value);
+    }
+    if (city.present) {
+      map['city'] = Variable<String>(city.value);
+    }
+    if (openingStatus.present) {
+      map['opening_status'] = Variable<String>(openingStatus.value);
+    }
+    if (searchQuery.present) {
+      map['search_query'] = Variable<String>(searchQuery.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (cachedPage.present) {
+      map['cached_page'] = Variable<int>(cachedPage.value);
+    }
+    if (pageSize.present) {
+      map['page_size'] = Variable<int>(pageSize.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DrivingCenterRecordsCompanion(')
+          ..write('id: $id, ')
+          ..write('province: $province, ')
+          ..write('name: $name, ')
+          ..write('phoneNumber: $phoneNumber, ')
+          ..write('photoUrl: $photoUrl, ')
+          ..write('website: $website, ')
+          ..write('rating: $rating, ')
+          ..write('reviewCount: $reviewCount, ')
+          ..write('businessStatus: $businessStatus, ')
+          ..write('address: $address, ')
+          ..write('district: $district, ')
+          ..write('city: $city, ')
+          ..write('openingStatus: $openingStatus, ')
+          ..write('searchQuery: $searchQuery, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('cachedPage: $cachedPage, ')
+          ..write('pageSize: $pageSize, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $DrivingCenterPageCachesTable extends DrivingCenterPageCaches
+    with TableInfo<$DrivingCenterPageCachesTable, DrivingCenterPageCache> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DrivingCenterPageCachesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _provinceMeta = const VerificationMeta(
+    'province',
+  );
+  @override
+  late final GeneratedColumn<String> province = GeneratedColumn<String>(
+    'province',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pageMeta = const VerificationMeta('page');
+  @override
+  late final GeneratedColumn<int> page = GeneratedColumn<int>(
+    'page',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pageSizeMeta = const VerificationMeta(
+    'pageSize',
+  );
+  @override
+  late final GeneratedColumn<int> pageSize = GeneratedColumn<int>(
+    'page_size',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _totalMeta = const VerificationMeta('total');
+  @override
+  late final GeneratedColumn<int> total = GeneratedColumn<int>(
+    'total',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _hasMoreMeta = const VerificationMeta(
+    'hasMore',
+  );
+  @override
+  late final GeneratedColumn<bool> hasMore = GeneratedColumn<bool>(
+    'has_more',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("has_more" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _syncedAtMeta = const VerificationMeta(
+    'syncedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+    'synced_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    province,
+    page,
+    pageSize,
+    total,
+    hasMore,
+    syncedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'driving_center_page_caches';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DrivingCenterPageCache> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('province')) {
+      context.handle(
+        _provinceMeta,
+        province.isAcceptableOrUnknown(data['province']!, _provinceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_provinceMeta);
+    }
+    if (data.containsKey('page')) {
+      context.handle(
+        _pageMeta,
+        page.isAcceptableOrUnknown(data['page']!, _pageMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageMeta);
+    }
+    if (data.containsKey('page_size')) {
+      context.handle(
+        _pageSizeMeta,
+        pageSize.isAcceptableOrUnknown(data['page_size']!, _pageSizeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pageSizeMeta);
+    }
+    if (data.containsKey('total')) {
+      context.handle(
+        _totalMeta,
+        total.isAcceptableOrUnknown(data['total']!, _totalMeta),
+      );
+    }
+    if (data.containsKey('has_more')) {
+      context.handle(
+        _hasMoreMeta,
+        hasMore.isAcceptableOrUnknown(data['has_more']!, _hasMoreMeta),
+      );
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(
+        _syncedAtMeta,
+        syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {province, page};
+  @override
+  DrivingCenterPageCache map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DrivingCenterPageCache(
+      province: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}province'],
+      )!,
+      page: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page'],
+      )!,
+      pageSize: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}page_size'],
+      )!,
+      total: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total'],
+      )!,
+      hasMore: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}has_more'],
+      )!,
+      syncedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}synced_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DrivingCenterPageCachesTable createAlias(String alias) {
+    return $DrivingCenterPageCachesTable(attachedDatabase, alias);
+  }
+}
+
+class DrivingCenterPageCache extends DataClass
+    implements Insertable<DrivingCenterPageCache> {
+  final String province;
+  final int page;
+  final int pageSize;
+  final int total;
+  final bool hasMore;
+  final DateTime syncedAt;
+  const DrivingCenterPageCache({
+    required this.province,
+    required this.page,
+    required this.pageSize,
+    required this.total,
+    required this.hasMore,
+    required this.syncedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['province'] = Variable<String>(province);
+    map['page'] = Variable<int>(page);
+    map['page_size'] = Variable<int>(pageSize);
+    map['total'] = Variable<int>(total);
+    map['has_more'] = Variable<bool>(hasMore);
+    map['synced_at'] = Variable<DateTime>(syncedAt);
+    return map;
+  }
+
+  DrivingCenterPageCachesCompanion toCompanion(bool nullToAbsent) {
+    return DrivingCenterPageCachesCompanion(
+      province: Value(province),
+      page: Value(page),
+      pageSize: Value(pageSize),
+      total: Value(total),
+      hasMore: Value(hasMore),
+      syncedAt: Value(syncedAt),
+    );
+  }
+
+  factory DrivingCenterPageCache.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DrivingCenterPageCache(
+      province: serializer.fromJson<String>(json['province']),
+      page: serializer.fromJson<int>(json['page']),
+      pageSize: serializer.fromJson<int>(json['pageSize']),
+      total: serializer.fromJson<int>(json['total']),
+      hasMore: serializer.fromJson<bool>(json['hasMore']),
+      syncedAt: serializer.fromJson<DateTime>(json['syncedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'province': serializer.toJson<String>(province),
+      'page': serializer.toJson<int>(page),
+      'pageSize': serializer.toJson<int>(pageSize),
+      'total': serializer.toJson<int>(total),
+      'hasMore': serializer.toJson<bool>(hasMore),
+      'syncedAt': serializer.toJson<DateTime>(syncedAt),
+    };
+  }
+
+  DrivingCenterPageCache copyWith({
+    String? province,
+    int? page,
+    int? pageSize,
+    int? total,
+    bool? hasMore,
+    DateTime? syncedAt,
+  }) => DrivingCenterPageCache(
+    province: province ?? this.province,
+    page: page ?? this.page,
+    pageSize: pageSize ?? this.pageSize,
+    total: total ?? this.total,
+    hasMore: hasMore ?? this.hasMore,
+    syncedAt: syncedAt ?? this.syncedAt,
+  );
+  DrivingCenterPageCache copyWithCompanion(
+    DrivingCenterPageCachesCompanion data,
+  ) {
+    return DrivingCenterPageCache(
+      province: data.province.present ? data.province.value : this.province,
+      page: data.page.present ? data.page.value : this.page,
+      pageSize: data.pageSize.present ? data.pageSize.value : this.pageSize,
+      total: data.total.present ? data.total.value : this.total,
+      hasMore: data.hasMore.present ? data.hasMore.value : this.hasMore,
+      syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DrivingCenterPageCache(')
+          ..write('province: $province, ')
+          ..write('page: $page, ')
+          ..write('pageSize: $pageSize, ')
+          ..write('total: $total, ')
+          ..write('hasMore: $hasMore, ')
+          ..write('syncedAt: $syncedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(province, page, pageSize, total, hasMore, syncedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DrivingCenterPageCache &&
+          other.province == this.province &&
+          other.page == this.page &&
+          other.pageSize == this.pageSize &&
+          other.total == this.total &&
+          other.hasMore == this.hasMore &&
+          other.syncedAt == this.syncedAt);
+}
+
+class DrivingCenterPageCachesCompanion
+    extends UpdateCompanion<DrivingCenterPageCache> {
+  final Value<String> province;
+  final Value<int> page;
+  final Value<int> pageSize;
+  final Value<int> total;
+  final Value<bool> hasMore;
+  final Value<DateTime> syncedAt;
+  final Value<int> rowid;
+  const DrivingCenterPageCachesCompanion({
+    this.province = const Value.absent(),
+    this.page = const Value.absent(),
+    this.pageSize = const Value.absent(),
+    this.total = const Value.absent(),
+    this.hasMore = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DrivingCenterPageCachesCompanion.insert({
+    required String province,
+    required int page,
+    required int pageSize,
+    this.total = const Value.absent(),
+    this.hasMore = const Value.absent(),
+    this.syncedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : province = Value(province),
+       page = Value(page),
+       pageSize = Value(pageSize);
+  static Insertable<DrivingCenterPageCache> custom({
+    Expression<String>? province,
+    Expression<int>? page,
+    Expression<int>? pageSize,
+    Expression<int>? total,
+    Expression<bool>? hasMore,
+    Expression<DateTime>? syncedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (province != null) 'province': province,
+      if (page != null) 'page': page,
+      if (pageSize != null) 'page_size': pageSize,
+      if (total != null) 'total': total,
+      if (hasMore != null) 'has_more': hasMore,
+      if (syncedAt != null) 'synced_at': syncedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DrivingCenterPageCachesCompanion copyWith({
+    Value<String>? province,
+    Value<int>? page,
+    Value<int>? pageSize,
+    Value<int>? total,
+    Value<bool>? hasMore,
+    Value<DateTime>? syncedAt,
+    Value<int>? rowid,
+  }) {
+    return DrivingCenterPageCachesCompanion(
+      province: province ?? this.province,
+      page: page ?? this.page,
+      pageSize: pageSize ?? this.pageSize,
+      total: total ?? this.total,
+      hasMore: hasMore ?? this.hasMore,
+      syncedAt: syncedAt ?? this.syncedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (province.present) {
+      map['province'] = Variable<String>(province.value);
+    }
+    if (page.present) {
+      map['page'] = Variable<int>(page.value);
+    }
+    if (pageSize.present) {
+      map['page_size'] = Variable<int>(pageSize.value);
+    }
+    if (total.present) {
+      map['total'] = Variable<int>(total.value);
+    }
+    if (hasMore.present) {
+      map['has_more'] = Variable<bool>(hasMore.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DrivingCenterPageCachesCompanion(')
+          ..write('province: $province, ')
+          ..write('page: $page, ')
+          ..write('pageSize: $pageSize, ')
+          ..write('total: $total, ')
+          ..write('hasMore: $hasMore, ')
+          ..write('syncedAt: $syncedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -6689,6 +8206,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SavedQuestionsTable savedQuestions = $SavedQuestionsTable(this);
   late final $TrafficViolationRecordsTable trafficViolationRecords =
       $TrafficViolationRecordsTable(this);
+  late final $DrivingCenterRecordsTable drivingCenterRecords =
+      $DrivingCenterRecordsTable(this);
+  late final $DrivingCenterPageCachesTable drivingCenterPageCaches =
+      $DrivingCenterPageCachesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -6709,6 +8230,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recognitionHistoryTable,
     savedQuestions,
     trafficViolationRecords,
+    drivingCenterRecords,
+    drivingCenterPageCaches,
   ];
 }
 
@@ -12321,6 +13844,757 @@ typedef $$TrafficViolationRecordsTableProcessedTableManager =
       TrafficViolationRecord,
       PrefetchHooks Function()
     >;
+typedef $$DrivingCenterRecordsTableCreateCompanionBuilder =
+    DrivingCenterRecordsCompanion Function({
+      required String id,
+      required String province,
+      required String name,
+      required String phoneNumber,
+      required String photoUrl,
+      required String website,
+      Value<double> rating,
+      Value<int> reviewCount,
+      required String businessStatus,
+      required String address,
+      required String district,
+      required String city,
+      required String openingStatus,
+      required String searchQuery,
+      required String createdAt,
+      required String updatedAt,
+      required int cachedPage,
+      required int pageSize,
+      required int sortOrder,
+      Value<DateTime> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$DrivingCenterRecordsTableUpdateCompanionBuilder =
+    DrivingCenterRecordsCompanion Function({
+      Value<String> id,
+      Value<String> province,
+      Value<String> name,
+      Value<String> phoneNumber,
+      Value<String> photoUrl,
+      Value<String> website,
+      Value<double> rating,
+      Value<int> reviewCount,
+      Value<String> businessStatus,
+      Value<String> address,
+      Value<String> district,
+      Value<String> city,
+      Value<String> openingStatus,
+      Value<String> searchQuery,
+      Value<String> createdAt,
+      Value<String> updatedAt,
+      Value<int> cachedPage,
+      Value<int> pageSize,
+      Value<int> sortOrder,
+      Value<DateTime> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$DrivingCenterRecordsTableFilterComposer
+    extends Composer<_$AppDatabase, $DrivingCenterRecordsTable> {
+  $$DrivingCenterRecordsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get photoUrl => $composableBuilder(
+    column: $table.photoUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get website => $composableBuilder(
+    column: $table.website,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get reviewCount => $composableBuilder(
+    column: $table.reviewCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get businessStatus => $composableBuilder(
+    column: $table.businessStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get district => $composableBuilder(
+    column: $table.district,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get city => $composableBuilder(
+    column: $table.city,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get openingStatus => $composableBuilder(
+    column: $table.openingStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get searchQuery => $composableBuilder(
+    column: $table.searchQuery,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cachedPage => $composableBuilder(
+    column: $table.cachedPage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pageSize => $composableBuilder(
+    column: $table.pageSize,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DrivingCenterRecordsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DrivingCenterRecordsTable> {
+  $$DrivingCenterRecordsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get photoUrl => $composableBuilder(
+    column: $table.photoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get website => $composableBuilder(
+    column: $table.website,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get reviewCount => $composableBuilder(
+    column: $table.reviewCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get businessStatus => $composableBuilder(
+    column: $table.businessStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get district => $composableBuilder(
+    column: $table.district,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get city => $composableBuilder(
+    column: $table.city,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get openingStatus => $composableBuilder(
+    column: $table.openingStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get searchQuery => $composableBuilder(
+    column: $table.searchQuery,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cachedPage => $composableBuilder(
+    column: $table.cachedPage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get pageSize => $composableBuilder(
+    column: $table.pageSize,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DrivingCenterRecordsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DrivingCenterRecordsTable> {
+  $$DrivingCenterRecordsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get province =>
+      $composableBuilder(column: $table.province, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get phoneNumber => $composableBuilder(
+    column: $table.phoneNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get photoUrl =>
+      $composableBuilder(column: $table.photoUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get website =>
+      $composableBuilder(column: $table.website, builder: (column) => column);
+
+  GeneratedColumn<double> get rating =>
+      $composableBuilder(column: $table.rating, builder: (column) => column);
+
+  GeneratedColumn<int> get reviewCount => $composableBuilder(
+    column: $table.reviewCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get businessStatus => $composableBuilder(
+    column: $table.businessStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get address =>
+      $composableBuilder(column: $table.address, builder: (column) => column);
+
+  GeneratedColumn<String> get district =>
+      $composableBuilder(column: $table.district, builder: (column) => column);
+
+  GeneratedColumn<String> get city =>
+      $composableBuilder(column: $table.city, builder: (column) => column);
+
+  GeneratedColumn<String> get openingStatus => $composableBuilder(
+    column: $table.openingStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get searchQuery => $composableBuilder(
+    column: $table.searchQuery,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get cachedPage => $composableBuilder(
+    column: $table.cachedPage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get pageSize =>
+      $composableBuilder(column: $table.pageSize, builder: (column) => column);
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$DrivingCenterRecordsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DrivingCenterRecordsTable,
+          DrivingCenterRecord,
+          $$DrivingCenterRecordsTableFilterComposer,
+          $$DrivingCenterRecordsTableOrderingComposer,
+          $$DrivingCenterRecordsTableAnnotationComposer,
+          $$DrivingCenterRecordsTableCreateCompanionBuilder,
+          $$DrivingCenterRecordsTableUpdateCompanionBuilder,
+          (
+            DrivingCenterRecord,
+            BaseReferences<
+              _$AppDatabase,
+              $DrivingCenterRecordsTable,
+              DrivingCenterRecord
+            >,
+          ),
+          DrivingCenterRecord,
+          PrefetchHooks Function()
+        > {
+  $$DrivingCenterRecordsTableTableManager(
+    _$AppDatabase db,
+    $DrivingCenterRecordsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DrivingCenterRecordsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$DrivingCenterRecordsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$DrivingCenterRecordsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> province = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> phoneNumber = const Value.absent(),
+                Value<String> photoUrl = const Value.absent(),
+                Value<String> website = const Value.absent(),
+                Value<double> rating = const Value.absent(),
+                Value<int> reviewCount = const Value.absent(),
+                Value<String> businessStatus = const Value.absent(),
+                Value<String> address = const Value.absent(),
+                Value<String> district = const Value.absent(),
+                Value<String> city = const Value.absent(),
+                Value<String> openingStatus = const Value.absent(),
+                Value<String> searchQuery = const Value.absent(),
+                Value<String> createdAt = const Value.absent(),
+                Value<String> updatedAt = const Value.absent(),
+                Value<int> cachedPage = const Value.absent(),
+                Value<int> pageSize = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<DateTime> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DrivingCenterRecordsCompanion(
+                id: id,
+                province: province,
+                name: name,
+                phoneNumber: phoneNumber,
+                photoUrl: photoUrl,
+                website: website,
+                rating: rating,
+                reviewCount: reviewCount,
+                businessStatus: businessStatus,
+                address: address,
+                district: district,
+                city: city,
+                openingStatus: openingStatus,
+                searchQuery: searchQuery,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                cachedPage: cachedPage,
+                pageSize: pageSize,
+                sortOrder: sortOrder,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String province,
+                required String name,
+                required String phoneNumber,
+                required String photoUrl,
+                required String website,
+                Value<double> rating = const Value.absent(),
+                Value<int> reviewCount = const Value.absent(),
+                required String businessStatus,
+                required String address,
+                required String district,
+                required String city,
+                required String openingStatus,
+                required String searchQuery,
+                required String createdAt,
+                required String updatedAt,
+                required int cachedPage,
+                required int pageSize,
+                required int sortOrder,
+                Value<DateTime> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DrivingCenterRecordsCompanion.insert(
+                id: id,
+                province: province,
+                name: name,
+                phoneNumber: phoneNumber,
+                photoUrl: photoUrl,
+                website: website,
+                rating: rating,
+                reviewCount: reviewCount,
+                businessStatus: businessStatus,
+                address: address,
+                district: district,
+                city: city,
+                openingStatus: openingStatus,
+                searchQuery: searchQuery,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                cachedPage: cachedPage,
+                pageSize: pageSize,
+                sortOrder: sortOrder,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DrivingCenterRecordsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DrivingCenterRecordsTable,
+      DrivingCenterRecord,
+      $$DrivingCenterRecordsTableFilterComposer,
+      $$DrivingCenterRecordsTableOrderingComposer,
+      $$DrivingCenterRecordsTableAnnotationComposer,
+      $$DrivingCenterRecordsTableCreateCompanionBuilder,
+      $$DrivingCenterRecordsTableUpdateCompanionBuilder,
+      (
+        DrivingCenterRecord,
+        BaseReferences<
+          _$AppDatabase,
+          $DrivingCenterRecordsTable,
+          DrivingCenterRecord
+        >,
+      ),
+      DrivingCenterRecord,
+      PrefetchHooks Function()
+    >;
+typedef $$DrivingCenterPageCachesTableCreateCompanionBuilder =
+    DrivingCenterPageCachesCompanion Function({
+      required String province,
+      required int page,
+      required int pageSize,
+      Value<int> total,
+      Value<bool> hasMore,
+      Value<DateTime> syncedAt,
+      Value<int> rowid,
+    });
+typedef $$DrivingCenterPageCachesTableUpdateCompanionBuilder =
+    DrivingCenterPageCachesCompanion Function({
+      Value<String> province,
+      Value<int> page,
+      Value<int> pageSize,
+      Value<int> total,
+      Value<bool> hasMore,
+      Value<DateTime> syncedAt,
+      Value<int> rowid,
+    });
+
+class $$DrivingCenterPageCachesTableFilterComposer
+    extends Composer<_$AppDatabase, $DrivingCenterPageCachesTable> {
+  $$DrivingCenterPageCachesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get page => $composableBuilder(
+    column: $table.page,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pageSize => $composableBuilder(
+    column: $table.pageSize,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get total => $composableBuilder(
+    column: $table.total,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasMore => $composableBuilder(
+    column: $table.hasMore,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$DrivingCenterPageCachesTableOrderingComposer
+    extends Composer<_$AppDatabase, $DrivingCenterPageCachesTable> {
+  $$DrivingCenterPageCachesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get province => $composableBuilder(
+    column: $table.province,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get page => $composableBuilder(
+    column: $table.page,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get pageSize => $composableBuilder(
+    column: $table.pageSize,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get total => $composableBuilder(
+    column: $table.total,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasMore => $composableBuilder(
+    column: $table.hasMore,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get syncedAt => $composableBuilder(
+    column: $table.syncedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$DrivingCenterPageCachesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DrivingCenterPageCachesTable> {
+  $$DrivingCenterPageCachesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get province =>
+      $composableBuilder(column: $table.province, builder: (column) => column);
+
+  GeneratedColumn<int> get page =>
+      $composableBuilder(column: $table.page, builder: (column) => column);
+
+  GeneratedColumn<int> get pageSize =>
+      $composableBuilder(column: $table.pageSize, builder: (column) => column);
+
+  GeneratedColumn<int> get total =>
+      $composableBuilder(column: $table.total, builder: (column) => column);
+
+  GeneratedColumn<bool> get hasMore =>
+      $composableBuilder(column: $table.hasMore, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get syncedAt =>
+      $composableBuilder(column: $table.syncedAt, builder: (column) => column);
+}
+
+class $$DrivingCenterPageCachesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DrivingCenterPageCachesTable,
+          DrivingCenterPageCache,
+          $$DrivingCenterPageCachesTableFilterComposer,
+          $$DrivingCenterPageCachesTableOrderingComposer,
+          $$DrivingCenterPageCachesTableAnnotationComposer,
+          $$DrivingCenterPageCachesTableCreateCompanionBuilder,
+          $$DrivingCenterPageCachesTableUpdateCompanionBuilder,
+          (
+            DrivingCenterPageCache,
+            BaseReferences<
+              _$AppDatabase,
+              $DrivingCenterPageCachesTable,
+              DrivingCenterPageCache
+            >,
+          ),
+          DrivingCenterPageCache,
+          PrefetchHooks Function()
+        > {
+  $$DrivingCenterPageCachesTableTableManager(
+    _$AppDatabase db,
+    $DrivingCenterPageCachesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DrivingCenterPageCachesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$DrivingCenterPageCachesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$DrivingCenterPageCachesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> province = const Value.absent(),
+                Value<int> page = const Value.absent(),
+                Value<int> pageSize = const Value.absent(),
+                Value<int> total = const Value.absent(),
+                Value<bool> hasMore = const Value.absent(),
+                Value<DateTime> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DrivingCenterPageCachesCompanion(
+                province: province,
+                page: page,
+                pageSize: pageSize,
+                total: total,
+                hasMore: hasMore,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String province,
+                required int page,
+                required int pageSize,
+                Value<int> total = const Value.absent(),
+                Value<bool> hasMore = const Value.absent(),
+                Value<DateTime> syncedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DrivingCenterPageCachesCompanion.insert(
+                province: province,
+                page: page,
+                pageSize: pageSize,
+                total: total,
+                hasMore: hasMore,
+                syncedAt: syncedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$DrivingCenterPageCachesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DrivingCenterPageCachesTable,
+      DrivingCenterPageCache,
+      $$DrivingCenterPageCachesTableFilterComposer,
+      $$DrivingCenterPageCachesTableOrderingComposer,
+      $$DrivingCenterPageCachesTableAnnotationComposer,
+      $$DrivingCenterPageCachesTableCreateCompanionBuilder,
+      $$DrivingCenterPageCachesTableUpdateCompanionBuilder,
+      (
+        DrivingCenterPageCache,
+        BaseReferences<
+          _$AppDatabase,
+          $DrivingCenterPageCachesTable,
+          DrivingCenterPageCache
+        >,
+      ),
+      DrivingCenterPageCache,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -12360,5 +14634,12 @@ class $AppDatabaseManager {
       $$TrafficViolationRecordsTableTableManager(
         _db,
         _db.trafficViolationRecords,
+      );
+  $$DrivingCenterRecordsTableTableManager get drivingCenterRecords =>
+      $$DrivingCenterRecordsTableTableManager(_db, _db.drivingCenterRecords);
+  $$DrivingCenterPageCachesTableTableManager get drivingCenterPageCaches =>
+      $$DrivingCenterPageCachesTableTableManager(
+        _db,
+        _db.drivingCenterPageCaches,
       );
 }
