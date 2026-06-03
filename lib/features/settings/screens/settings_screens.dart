@@ -58,6 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _selectedGplx = rankId);
     await _repo.updateRankId(rankId);
     rankNotifier.value = rankId;
+    await WrongQuestionNotificationService.instance.syncCurrentReminderState();
   }
 
   Future<void> _onScoringChanged(bool value) async {
