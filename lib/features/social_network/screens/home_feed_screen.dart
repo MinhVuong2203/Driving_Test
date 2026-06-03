@@ -6,10 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../data/repository/notification_api_repository.dart';
 import '../../../data/repository/post_api_repository.dart';
 import '../../../data/repository/comment_api_repository.dart';
+import '../../../data/services/firebase/notification_api_service.dart';
 import '../models/comment_model.dart';
 import '../controller/signout.dart';
+import '../models/notification_model.dart';
 import '../models/post_model.dart';
 import '../widgets/comment_bottom_sheet.dart';
 import '../widgets/create_post_box.dart';
@@ -33,6 +36,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   late final CommentApiRepository _commentApiRepo =
   CommentApiRepository.instance(BACKEND_URL);
+
+  late final NotificationApiRepository _notificationApiRepo =
+  NotificationApiRepository.instance(BACKEND_URL);
 
   bool _isAdmin = false;
 
@@ -619,6 +625,156 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     );
   }
 
+  Future<void> _showNotifications() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) {
+        return FutureBuilder<List<NotificationModel>>(
+          future: _notificationApiRepo.getUserNotifications(user.uid),
+          builder: (context, snapshot) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
+            final bg = isDark ? const Color(0xFF111827) : Colors.white;
+            final cardBg = isDark ? const Color(0xFF1F2937) : const Color(0xFFF8FAFC);
+            final textColor = isDark ? Colors.white : const Color(0xFF111827);
+            final subColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF6B7280);
+            final borderColor = isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB);
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.75,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 42,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: subColor.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Thông báo',
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    const Expanded(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (snapshot.hasError)
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Không thể tải thông báo',
+                          style: TextStyle(color: subColor),
+                        ),
+                      ),
+                    )
+                  else if ((snapshot.data ?? []).isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Chưa có thông báo nào',
+                            style: TextStyle(color: subColor),
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount: snapshot.data!.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final item = snapshot.data![index];
+
+                            return InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () async {
+                                await _notificationApiRepo.markAsRead(
+                                  item.notificationId,
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: item.isRead
+                                      ? cardBg
+                                      : const Color(0xFF2563EB).withValues(alpha: 0.16),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: borderColor),
+                                ),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor: item.isRead
+                                          ? const Color(0xFF64748B)
+                                          : const Color(0xFFF59E0B),
+                                      child: const Icon(
+                                        Icons.notifications,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.title,
+                                            style: TextStyle(
+                                              color: textColor,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            item.message,
+                                            style: TextStyle(
+                                              color: subColor,
+                                              fontSize: 13,
+                                              height: 1.35,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -645,7 +801,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: _showNotifications,
             icon: Icon(
               Icons.notifications_none_rounded,
               color: textColor,
