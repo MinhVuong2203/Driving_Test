@@ -419,14 +419,14 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
       await WrongQuestionNotificationService.instance
           .syncCurrentReminderState();
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(ok ? 'Chính xác' : 'Sai rồi'),
-          backgroundColor: ok ? AppColors.success : AppColors.danger,
-          duration: const Duration(milliseconds: 700),
-        ),
-      );
+      // if (!mounted) return;
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text(ok ? 'Chính xác' : 'Sai rồi'),
+      //     backgroundColor: ok ? AppColors.success : AppColors.danger,
+      //     duration: const Duration(milliseconds: 700),
+      //   ),
+      // );
     }
   }
 
