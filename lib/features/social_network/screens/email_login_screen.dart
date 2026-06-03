@@ -11,7 +11,7 @@ import 'package:driving_test_prep/shared/widgets/account_status_gate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../../data/repository/google_auth_repository.dart';
+import '../../../data/repository/social_auth_repository.dart';
 import '../widgets/other_login_method.dart';
 
 const Color _kNavy = Color(0xFF0D1B3E);
@@ -32,7 +32,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
-  final GoogleAuthRepository _googleAuthRepo = GoogleAuthRepository.instance;
+  final SocialAuthRepository _socialAuthRepo = SocialAuthRepository.instance;
   late final Stream<User?> _authStateStream;
 
   bool _isLoading = false;
@@ -70,11 +70,11 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     final String email = _emailCtrl.text.trim();
 
     try {
-      final UserCredential credential =
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: _passwordCtrl.text,
-      );
+      final UserCredential credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: email,
+            password: _passwordCtrl.text,
+          );
 
       final User? user = credential.user;
       if (user != null) {
@@ -91,16 +91,18 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
         };
       });
     } on FirebaseException catch (e) {
-      setState(() => _error = 'Cập nhật hồ sơ thất bại: ${e.message ?? e.code}');
+      setState(
+        () => _error = 'Cập nhật hồ sơ thất bại: ${e.message ?? e.code}',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _register() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const RegisterWithOtpScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const RegisterWithOtpScreen()));
   }
 
   void googleSignIn() async {
@@ -112,7 +114,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
     });
 
     try {
-      final credential = await _googleAuthRepo.signInWithGoogle();
+      final credential = await _socialAuthRepo.signInWithGoogle();
       if (!mounted) return;
 
       if (credential.user != null) {
@@ -122,6 +124,33 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       if (!mounted) return;
       setState(() {
         _error = e.message ?? 'Đăng nhập Google thất bại.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void facebookSignIn() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final credential = await _socialAuthRepo.signInWithFacebook();
+      if (!mounted) return;
+
+      if (credential.user != null) {
+        return;
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message ?? 'Đăng nhập Facebook thất bại.';
       });
     } finally {
       if (mounted) {
@@ -151,10 +180,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: _kNavy,
-            elevation: 0,
-          ),
+          appBar: AppBar(backgroundColor: _kNavy, elevation: 0),
           backgroundColor: _kNavy,
           body: SafeArea(
             child: SingleChildScrollView(
@@ -226,7 +252,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
             const SizedBox(height: 6),
             ValueListenableBuilder<bool>(
               valueListenable: _obscurePassword,
-              builder: (_, bool isObscured, __) {
+              builder: (_, bool isObscured, child) {
                 return LoginTextField(
                   controller: _passwordCtrl,
                   hint: '••••••••',
@@ -266,6 +292,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
             const SizedBox(height: 16),
             OtherLoginMethod(
               onGoogleTap: googleSignIn,
+              onFacebookTap: facebookSignIn,
             ),
             const OrDivider(grey: _kGrey),
             const SizedBox(height: 16),
