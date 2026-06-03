@@ -4024,8 +4024,17 @@ class $WrongQuestionsTable extends WrongQuestions
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'UNIQUE REFERENCES questions (id)',
+      'REFERENCES questions (id)',
     ),
+  );
+  static const VerificationMeta _rankIdMeta = const VerificationMeta('rankId');
+  @override
+  late final GeneratedColumn<String> rankId = GeneratedColumn<String>(
+    'rank_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _wrongCountMeta = const VerificationMeta(
     'wrongCount',
@@ -4055,6 +4064,7 @@ class $WrongQuestionsTable extends WrongQuestions
   List<GeneratedColumn> get $columns => [
     id,
     questionId,
+    rankId,
     wrongCount,
     lastWrongAt,
   ];
@@ -4079,6 +4089,12 @@ class $WrongQuestionsTable extends WrongQuestions
         questionId.isAcceptableOrUnknown(data['question_id']!, _questionIdMeta),
       );
     }
+    if (data.containsKey('rank_id')) {
+      context.handle(
+        _rankIdMeta,
+        rankId.isAcceptableOrUnknown(data['rank_id']!, _rankIdMeta),
+      );
+    }
     if (data.containsKey('wrong_count')) {
       context.handle(
         _wrongCountMeta,
@@ -4100,6 +4116,10 @@ class $WrongQuestionsTable extends WrongQuestions
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {questionId, rankId},
+  ];
+  @override
   WrongQuestion map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return WrongQuestion(
@@ -4110,6 +4130,10 @@ class $WrongQuestionsTable extends WrongQuestions
       questionId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}question_id'],
+      ),
+      rankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rank_id'],
       ),
       wrongCount: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -4131,11 +4155,13 @@ class $WrongQuestionsTable extends WrongQuestions
 class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
   final int id;
   final int? questionId;
+  final String? rankId;
   final int wrongCount;
   final DateTime lastWrongAt;
   const WrongQuestion({
     required this.id,
     this.questionId,
+    this.rankId,
     required this.wrongCount,
     required this.lastWrongAt,
   });
@@ -4145,6 +4171,9 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
     map['id'] = Variable<int>(id);
     if (!nullToAbsent || questionId != null) {
       map['question_id'] = Variable<int>(questionId);
+    }
+    if (!nullToAbsent || rankId != null) {
+      map['rank_id'] = Variable<String>(rankId);
     }
     map['wrong_count'] = Variable<int>(wrongCount);
     map['last_wrong_at'] = Variable<DateTime>(lastWrongAt);
@@ -4157,6 +4186,9 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
       questionId: questionId == null && nullToAbsent
           ? const Value.absent()
           : Value(questionId),
+      rankId: rankId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rankId),
       wrongCount: Value(wrongCount),
       lastWrongAt: Value(lastWrongAt),
     );
@@ -4170,6 +4202,7 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
     return WrongQuestion(
       id: serializer.fromJson<int>(json['id']),
       questionId: serializer.fromJson<int?>(json['questionId']),
+      rankId: serializer.fromJson<String?>(json['rankId']),
       wrongCount: serializer.fromJson<int>(json['wrongCount']),
       lastWrongAt: serializer.fromJson<DateTime>(json['lastWrongAt']),
     );
@@ -4180,6 +4213,7 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'questionId': serializer.toJson<int?>(questionId),
+      'rankId': serializer.toJson<String?>(rankId),
       'wrongCount': serializer.toJson<int>(wrongCount),
       'lastWrongAt': serializer.toJson<DateTime>(lastWrongAt),
     };
@@ -4188,11 +4222,13 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
   WrongQuestion copyWith({
     int? id,
     Value<int?> questionId = const Value.absent(),
+    Value<String?> rankId = const Value.absent(),
     int? wrongCount,
     DateTime? lastWrongAt,
   }) => WrongQuestion(
     id: id ?? this.id,
     questionId: questionId.present ? questionId.value : this.questionId,
+    rankId: rankId.present ? rankId.value : this.rankId,
     wrongCount: wrongCount ?? this.wrongCount,
     lastWrongAt: lastWrongAt ?? this.lastWrongAt,
   );
@@ -4202,6 +4238,7 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
       questionId: data.questionId.present
           ? data.questionId.value
           : this.questionId,
+      rankId: data.rankId.present ? data.rankId.value : this.rankId,
       wrongCount: data.wrongCount.present
           ? data.wrongCount.value
           : this.wrongCount,
@@ -4216,6 +4253,7 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
     return (StringBuffer('WrongQuestion(')
           ..write('id: $id, ')
           ..write('questionId: $questionId, ')
+          ..write('rankId: $rankId, ')
           ..write('wrongCount: $wrongCount, ')
           ..write('lastWrongAt: $lastWrongAt')
           ..write(')'))
@@ -4223,13 +4261,15 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
   }
 
   @override
-  int get hashCode => Object.hash(id, questionId, wrongCount, lastWrongAt);
+  int get hashCode =>
+      Object.hash(id, questionId, rankId, wrongCount, lastWrongAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is WrongQuestion &&
           other.id == this.id &&
           other.questionId == this.questionId &&
+          other.rankId == this.rankId &&
           other.wrongCount == this.wrongCount &&
           other.lastWrongAt == this.lastWrongAt);
 }
@@ -4237,29 +4277,34 @@ class WrongQuestion extends DataClass implements Insertable<WrongQuestion> {
 class WrongQuestionsCompanion extends UpdateCompanion<WrongQuestion> {
   final Value<int> id;
   final Value<int?> questionId;
+  final Value<String?> rankId;
   final Value<int> wrongCount;
   final Value<DateTime> lastWrongAt;
   const WrongQuestionsCompanion({
     this.id = const Value.absent(),
     this.questionId = const Value.absent(),
+    this.rankId = const Value.absent(),
     this.wrongCount = const Value.absent(),
     this.lastWrongAt = const Value.absent(),
   });
   WrongQuestionsCompanion.insert({
     this.id = const Value.absent(),
     this.questionId = const Value.absent(),
+    this.rankId = const Value.absent(),
     this.wrongCount = const Value.absent(),
     this.lastWrongAt = const Value.absent(),
   });
   static Insertable<WrongQuestion> custom({
     Expression<int>? id,
     Expression<int>? questionId,
+    Expression<String>? rankId,
     Expression<int>? wrongCount,
     Expression<DateTime>? lastWrongAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (questionId != null) 'question_id': questionId,
+      if (rankId != null) 'rank_id': rankId,
       if (wrongCount != null) 'wrong_count': wrongCount,
       if (lastWrongAt != null) 'last_wrong_at': lastWrongAt,
     });
@@ -4268,12 +4313,14 @@ class WrongQuestionsCompanion extends UpdateCompanion<WrongQuestion> {
   WrongQuestionsCompanion copyWith({
     Value<int>? id,
     Value<int?>? questionId,
+    Value<String?>? rankId,
     Value<int>? wrongCount,
     Value<DateTime>? lastWrongAt,
   }) {
     return WrongQuestionsCompanion(
       id: id ?? this.id,
       questionId: questionId ?? this.questionId,
+      rankId: rankId ?? this.rankId,
       wrongCount: wrongCount ?? this.wrongCount,
       lastWrongAt: lastWrongAt ?? this.lastWrongAt,
     );
@@ -4287,6 +4334,9 @@ class WrongQuestionsCompanion extends UpdateCompanion<WrongQuestion> {
     }
     if (questionId.present) {
       map['question_id'] = Variable<int>(questionId.value);
+    }
+    if (rankId.present) {
+      map['rank_id'] = Variable<String>(rankId.value);
     }
     if (wrongCount.present) {
       map['wrong_count'] = Variable<int>(wrongCount.value);
@@ -4302,6 +4352,7 @@ class WrongQuestionsCompanion extends UpdateCompanion<WrongQuestion> {
     return (StringBuffer('WrongQuestionsCompanion(')
           ..write('id: $id, ')
           ..write('questionId: $questionId, ')
+          ..write('rankId: $rankId, ')
           ..write('wrongCount: $wrongCount, ')
           ..write('lastWrongAt: $lastWrongAt')
           ..write(')'))
@@ -13252,6 +13303,7 @@ typedef $$WrongQuestionsTableCreateCompanionBuilder =
     WrongQuestionsCompanion Function({
       Value<int> id,
       Value<int?> questionId,
+      Value<String?> rankId,
       Value<int> wrongCount,
       Value<DateTime> lastWrongAt,
     });
@@ -13259,6 +13311,7 @@ typedef $$WrongQuestionsTableUpdateCompanionBuilder =
     WrongQuestionsCompanion Function({
       Value<int> id,
       Value<int?> questionId,
+      Value<String?> rankId,
       Value<int> wrongCount,
       Value<DateTime> lastWrongAt,
     });
@@ -13302,6 +13355,11 @@ class $$WrongQuestionsTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rankId => $composableBuilder(
+    column: $table.rankId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -13353,6 +13411,11 @@ class $$WrongQuestionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get wrongCount => $composableBuilder(
     column: $table.wrongCount,
     builder: (column) => ColumnOrderings(column),
@@ -13398,6 +13461,9 @@ class $$WrongQuestionsTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get rankId =>
+      $composableBuilder(column: $table.rankId, builder: (column) => column);
 
   GeneratedColumn<int> get wrongCount => $composableBuilder(
     column: $table.wrongCount,
@@ -13465,11 +13531,13 @@ class $$WrongQuestionsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
                 Value<int> wrongCount = const Value.absent(),
                 Value<DateTime> lastWrongAt = const Value.absent(),
               }) => WrongQuestionsCompanion(
                 id: id,
                 questionId: questionId,
+                rankId: rankId,
                 wrongCount: wrongCount,
                 lastWrongAt: lastWrongAt,
               ),
@@ -13477,11 +13545,13 @@ class $$WrongQuestionsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
                 Value<int> wrongCount = const Value.absent(),
                 Value<DateTime> lastWrongAt = const Value.absent(),
               }) => WrongQuestionsCompanion.insert(
                 id: id,
                 questionId: questionId,
+                rankId: rankId,
                 wrongCount: wrongCount,
                 lastWrongAt: lastWrongAt,
               ),
