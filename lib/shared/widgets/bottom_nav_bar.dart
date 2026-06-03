@@ -18,29 +18,40 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 2;
+  final Set<int> _openedTabs = {2};
 
   List<Widget> get screens => [
-    const CenterListScreen(),
-    AccountStatusGate(
-      featureName: 'Nhận dạng biển báo',
-      unauthenticatedChild: LoginScreen(
-      onLoginSuccess: (_) async {
-        if (!mounted) return;
-        setState(() {}); // login xong -> rebuild để hiện RecognitionHomeScreen
-      },
-      fallbackSuccessScreen: const SizedBox.shrink(),
-      ),
-      child: RecognitionHomeScreen(onUpgradeVip: () => _onItemTapped(4)),
-    ),
-    HomeScreen(onUpgradeVip: () => _onItemTapped(4)),
-    const AccountStatusGate(
-      featureName: 'Diễn đàn',
-      unauthenticatedChild: EmailLoginScreen(),
-      child: HomeFeedScreen(),
-    ),
-    const InfoScreen(),
-  ];
+    _openedTabs.contains(0)
+        ? const CenterListScreen()
+        : const SizedBox.shrink(),
 
+    _openedTabs.contains(1)
+        ? AccountStatusGate(
+            featureName: 'Nhận dạng biển báo',
+            unauthenticatedChild: LoginScreen(
+              onLoginSuccess: (_) async {
+                if (!mounted) return;
+                setState(
+                  () {},
+                ); // login xong -> rebuild để hiện RecognitionHomeScreen
+              },
+              fallbackSuccessScreen: const SizedBox.shrink(),
+            ),
+            child: RecognitionHomeScreen(onUpgradeVip: () => _onItemTapped(4)),
+          )
+        : const SizedBox.shrink(),
+
+    HomeScreen(onUpgradeVip: () => _onItemTapped(4)),
+
+    _openedTabs.contains(3)
+        ? const AccountStatusGate(
+            featureName: 'Diễn đàn',
+            unauthenticatedChild: EmailLoginScreen(),
+            child: HomeFeedScreen(),
+          )
+        : const SizedBox.shrink(),
+    _openedTabs.contains(4) ? const InfoScreen() : const SizedBox.shrink(),
+  ];
 
   final List<IconData> _icons = const [
     Icons.directions_car,
@@ -61,6 +72,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Future<void> _onItemTapped(int index) async {
     if (index == currentIndex) return;
     setState(() {
+      _openedTabs.add(index);
       currentIndex = index;
     });
   }
@@ -72,7 +84,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 70, // 👈 FIX CỐ ĐỊNH WIDTH (QUAN TRỌNG)
+        width: 70, //  FIX CỐ ĐỊNH WIDTH (QUAN TRỌNG)
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +95,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
               child: Icon(
                 _icons[index],
                 size: 22,
-                color: isSelected ? Colors.blue : Theme.of(context).brightness == Brightness.dark ? AppColors.iconDark : AppColors.iconLight,
+                color: isSelected
+                    ? Colors.blue
+                    : Theme.of(context).brightness == Brightness.dark
+                    ? AppColors.iconDark
+                    : AppColors.iconLight,
               ),
             ),
 
@@ -110,10 +126,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: currentIndex, children: screens),
 
       floatingActionButton: SizedBox(
         width: 44,
@@ -122,10 +135,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           onPressed: () => _onItemTapped(2),
           backgroundColor: Colors.blue,
           elevation: 6,
-          child: const Icon(
-              Icons.menu_book,
-              color: AppColors.iconDark,
-          ),
+          child: const Icon(Icons.menu_book, color: AppColors.iconDark),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -145,29 +155,33 @@ class _BottomNavBarState extends State<BottomNavBar> {
             maxHeight: double.infinity,
             child: SizedBox(
               child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildItem(0),
-                      _buildItem(1),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 14, left: 10, right: 10),
-                        child: Text(
-                          'Ôn luyện',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: currentIndex == 2 ? Colors.blue : Colors.grey,
-                          ),
-                        ),
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildItem(0),
+                  _buildItem(1),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 14,
+                      left: 10,
+                      right: 10,
+                    ),
+                    child: Text(
+                      'Ôn luyện',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: currentIndex == 2 ? Colors.blue : Colors.grey,
                       ),
-                      _buildItem(3),
-                      _buildItem(4),
-                    ],
+                    ),
                   ),
+                  _buildItem(3),
+                  _buildItem(4),
+                ],
               ),
-          ),
+            ),
           ),
         ),
+      ),
     );
   }
 }

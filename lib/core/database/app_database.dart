@@ -14,6 +14,7 @@ import 'package:driving_test_prep/core/database/tables/setting_table.dart';
 import 'package:driving_test_prep/core/database/tables/saved_questions_table.dart';
 import 'package:driving_test_prep/core/database/tables/traffic_signs_table.dart';
 import 'package:driving_test_prep/core/database/tables/traffic_violations_table.dart';
+import 'package:driving_test_prep/core/database/tables/driving_centers_table.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
@@ -49,13 +50,15 @@ part 'app_database.g.dart';
     RecognitionHistoryTable,
     SavedQuestions,
     TrafficViolationRecords,
+    DrivingCenterRecords,
+    DrivingCenterPageCaches,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   bool get logStatements => kDebugMode;
 
@@ -157,6 +160,23 @@ class AppDatabase extends _$AppDatabase {
 
         if (!tableNames.contains('traffic_violation_records')) {
           await m.createTable(trafficViolationRecords);
+        }
+      }
+
+      if (from < 7) {
+        final tableRows = await customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table'",
+        ).get();
+        final tableNames = tableRows
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!tableNames.contains('driving_center_records')) {
+          await m.createTable(drivingCenterRecords);
+        }
+        if (!tableNames.contains('driving_center_page_caches')) {
+          await m.createTable(drivingCenterPageCaches);
         }
       }
     },
