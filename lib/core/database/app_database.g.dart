@@ -2466,6 +2466,588 @@ class ExamSetQuestionsCompanion extends UpdateCompanion<ExamSetQuestion> {
   }
 }
 
+class $ExamSetProgressTable extends ExamSetProgress
+    with TableInfo<$ExamSetProgressTable, ExamSetProgressData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExamSetProgressTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _examSetIdMeta = const VerificationMeta(
+    'examSetId',
+  );
+  @override
+  late final GeneratedColumn<int> examSetId = GeneratedColumn<int>(
+    'exam_set_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES exam_sets (id)',
+    ),
+  );
+  static const VerificationMeta _rankIdMeta = const VerificationMeta('rankId');
+  @override
+  late final GeneratedColumn<String> rankId = GeneratedColumn<String>(
+    'rank_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remainingSecondsMeta = const VerificationMeta(
+    'remainingSeconds',
+  );
+  @override
+  late final GeneratedColumn<int> remainingSeconds = GeneratedColumn<int>(
+    'remaining_seconds',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _totalQuestionsMeta = const VerificationMeta(
+    'totalQuestions',
+  );
+  @override
+  late final GeneratedColumn<int> totalQuestions = GeneratedColumn<int>(
+    'total_questions',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _correctAnswersMeta = const VerificationMeta(
+    'correctAnswers',
+  );
+  @override
+  late final GeneratedColumn<int> correctAnswers = GeneratedColumn<int>(
+    'correct_answers',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isPassedMeta = const VerificationMeta(
+    'isPassed',
+  );
+  @override
+  late final GeneratedColumn<int> isPassed = GeneratedColumn<int>(
+    'is_passed',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _submittedAtMeta = const VerificationMeta(
+    'submittedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> submittedAt = GeneratedColumn<DateTime>(
+    'submitted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    examSetId,
+    rankId,
+    remainingSeconds,
+    totalQuestions,
+    correctAnswers,
+    isPassed,
+    submittedAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exam_set_progress';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExamSetProgressData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('exam_set_id')) {
+      context.handle(
+        _examSetIdMeta,
+        examSetId.isAcceptableOrUnknown(data['exam_set_id']!, _examSetIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_examSetIdMeta);
+    }
+    if (data.containsKey('rank_id')) {
+      context.handle(
+        _rankIdMeta,
+        rankId.isAcceptableOrUnknown(data['rank_id']!, _rankIdMeta),
+      );
+    }
+    if (data.containsKey('remaining_seconds')) {
+      context.handle(
+        _remainingSecondsMeta,
+        remainingSeconds.isAcceptableOrUnknown(
+          data['remaining_seconds']!,
+          _remainingSecondsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('total_questions')) {
+      context.handle(
+        _totalQuestionsMeta,
+        totalQuestions.isAcceptableOrUnknown(
+          data['total_questions']!,
+          _totalQuestionsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('correct_answers')) {
+      context.handle(
+        _correctAnswersMeta,
+        correctAnswers.isAcceptableOrUnknown(
+          data['correct_answers']!,
+          _correctAnswersMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_passed')) {
+      context.handle(
+        _isPassedMeta,
+        isPassed.isAcceptableOrUnknown(data['is_passed']!, _isPassedMeta),
+      );
+    }
+    if (data.containsKey('submitted_at')) {
+      context.handle(
+        _submittedAtMeta,
+        submittedAt.isAcceptableOrUnknown(
+          data['submitted_at']!,
+          _submittedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ExamSetProgressData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExamSetProgressData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      examSetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}exam_set_id'],
+      )!,
+      rankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rank_id'],
+      ),
+      remainingSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}remaining_seconds'],
+      ),
+      totalQuestions: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_questions'],
+      ),
+      correctAnswers: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}correct_answers'],
+      ),
+      isPassed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_passed'],
+      ),
+      submittedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}submitted_at'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ExamSetProgressTable createAlias(String alias) {
+    return $ExamSetProgressTable(attachedDatabase, alias);
+  }
+}
+
+class ExamSetProgressData extends DataClass
+    implements Insertable<ExamSetProgressData> {
+  final int id;
+  final int examSetId;
+  final String? rankId;
+  final int? remainingSeconds;
+  final int? totalQuestions;
+  final int? correctAnswers;
+  final int? isPassed;
+  final DateTime? submittedAt;
+  final DateTime updatedAt;
+  const ExamSetProgressData({
+    required this.id,
+    required this.examSetId,
+    this.rankId,
+    this.remainingSeconds,
+    this.totalQuestions,
+    this.correctAnswers,
+    this.isPassed,
+    this.submittedAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['exam_set_id'] = Variable<int>(examSetId);
+    if (!nullToAbsent || rankId != null) {
+      map['rank_id'] = Variable<String>(rankId);
+    }
+    if (!nullToAbsent || remainingSeconds != null) {
+      map['remaining_seconds'] = Variable<int>(remainingSeconds);
+    }
+    if (!nullToAbsent || totalQuestions != null) {
+      map['total_questions'] = Variable<int>(totalQuestions);
+    }
+    if (!nullToAbsent || correctAnswers != null) {
+      map['correct_answers'] = Variable<int>(correctAnswers);
+    }
+    if (!nullToAbsent || isPassed != null) {
+      map['is_passed'] = Variable<int>(isPassed);
+    }
+    if (!nullToAbsent || submittedAt != null) {
+      map['submitted_at'] = Variable<DateTime>(submittedAt);
+    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ExamSetProgressCompanion toCompanion(bool nullToAbsent) {
+    return ExamSetProgressCompanion(
+      id: Value(id),
+      examSetId: Value(examSetId),
+      rankId: rankId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rankId),
+      remainingSeconds: remainingSeconds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remainingSeconds),
+      totalQuestions: totalQuestions == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalQuestions),
+      correctAnswers: correctAnswers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correctAnswers),
+      isPassed: isPassed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(isPassed),
+      submittedAt: submittedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(submittedAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ExamSetProgressData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExamSetProgressData(
+      id: serializer.fromJson<int>(json['id']),
+      examSetId: serializer.fromJson<int>(json['examSetId']),
+      rankId: serializer.fromJson<String?>(json['rankId']),
+      remainingSeconds: serializer.fromJson<int?>(json['remainingSeconds']),
+      totalQuestions: serializer.fromJson<int?>(json['totalQuestions']),
+      correctAnswers: serializer.fromJson<int?>(json['correctAnswers']),
+      isPassed: serializer.fromJson<int?>(json['isPassed']),
+      submittedAt: serializer.fromJson<DateTime?>(json['submittedAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'examSetId': serializer.toJson<int>(examSetId),
+      'rankId': serializer.toJson<String?>(rankId),
+      'remainingSeconds': serializer.toJson<int?>(remainingSeconds),
+      'totalQuestions': serializer.toJson<int?>(totalQuestions),
+      'correctAnswers': serializer.toJson<int?>(correctAnswers),
+      'isPassed': serializer.toJson<int?>(isPassed),
+      'submittedAt': serializer.toJson<DateTime?>(submittedAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ExamSetProgressData copyWith({
+    int? id,
+    int? examSetId,
+    Value<String?> rankId = const Value.absent(),
+    Value<int?> remainingSeconds = const Value.absent(),
+    Value<int?> totalQuestions = const Value.absent(),
+    Value<int?> correctAnswers = const Value.absent(),
+    Value<int?> isPassed = const Value.absent(),
+    Value<DateTime?> submittedAt = const Value.absent(),
+    DateTime? updatedAt,
+  }) => ExamSetProgressData(
+    id: id ?? this.id,
+    examSetId: examSetId ?? this.examSetId,
+    rankId: rankId.present ? rankId.value : this.rankId,
+    remainingSeconds: remainingSeconds.present
+        ? remainingSeconds.value
+        : this.remainingSeconds,
+    totalQuestions: totalQuestions.present
+        ? totalQuestions.value
+        : this.totalQuestions,
+    correctAnswers: correctAnswers.present
+        ? correctAnswers.value
+        : this.correctAnswers,
+    isPassed: isPassed.present ? isPassed.value : this.isPassed,
+    submittedAt: submittedAt.present ? submittedAt.value : this.submittedAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ExamSetProgressData copyWithCompanion(ExamSetProgressCompanion data) {
+    return ExamSetProgressData(
+      id: data.id.present ? data.id.value : this.id,
+      examSetId: data.examSetId.present ? data.examSetId.value : this.examSetId,
+      rankId: data.rankId.present ? data.rankId.value : this.rankId,
+      remainingSeconds: data.remainingSeconds.present
+          ? data.remainingSeconds.value
+          : this.remainingSeconds,
+      totalQuestions: data.totalQuestions.present
+          ? data.totalQuestions.value
+          : this.totalQuestions,
+      correctAnswers: data.correctAnswers.present
+          ? data.correctAnswers.value
+          : this.correctAnswers,
+      isPassed: data.isPassed.present ? data.isPassed.value : this.isPassed,
+      submittedAt: data.submittedAt.present
+          ? data.submittedAt.value
+          : this.submittedAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExamSetProgressData(')
+          ..write('id: $id, ')
+          ..write('examSetId: $examSetId, ')
+          ..write('rankId: $rankId, ')
+          ..write('remainingSeconds: $remainingSeconds, ')
+          ..write('totalQuestions: $totalQuestions, ')
+          ..write('correctAnswers: $correctAnswers, ')
+          ..write('isPassed: $isPassed, ')
+          ..write('submittedAt: $submittedAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    examSetId,
+    rankId,
+    remainingSeconds,
+    totalQuestions,
+    correctAnswers,
+    isPassed,
+    submittedAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExamSetProgressData &&
+          other.id == this.id &&
+          other.examSetId == this.examSetId &&
+          other.rankId == this.rankId &&
+          other.remainingSeconds == this.remainingSeconds &&
+          other.totalQuestions == this.totalQuestions &&
+          other.correctAnswers == this.correctAnswers &&
+          other.isPassed == this.isPassed &&
+          other.submittedAt == this.submittedAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ExamSetProgressCompanion extends UpdateCompanion<ExamSetProgressData> {
+  final Value<int> id;
+  final Value<int> examSetId;
+  final Value<String?> rankId;
+  final Value<int?> remainingSeconds;
+  final Value<int?> totalQuestions;
+  final Value<int?> correctAnswers;
+  final Value<int?> isPassed;
+  final Value<DateTime?> submittedAt;
+  final Value<DateTime> updatedAt;
+  const ExamSetProgressCompanion({
+    this.id = const Value.absent(),
+    this.examSetId = const Value.absent(),
+    this.rankId = const Value.absent(),
+    this.remainingSeconds = const Value.absent(),
+    this.totalQuestions = const Value.absent(),
+    this.correctAnswers = const Value.absent(),
+    this.isPassed = const Value.absent(),
+    this.submittedAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  ExamSetProgressCompanion.insert({
+    this.id = const Value.absent(),
+    required int examSetId,
+    this.rankId = const Value.absent(),
+    this.remainingSeconds = const Value.absent(),
+    this.totalQuestions = const Value.absent(),
+    this.correctAnswers = const Value.absent(),
+    this.isPassed = const Value.absent(),
+    this.submittedAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : examSetId = Value(examSetId);
+  static Insertable<ExamSetProgressData> custom({
+    Expression<int>? id,
+    Expression<int>? examSetId,
+    Expression<String>? rankId,
+    Expression<int>? remainingSeconds,
+    Expression<int>? totalQuestions,
+    Expression<int>? correctAnswers,
+    Expression<int>? isPassed,
+    Expression<DateTime>? submittedAt,
+    Expression<DateTime>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (examSetId != null) 'exam_set_id': examSetId,
+      if (rankId != null) 'rank_id': rankId,
+      if (remainingSeconds != null) 'remaining_seconds': remainingSeconds,
+      if (totalQuestions != null) 'total_questions': totalQuestions,
+      if (correctAnswers != null) 'correct_answers': correctAnswers,
+      if (isPassed != null) 'is_passed': isPassed,
+      if (submittedAt != null) 'submitted_at': submittedAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  ExamSetProgressCompanion copyWith({
+    Value<int>? id,
+    Value<int>? examSetId,
+    Value<String?>? rankId,
+    Value<int?>? remainingSeconds,
+    Value<int?>? totalQuestions,
+    Value<int?>? correctAnswers,
+    Value<int?>? isPassed,
+    Value<DateTime?>? submittedAt,
+    Value<DateTime>? updatedAt,
+  }) {
+    return ExamSetProgressCompanion(
+      id: id ?? this.id,
+      examSetId: examSetId ?? this.examSetId,
+      rankId: rankId ?? this.rankId,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
+      totalQuestions: totalQuestions ?? this.totalQuestions,
+      correctAnswers: correctAnswers ?? this.correctAnswers,
+      isPassed: isPassed ?? this.isPassed,
+      submittedAt: submittedAt ?? this.submittedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (examSetId.present) {
+      map['exam_set_id'] = Variable<int>(examSetId.value);
+    }
+    if (rankId.present) {
+      map['rank_id'] = Variable<String>(rankId.value);
+    }
+    if (remainingSeconds.present) {
+      map['remaining_seconds'] = Variable<int>(remainingSeconds.value);
+    }
+    if (totalQuestions.present) {
+      map['total_questions'] = Variable<int>(totalQuestions.value);
+    }
+    if (correctAnswers.present) {
+      map['correct_answers'] = Variable<int>(correctAnswers.value);
+    }
+    if (isPassed.present) {
+      map['is_passed'] = Variable<int>(isPassed.value);
+    }
+    if (submittedAt.present) {
+      map['submitted_at'] = Variable<DateTime>(submittedAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExamSetProgressCompanion(')
+          ..write('id: $id, ')
+          ..write('examSetId: $examSetId, ')
+          ..write('rankId: $rankId, ')
+          ..write('remainingSeconds: $remainingSeconds, ')
+          ..write('totalQuestions: $totalQuestions, ')
+          ..write('correctAnswers: $correctAnswers, ')
+          ..write('isPassed: $isPassed, ')
+          ..write('submittedAt: $submittedAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PracticeSessionsTable extends PracticeSessions
     with TableInfo<$PracticeSessionsTable, PracticeSession> {
   @override
@@ -2968,6 +3550,20 @@ class $UserAnswersTable extends UserAnswers
       'REFERENCES practice_sessions (id)',
     ),
   );
+  static const VerificationMeta _examSetIdMeta = const VerificationMeta(
+    'examSetId',
+  );
+  @override
+  late final GeneratedColumn<int> examSetId = GeneratedColumn<int>(
+    'exam_set_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES exam_sets (id)',
+    ),
+  );
   static const VerificationMeta _questionIdMeta = const VerificationMeta(
     'questionId',
   );
@@ -3017,6 +3613,7 @@ class $UserAnswersTable extends UserAnswers
   List<GeneratedColumn> get $columns => [
     id,
     sessionId,
+    examSetId,
     questionId,
     rankId,
     selectedAnswer,
@@ -3041,6 +3638,12 @@ class $UserAnswersTable extends UserAnswers
       context.handle(
         _sessionIdMeta,
         sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    }
+    if (data.containsKey('exam_set_id')) {
+      context.handle(
+        _examSetIdMeta,
+        examSetId.isAcceptableOrUnknown(data['exam_set_id']!, _examSetIdMeta),
       );
     }
     if (data.containsKey('question_id')) {
@@ -3087,6 +3690,10 @@ class $UserAnswersTable extends UserAnswers
         DriftSqlType.int,
         data['${effectivePrefix}session_id'],
       ),
+      examSetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}exam_set_id'],
+      ),
       questionId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}question_id'],
@@ -3115,6 +3722,7 @@ class $UserAnswersTable extends UserAnswers
 class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   final int id;
   final int? sessionId;
+  final int? examSetId;
   final int? questionId;
   final String? rankId;
   final String? selectedAnswer;
@@ -3122,6 +3730,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   const UserAnswer({
     required this.id,
     this.sessionId,
+    this.examSetId,
     this.questionId,
     this.rankId,
     this.selectedAnswer,
@@ -3133,6 +3742,9 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     map['id'] = Variable<int>(id);
     if (!nullToAbsent || sessionId != null) {
       map['session_id'] = Variable<int>(sessionId);
+    }
+    if (!nullToAbsent || examSetId != null) {
+      map['exam_set_id'] = Variable<int>(examSetId);
     }
     if (!nullToAbsent || questionId != null) {
       map['question_id'] = Variable<int>(questionId);
@@ -3155,6 +3767,9 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
       sessionId: sessionId == null && nullToAbsent
           ? const Value.absent()
           : Value(sessionId),
+      examSetId: examSetId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(examSetId),
       questionId: questionId == null && nullToAbsent
           ? const Value.absent()
           : Value(questionId),
@@ -3178,6 +3793,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     return UserAnswer(
       id: serializer.fromJson<int>(json['id']),
       sessionId: serializer.fromJson<int?>(json['sessionId']),
+      examSetId: serializer.fromJson<int?>(json['examSetId']),
       questionId: serializer.fromJson<int?>(json['questionId']),
       rankId: serializer.fromJson<String?>(json['rankId']),
       selectedAnswer: serializer.fromJson<String?>(json['selectedAnswer']),
@@ -3190,6 +3806,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'sessionId': serializer.toJson<int?>(sessionId),
+      'examSetId': serializer.toJson<int?>(examSetId),
       'questionId': serializer.toJson<int?>(questionId),
       'rankId': serializer.toJson<String?>(rankId),
       'selectedAnswer': serializer.toJson<String?>(selectedAnswer),
@@ -3200,6 +3817,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   UserAnswer copyWith({
     int? id,
     Value<int?> sessionId = const Value.absent(),
+    Value<int?> examSetId = const Value.absent(),
     Value<int?> questionId = const Value.absent(),
     Value<String?> rankId = const Value.absent(),
     Value<String?> selectedAnswer = const Value.absent(),
@@ -3207,6 +3825,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   }) => UserAnswer(
     id: id ?? this.id,
     sessionId: sessionId.present ? sessionId.value : this.sessionId,
+    examSetId: examSetId.present ? examSetId.value : this.examSetId,
     questionId: questionId.present ? questionId.value : this.questionId,
     rankId: rankId.present ? rankId.value : this.rankId,
     selectedAnswer: selectedAnswer.present
@@ -3218,6 +3837,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     return UserAnswer(
       id: data.id.present ? data.id.value : this.id,
       sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      examSetId: data.examSetId.present ? data.examSetId.value : this.examSetId,
       questionId: data.questionId.present
           ? data.questionId.value
           : this.questionId,
@@ -3234,6 +3854,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
     return (StringBuffer('UserAnswer(')
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
+          ..write('examSetId: $examSetId, ')
           ..write('questionId: $questionId, ')
           ..write('rankId: $rankId, ')
           ..write('selectedAnswer: $selectedAnswer, ')
@@ -3243,14 +3864,22 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, sessionId, questionId, rankId, selectedAnswer, isCorrect);
+  int get hashCode => Object.hash(
+    id,
+    sessionId,
+    examSetId,
+    questionId,
+    rankId,
+    selectedAnswer,
+    isCorrect,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is UserAnswer &&
           other.id == this.id &&
           other.sessionId == this.sessionId &&
+          other.examSetId == this.examSetId &&
           other.questionId == this.questionId &&
           other.rankId == this.rankId &&
           other.selectedAnswer == this.selectedAnswer &&
@@ -3260,6 +3889,7 @@ class UserAnswer extends DataClass implements Insertable<UserAnswer> {
 class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   final Value<int> id;
   final Value<int?> sessionId;
+  final Value<int?> examSetId;
   final Value<int?> questionId;
   final Value<String?> rankId;
   final Value<String?> selectedAnswer;
@@ -3267,6 +3897,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   const UserAnswersCompanion({
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
+    this.examSetId = const Value.absent(),
     this.questionId = const Value.absent(),
     this.rankId = const Value.absent(),
     this.selectedAnswer = const Value.absent(),
@@ -3275,6 +3906,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   UserAnswersCompanion.insert({
     this.id = const Value.absent(),
     this.sessionId = const Value.absent(),
+    this.examSetId = const Value.absent(),
     this.questionId = const Value.absent(),
     this.rankId = const Value.absent(),
     this.selectedAnswer = const Value.absent(),
@@ -3283,6 +3915,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   static Insertable<UserAnswer> custom({
     Expression<int>? id,
     Expression<int>? sessionId,
+    Expression<int>? examSetId,
     Expression<int>? questionId,
     Expression<String>? rankId,
     Expression<String>? selectedAnswer,
@@ -3291,6 +3924,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (sessionId != null) 'session_id': sessionId,
+      if (examSetId != null) 'exam_set_id': examSetId,
       if (questionId != null) 'question_id': questionId,
       if (rankId != null) 'rank_id': rankId,
       if (selectedAnswer != null) 'selected_answer': selectedAnswer,
@@ -3301,6 +3935,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
   UserAnswersCompanion copyWith({
     Value<int>? id,
     Value<int?>? sessionId,
+    Value<int?>? examSetId,
     Value<int?>? questionId,
     Value<String?>? rankId,
     Value<String?>? selectedAnswer,
@@ -3309,6 +3944,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     return UserAnswersCompanion(
       id: id ?? this.id,
       sessionId: sessionId ?? this.sessionId,
+      examSetId: examSetId ?? this.examSetId,
       questionId: questionId ?? this.questionId,
       rankId: rankId ?? this.rankId,
       selectedAnswer: selectedAnswer ?? this.selectedAnswer,
@@ -3324,6 +3960,9 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     }
     if (sessionId.present) {
       map['session_id'] = Variable<int>(sessionId.value);
+    }
+    if (examSetId.present) {
+      map['exam_set_id'] = Variable<int>(examSetId.value);
     }
     if (questionId.present) {
       map['question_id'] = Variable<int>(questionId.value);
@@ -3345,6 +3984,7 @@ class UserAnswersCompanion extends UpdateCompanion<UserAnswer> {
     return (StringBuffer('UserAnswersCompanion(')
           ..write('id: $id, ')
           ..write('sessionId: $sessionId, ')
+          ..write('examSetId: $examSetId, ')
           ..write('questionId: $questionId, ')
           ..write('rankId: $rankId, ')
           ..write('selectedAnswer: $selectedAnswer, ')
@@ -8193,6 +8833,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ExamSetQuestionsTable examSetQuestions = $ExamSetQuestionsTable(
     this,
   );
+  late final $ExamSetProgressTable examSetProgress = $ExamSetProgressTable(
+    this,
+  );
   late final $PracticeSessionsTable practiceSessions = $PracticeSessionsTable(
     this,
   );
@@ -8221,6 +8864,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     ranks,
     examSets,
     examSetQuestions,
+    examSetProgress,
     practiceSessions,
     userAnswers,
     wrongQuestions,
@@ -10286,6 +10930,47 @@ final class $$ExamSetsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$ExamSetProgressTable, List<ExamSetProgressData>>
+  _examSetProgressRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.examSetProgress,
+    aliasName: $_aliasNameGenerator(
+      db.examSets.id,
+      db.examSetProgress.examSetId,
+    ),
+  );
+
+  $$ExamSetProgressTableProcessedTableManager get examSetProgressRefs {
+    final manager = $$ExamSetProgressTableTableManager(
+      $_db,
+      $_db.examSetProgress,
+    ).filter((f) => f.examSetId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _examSetProgressRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$UserAnswersTable, List<UserAnswer>>
+  _userAnswersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.userAnswers,
+    aliasName: $_aliasNameGenerator(db.examSets.id, db.userAnswers.examSetId),
+  );
+
+  $$UserAnswersTableProcessedTableManager get userAnswersRefs {
+    final manager = $$UserAnswersTableTableManager(
+      $_db,
+      $_db.userAnswers,
+    ).filter((f) => f.examSetId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_userAnswersRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ExamSetsTableFilterComposer
@@ -10351,6 +11036,56 @@ class $$ExamSetsTableFilterComposer
           }) => $$ExamSetQuestionsTableFilterComposer(
             $db: $db,
             $table: $db.examSetQuestions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> examSetProgressRefs(
+    Expression<bool> Function($$ExamSetProgressTableFilterComposer f) f,
+  ) {
+    final $$ExamSetProgressTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.examSetProgress,
+      getReferencedColumn: (t) => t.examSetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetProgressTableFilterComposer(
+            $db: $db,
+            $table: $db.examSetProgress,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> userAnswersRefs(
+    Expression<bool> Function($$UserAnswersTableFilterComposer f) f,
+  ) {
+    final $$UserAnswersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.userAnswers,
+      getReferencedColumn: (t) => t.examSetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserAnswersTableFilterComposer(
+            $db: $db,
+            $table: $db.userAnswers,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -10474,6 +11209,56 @@ class $$ExamSetsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> examSetProgressRefs<T extends Object>(
+    Expression<T> Function($$ExamSetProgressTableAnnotationComposer a) f,
+  ) {
+    final $$ExamSetProgressTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.examSetProgress,
+      getReferencedColumn: (t) => t.examSetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetProgressTableAnnotationComposer(
+            $db: $db,
+            $table: $db.examSetProgress,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> userAnswersRefs<T extends Object>(
+    Expression<T> Function($$UserAnswersTableAnnotationComposer a) f,
+  ) {
+    final $$UserAnswersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.userAnswers,
+      getReferencedColumn: (t) => t.examSetId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UserAnswersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.userAnswers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ExamSetsTableTableManager
@@ -10489,7 +11274,12 @@ class $$ExamSetsTableTableManager
           $$ExamSetsTableUpdateCompanionBuilder,
           (ExamSet, $$ExamSetsTableReferences),
           ExamSet,
-          PrefetchHooks Function({bool examGroupsId, bool examSetQuestionsRefs})
+          PrefetchHooks Function({
+            bool examGroupsId,
+            bool examSetQuestionsRefs,
+            bool examSetProgressRefs,
+            bool userAnswersRefs,
+          })
         > {
   $$ExamSetsTableTableManager(_$AppDatabase db, $ExamSetsTable table)
     : super(
@@ -10535,11 +11325,18 @@ class $$ExamSetsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({examGroupsId = false, examSetQuestionsRefs = false}) {
+              ({
+                examGroupsId = false,
+                examSetQuestionsRefs = false,
+                examSetProgressRefs = false,
+                userAnswersRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (examSetQuestionsRefs) db.examSetQuestions,
+                    if (examSetProgressRefs) db.examSetProgress,
+                    if (userAnswersRefs) db.userAnswers,
                   ],
                   addJoins:
                       <
@@ -10596,6 +11393,48 @@ class $$ExamSetsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (examSetProgressRefs)
+                        await $_getPrefetchedData<
+                          ExamSet,
+                          $ExamSetsTable,
+                          ExamSetProgressData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ExamSetsTableReferences
+                              ._examSetProgressRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ExamSetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).examSetProgressRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.examSetId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (userAnswersRefs)
+                        await $_getPrefetchedData<
+                          ExamSet,
+                          $ExamSetsTable,
+                          UserAnswer
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ExamSetsTableReferences
+                              ._userAnswersRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ExamSetsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).userAnswersRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.examSetId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -10616,7 +11455,12 @@ typedef $$ExamSetsTableProcessedTableManager =
       $$ExamSetsTableUpdateCompanionBuilder,
       (ExamSet, $$ExamSetsTableReferences),
       ExamSet,
-      PrefetchHooks Function({bool examGroupsId, bool examSetQuestionsRefs})
+      PrefetchHooks Function({
+        bool examGroupsId,
+        bool examSetQuestionsRefs,
+        bool examSetProgressRefs,
+        bool userAnswersRefs,
+      })
     >;
 typedef $$ExamSetQuestionsTableCreateCompanionBuilder =
     ExamSetQuestionsCompanion Function({
@@ -10999,6 +11843,416 @@ typedef $$ExamSetQuestionsTableProcessedTableManager =
       (ExamSetQuestion, $$ExamSetQuestionsTableReferences),
       ExamSetQuestion,
       PrefetchHooks Function({bool examSetId, bool questionId})
+    >;
+typedef $$ExamSetProgressTableCreateCompanionBuilder =
+    ExamSetProgressCompanion Function({
+      Value<int> id,
+      required int examSetId,
+      Value<String?> rankId,
+      Value<int?> remainingSeconds,
+      Value<int?> totalQuestions,
+      Value<int?> correctAnswers,
+      Value<int?> isPassed,
+      Value<DateTime?> submittedAt,
+      Value<DateTime> updatedAt,
+    });
+typedef $$ExamSetProgressTableUpdateCompanionBuilder =
+    ExamSetProgressCompanion Function({
+      Value<int> id,
+      Value<int> examSetId,
+      Value<String?> rankId,
+      Value<int?> remainingSeconds,
+      Value<int?> totalQuestions,
+      Value<int?> correctAnswers,
+      Value<int?> isPassed,
+      Value<DateTime?> submittedAt,
+      Value<DateTime> updatedAt,
+    });
+
+final class $$ExamSetProgressTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $ExamSetProgressTable,
+          ExamSetProgressData
+        > {
+  $$ExamSetProgressTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ExamSetsTable _examSetIdTable(_$AppDatabase db) =>
+      db.examSets.createAlias(
+        $_aliasNameGenerator(db.examSetProgress.examSetId, db.examSets.id),
+      );
+
+  $$ExamSetsTableProcessedTableManager get examSetId {
+    final $_column = $_itemColumn<int>('exam_set_id')!;
+
+    final manager = $$ExamSetsTableTableManager(
+      $_db,
+      $_db.examSets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_examSetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$ExamSetProgressTableFilterComposer
+    extends Composer<_$AppDatabase, $ExamSetProgressTable> {
+  $$ExamSetProgressTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get remainingSeconds => $composableBuilder(
+    column: $table.remainingSeconds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalQuestions => $composableBuilder(
+    column: $table.totalQuestions,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get correctAnswers => $composableBuilder(
+    column: $table.correctAnswers,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get isPassed => $composableBuilder(
+    column: $table.isPassed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get submittedAt => $composableBuilder(
+    column: $table.submittedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ExamSetsTableFilterComposer get examSetId {
+    final $$ExamSetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.examSetId,
+      referencedTable: $db.examSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.examSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ExamSetProgressTableOrderingComposer
+    extends Composer<_$AppDatabase, $ExamSetProgressTable> {
+  $$ExamSetProgressTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rankId => $composableBuilder(
+    column: $table.rankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get remainingSeconds => $composableBuilder(
+    column: $table.remainingSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalQuestions => $composableBuilder(
+    column: $table.totalQuestions,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get correctAnswers => $composableBuilder(
+    column: $table.correctAnswers,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get isPassed => $composableBuilder(
+    column: $table.isPassed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get submittedAt => $composableBuilder(
+    column: $table.submittedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ExamSetsTableOrderingComposer get examSetId {
+    final $$ExamSetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.examSetId,
+      referencedTable: $db.examSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.examSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ExamSetProgressTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ExamSetProgressTable> {
+  $$ExamSetProgressTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get rankId =>
+      $composableBuilder(column: $table.rankId, builder: (column) => column);
+
+  GeneratedColumn<int> get remainingSeconds => $composableBuilder(
+    column: $table.remainingSeconds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalQuestions => $composableBuilder(
+    column: $table.totalQuestions,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get correctAnswers => $composableBuilder(
+    column: $table.correctAnswers,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get isPassed =>
+      $composableBuilder(column: $table.isPassed, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get submittedAt => $composableBuilder(
+    column: $table.submittedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$ExamSetsTableAnnotationComposer get examSetId {
+    final $$ExamSetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.examSetId,
+      referencedTable: $db.examSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.examSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$ExamSetProgressTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ExamSetProgressTable,
+          ExamSetProgressData,
+          $$ExamSetProgressTableFilterComposer,
+          $$ExamSetProgressTableOrderingComposer,
+          $$ExamSetProgressTableAnnotationComposer,
+          $$ExamSetProgressTableCreateCompanionBuilder,
+          $$ExamSetProgressTableUpdateCompanionBuilder,
+          (ExamSetProgressData, $$ExamSetProgressTableReferences),
+          ExamSetProgressData,
+          PrefetchHooks Function({bool examSetId})
+        > {
+  $$ExamSetProgressTableTableManager(
+    _$AppDatabase db,
+    $ExamSetProgressTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExamSetProgressTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExamSetProgressTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExamSetProgressTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> examSetId = const Value.absent(),
+                Value<String?> rankId = const Value.absent(),
+                Value<int?> remainingSeconds = const Value.absent(),
+                Value<int?> totalQuestions = const Value.absent(),
+                Value<int?> correctAnswers = const Value.absent(),
+                Value<int?> isPassed = const Value.absent(),
+                Value<DateTime?> submittedAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => ExamSetProgressCompanion(
+                id: id,
+                examSetId: examSetId,
+                rankId: rankId,
+                remainingSeconds: remainingSeconds,
+                totalQuestions: totalQuestions,
+                correctAnswers: correctAnswers,
+                isPassed: isPassed,
+                submittedAt: submittedAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int examSetId,
+                Value<String?> rankId = const Value.absent(),
+                Value<int?> remainingSeconds = const Value.absent(),
+                Value<int?> totalQuestions = const Value.absent(),
+                Value<int?> correctAnswers = const Value.absent(),
+                Value<int?> isPassed = const Value.absent(),
+                Value<DateTime?> submittedAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+              }) => ExamSetProgressCompanion.insert(
+                id: id,
+                examSetId: examSetId,
+                rankId: rankId,
+                remainingSeconds: remainingSeconds,
+                totalQuestions: totalQuestions,
+                correctAnswers: correctAnswers,
+                isPassed: isPassed,
+                submittedAt: submittedAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$ExamSetProgressTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({examSetId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (examSetId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.examSetId,
+                                referencedTable:
+                                    $$ExamSetProgressTableReferences
+                                        ._examSetIdTable(db),
+                                referencedColumn:
+                                    $$ExamSetProgressTableReferences
+                                        ._examSetIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$ExamSetProgressTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ExamSetProgressTable,
+      ExamSetProgressData,
+      $$ExamSetProgressTableFilterComposer,
+      $$ExamSetProgressTableOrderingComposer,
+      $$ExamSetProgressTableAnnotationComposer,
+      $$ExamSetProgressTableCreateCompanionBuilder,
+      $$ExamSetProgressTableUpdateCompanionBuilder,
+      (ExamSetProgressData, $$ExamSetProgressTableReferences),
+      ExamSetProgressData,
+      PrefetchHooks Function({bool examSetId})
     >;
 typedef $$PracticeSessionsTableCreateCompanionBuilder =
     PracticeSessionsCompanion Function({
@@ -11458,6 +12712,7 @@ typedef $$UserAnswersTableCreateCompanionBuilder =
     UserAnswersCompanion Function({
       Value<int> id,
       Value<int?> sessionId,
+      Value<int?> examSetId,
       Value<int?> questionId,
       Value<String?> rankId,
       Value<String?> selectedAnswer,
@@ -11467,6 +12722,7 @@ typedef $$UserAnswersTableUpdateCompanionBuilder =
     UserAnswersCompanion Function({
       Value<int> id,
       Value<int?> sessionId,
+      Value<int?> examSetId,
       Value<int?> questionId,
       Value<String?> rankId,
       Value<String?> selectedAnswer,
@@ -11490,6 +12746,25 @@ final class $$UserAnswersTableReferences
       $_db.practiceSessions,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_sessionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $ExamSetsTable _examSetIdTable(_$AppDatabase db) =>
+      db.examSets.createAlias(
+        $_aliasNameGenerator(db.userAnswers.examSetId, db.examSets.id),
+      );
+
+  $$ExamSetsTableProcessedTableManager? get examSetId {
+    final $_column = $_itemColumn<int>('exam_set_id');
+    if ($_column == null) return null;
+    final manager = $$ExamSetsTableTableManager(
+      $_db,
+      $_db.examSets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_examSetIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -11559,6 +12834,29 @@ class $$UserAnswersTableFilterComposer
           }) => $$PracticeSessionsTableFilterComposer(
             $db: $db,
             $table: $db.practiceSessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$ExamSetsTableFilterComposer get examSetId {
+    final $$ExamSetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.examSetId,
+      referencedTable: $db.examSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.examSets,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -11644,6 +12942,29 @@ class $$UserAnswersTableOrderingComposer
     return composer;
   }
 
+  $$ExamSetsTableOrderingComposer get examSetId {
+    final $$ExamSetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.examSetId,
+      referencedTable: $db.examSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.examSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$QuestionsTableOrderingComposer get questionId {
     final $$QuestionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -11714,6 +13035,29 @@ class $$UserAnswersTableAnnotationComposer
     return composer;
   }
 
+  $$ExamSetsTableAnnotationComposer get examSetId {
+    final $$ExamSetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.examSetId,
+      referencedTable: $db.examSets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExamSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.examSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$QuestionsTableAnnotationComposer get questionId {
     final $$QuestionsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -11751,7 +13095,11 @@ class $$UserAnswersTableTableManager
           $$UserAnswersTableUpdateCompanionBuilder,
           (UserAnswer, $$UserAnswersTableReferences),
           UserAnswer,
-          PrefetchHooks Function({bool sessionId, bool questionId})
+          PrefetchHooks Function({
+            bool sessionId,
+            bool examSetId,
+            bool questionId,
+          })
         > {
   $$UserAnswersTableTableManager(_$AppDatabase db, $UserAnswersTable table)
     : super(
@@ -11768,6 +13116,7 @@ class $$UserAnswersTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> sessionId = const Value.absent(),
+                Value<int?> examSetId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
                 Value<String?> rankId = const Value.absent(),
                 Value<String?> selectedAnswer = const Value.absent(),
@@ -11775,6 +13124,7 @@ class $$UserAnswersTableTableManager
               }) => UserAnswersCompanion(
                 id: id,
                 sessionId: sessionId,
+                examSetId: examSetId,
                 questionId: questionId,
                 rankId: rankId,
                 selectedAnswer: selectedAnswer,
@@ -11784,6 +13134,7 @@ class $$UserAnswersTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int?> sessionId = const Value.absent(),
+                Value<int?> examSetId = const Value.absent(),
                 Value<int?> questionId = const Value.absent(),
                 Value<String?> rankId = const Value.absent(),
                 Value<String?> selectedAnswer = const Value.absent(),
@@ -11791,6 +13142,7 @@ class $$UserAnswersTableTableManager
               }) => UserAnswersCompanion.insert(
                 id: id,
                 sessionId: sessionId,
+                examSetId: examSetId,
                 questionId: questionId,
                 rankId: rankId,
                 selectedAnswer: selectedAnswer,
@@ -11804,60 +13156,80 @@ class $$UserAnswersTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({sessionId = false, questionId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (sessionId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.sessionId,
-                                referencedTable: $$UserAnswersTableReferences
-                                    ._sessionIdTable(db),
-                                referencedColumn: $$UserAnswersTableReferences
-                                    ._sessionIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-                    if (questionId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.questionId,
-                                referencedTable: $$UserAnswersTableReferences
-                                    ._questionIdTable(db),
-                                referencedColumn: $$UserAnswersTableReferences
-                                    ._questionIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({sessionId = false, examSetId = false, questionId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (sessionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.sessionId,
+                                    referencedTable:
+                                        $$UserAnswersTableReferences
+                                            ._sessionIdTable(db),
+                                    referencedColumn:
+                                        $$UserAnswersTableReferences
+                                            ._sessionIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (examSetId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.examSetId,
+                                    referencedTable:
+                                        $$UserAnswersTableReferences
+                                            ._examSetIdTable(db),
+                                    referencedColumn:
+                                        $$UserAnswersTableReferences
+                                            ._examSetIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (questionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.questionId,
+                                    referencedTable:
+                                        $$UserAnswersTableReferences
+                                            ._questionIdTable(db),
+                                    referencedColumn:
+                                        $$UserAnswersTableReferences
+                                            ._questionIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -11874,7 +13246,7 @@ typedef $$UserAnswersTableProcessedTableManager =
       $$UserAnswersTableUpdateCompanionBuilder,
       (UserAnswer, $$UserAnswersTableReferences),
       UserAnswer,
-      PrefetchHooks Function({bool sessionId, bool questionId})
+      PrefetchHooks Function({bool sessionId, bool examSetId, bool questionId})
     >;
 typedef $$WrongQuestionsTableCreateCompanionBuilder =
     WrongQuestionsCompanion Function({
@@ -14611,6 +15983,8 @@ class $AppDatabaseManager {
       $$ExamSetsTableTableManager(_db, _db.examSets);
   $$ExamSetQuestionsTableTableManager get examSetQuestions =>
       $$ExamSetQuestionsTableTableManager(_db, _db.examSetQuestions);
+  $$ExamSetProgressTableTableManager get examSetProgress =>
+      $$ExamSetProgressTableTableManager(_db, _db.examSetProgress);
   $$PracticeSessionsTableTableManager get practiceSessions =>
       $$PracticeSessionsTableTableManager(_db, _db.practiceSessions);
   $$UserAnswersTableTableManager get userAnswers =>

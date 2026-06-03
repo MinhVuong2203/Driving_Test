@@ -20,14 +20,53 @@ class UserProgressRepository {
   Future<void> logAnswer(
     int questionId,
     String selectedAnswer,
-    bool isCorrect,
-  ) {
-    return dao.logAnswer(questionId, selectedAnswer, isCorrect);
+    bool isCorrect, {
+    int? examSetId,
+  }) {
+    return dao.logAnswer(
+      questionId,
+      selectedAnswer,
+      isCorrect,
+      examSetId: examSetId,
+    );
   }
 
   Future<Map<String, int>> getProgressStats() => dao.getProgressStats();
   Future<Map<int, Map<String, int>>> getTopicProgressStats() =>
       dao.getTopicProgressStats();
+  Future<Map<int, String>> getExamSetSavedAnswers(int examSetId) =>
+      dao.getExamSetSavedAnswers(examSetId);
+  Future<int?> getExamSetRemainingSeconds(int examSetId) =>
+      dao.getExamSetRemainingSeconds(examSetId);
+  Future<void> saveExamSetRemainingSeconds(
+    int examSetId,
+    int remainingSeconds,
+  ) => dao.saveExamSetRemainingSeconds(examSetId, remainingSeconds);
+  Future<void> saveExamSetResult({
+    required int examSetId,
+    required int totalQuestions,
+    required int correctAnswers,
+    required bool isPassed,
+    required int remainingSeconds,
+  }) => dao.saveExamSetResult(
+    examSetId: examSetId,
+    totalQuestions: totalQuestions,
+    correctAnswers: correctAnswers,
+    isPassed: isPassed,
+    remainingSeconds: remainingSeconds,
+  );
+  Future<ExamSetResultSummary?> getExamSetResultSummary(int examSetId) =>
+      dao.getExamSetResultSummary(examSetId);
+  Future<Map<int, ExamSetResultSummary>> getExamSetResultSummaries(
+    List<int> examSetIds,
+  ) => dao.getExamSetResultSummaries(examSetIds);
+  Future<Map<int, Map<String, int>>> getExamSetProgressStats(
+    List<int> examSetIds,
+  ) => dao.getExamSetProgressStats(examSetIds);
+  Future<Map<String, int>> getExamSetProgressStatsById(int examSetId) =>
+      dao.getExamSetProgressStatsById(examSetId);
+  Future<void> resetExamSetProgress(int examSetId) =>
+      dao.resetExamSetProgress(examSetId);
   Future<Map<String, int>> getCriticalProgressStats() =>
       dao.getCriticalProgressStats();
 }

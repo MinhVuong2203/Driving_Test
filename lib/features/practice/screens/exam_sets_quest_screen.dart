@@ -11,14 +11,17 @@ import '../../../core/database/daos/user_progress_dao.dart';
 import '../../../data/repository/exam_sets_quest_repository.dart';
 import '../../../data/repository/setting_reponsitory.dart';
 import '../../../data/repository/user_progress_repository.dart';
+import '../../../data/services/firebase/user_vip_service.dart';
 import '../../../data/services/sqlite/wrong_question_notification_service.dart';
 import '../../../shared/utils/constants/app_colors.dart';
 import '../../../shared/widgets/question_image.dart';
 import '../../../shared/widgets/interstitial_ad_helper.dart';
 import '../../../data/repository/admob_config_repository.dart';
+import 'exam_result_screen.dart';
 
 class ExamSetsQuestScreen extends StatefulWidget {
   final int examSetId;
+  final String examTitle;
   final bool gradeInstantly;
   final int durationMinutes;
   final int passScore;
@@ -26,6 +29,7 @@ class ExamSetsQuestScreen extends StatefulWidget {
   const ExamSetsQuestScreen({
     super.key,
     required this.examSetId,
+    this.examTitle = 'Đề thi',
     this.gradeInstantly = false,
     this.durationMinutes = 20,
     this.passScore = 0,
@@ -59,6 +63,9 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
   bool _isSubmitting = false;
   bool _vibrationEnabled = true;
+  bool _isVipActive = false;
+  Future<void>? _vipAdInitFuture;
+  int _timePersistTick = 0;
 
   @override
   void initState() {
@@ -66,17 +73,18 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     repo = ExamSetsQuestRepository(ExamSetsQuestDao(db));
     userProgressRepo = UserProgressRepository(UserProgressDao(db));
     settingRepo = SettingRepository(SettingDao(db));
-    remaining = Duration(minutes: widget.durationMinutes);
     _loadVibrationSetting();
     _loadData();
-    _startTimer();
-    _initAd();
+    _vipAdInitFuture = _initVipAndAd();
   }
 
   @override
   void dispose() {
     timer?.cancel();
     _autoNextTimer?.cancel();
+    if (!_isSubmitting && remaining.inSeconds > 0) {
+      unawaited(_saveRemainingTime());
+    }
     _adHelper.dispose();
     super.dispose();
   }
@@ -114,7 +122,13 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     });
   }
 
-  Future<void> _initAd() async {
+  Future<void> _initVipAndAd() async {
+    final currentVip = await UserVipService().getCurrentUserVip();
+    if (!mounted) return;
+
+    _isVipActive = currentVip != null;
+    if (_isVipActive) return;
+
     final config = await _adMobRepo.getConfig();
     _adHelper.setAdUnitId(config.interstitialId);
     _adHelper.loadAd();
@@ -122,29 +136,67 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
   Future<void> _loadData() async {
     final data = await repo.getQuestionsByExamSet(widget.examSetId);
+    final savedAnswers = await userProgressRepo.getExamSetSavedAnswers(
+      widget.examSetId,
+    );
+    final savedRemainingSeconds = await userProgressRepo
+        .getExamSetRemainingSeconds(widget.examSetId);
 
     final savedQuestions = await userProgressRepo.getSavedQuestions();
     bookmarkedQuestionIds.clear();
     bookmarkedQuestionIds.addAll(savedQuestions.map((q) => q.id));
 
+    final defaultRemaining = Duration(minutes: widget.durationMinutes);
+    final restoredRemaining =
+        savedRemainingSeconds != null && savedRemainingSeconds > 0
+        ? Duration(seconds: savedRemainingSeconds)
+        : defaultRemaining;
+    final firstUnansweredIndex = data.indexWhere(
+      (item) => !savedAnswers.containsKey(item.question.id),
+    );
+
     if (!mounted) return;
     setState(() {
       questions = data;
+      selectedAnswers
+        ..clear()
+        ..addAll(savedAnswers);
+      if (widget.gradeInstantly) {
+        judgedQuestionIds
+          ..clear()
+          ..addAll(savedAnswers.keys);
+      }
+      currentIndex = firstUnansweredIndex == -1 ? 0 : firstUnansweredIndex;
+      remaining = restoredRemaining;
     });
+    _startTimer();
   }
 
   void _startTimer() {
+    timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       if (remaining.inSeconds <= 0) {
         timer?.cancel();
+        unawaited(_saveRemainingTime());
         _submitExam(autoSubmit: true);
         return;
       }
       setState(() {
         remaining -= const Duration(seconds: 1);
       });
+      _timePersistTick++;
+      if (_timePersistTick % 5 == 0) {
+        unawaited(_saveRemainingTime());
+      }
     });
+  }
+
+  Future<void> _saveRemainingTime() {
+    return userProgressRepo.saveExamSetRemainingSeconds(
+      widget.examSetId,
+      remaining.inSeconds,
+    );
   }
 
   String _timeText(Duration d) {
@@ -201,13 +253,44 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     return QuestionImage(path: rawPath);
   }
 
+  Future<bool> _confirmSubmitWithMissingAnswers(int missingCount) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Còn câu chưa chọn đáp án'),
+        content: Text(
+          'Bạn còn $missingCount câu bỏ trống. Bạn vẫn muốn nộp bài?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Tiếp tục làm'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Vẫn nộp bài'),
+          ),
+        ],
+      ),
+    );
+
+    return confirmed == true;
+  }
+
   Future<void> _submitExam({bool autoSubmit = false}) async {
     if (_isSubmitting) return;
+    final total = questions.length;
+    final answered = selectedAnswers.length;
+    final missingCount = total - answered;
+
+    if (!autoSubmit && missingCount > 0) {
+      final shouldSubmit = await _confirmSubmitWithMissingAnswers(missingCount);
+      if (!shouldSubmit) return;
+    }
+
     _isSubmitting = true;
     timer?.cancel();
 
-    final total = questions.length;
-    final answered = selectedAnswers.length;
     final correct = _countCorrectAnswers();
     final passNeed = widget.passScore > 0 ? widget.passScore : total;
     final passed = correct >= passNeed;
@@ -219,7 +302,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       final selected = selectedAnswers[q.id];
       if (selected != null) {
         final ok = _isCorrect(q, selected);
-        await userProgressRepo.logAnswer(q.id, selected, ok);
+        await userProgressRepo.logAnswer(
+          q.id,
+          selected,
+          ok,
+          examSetId: widget.examSetId,
+        );
         if (!ok) {
           await userProgressRepo.logWrongAnswer(q.id);
           reminderStateChanged = true;
@@ -236,33 +324,29 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     }
 
     if (!mounted) return;
-    await _adHelper.showAd();
+    await _vipAdInitFuture;
+    await userProgressRepo.saveExamSetResult(
+      examSetId: widget.examSetId,
+      totalQuestions: total,
+      correctAnswers: correct,
+      isPassed: passed,
+      remainingSeconds: 0,
+    );
+    if (!mounted) return;
+    if (!_isVipActive) {
+      await _adHelper.showAd();
+    }
     if (!mounted) return;
 
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: Text(autoSubmit ? 'Hết giờ làm bài' : 'Kết quả bài thi'),
-        content: Text(
-          'Đã làm: $answered/$total câu\n'
-          'Đúng: $correct/$total câu\n'
-          'Điểm đậu tối thiểu: $passNeed\n'
-          'Kết quả: ${passed ? "ĐẠT" : "KHÔNG ĐẠT"}',
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ExamResultScreen(
+          examSetId: widget.examSetId,
+          examTitle: widget.examTitle,
+          passScore: passNeed,
+          popToExamListOnBack: true,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Đóng'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text('Về danh sách đề'),
-          ),
-        ],
       ),
     );
 
@@ -285,10 +369,16 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
     });
     _scheduleAutoNext(qId, selectedQuestionIndex);
 
-    if (widget.gradeInstantly) {
-      final ok = _isCorrect(q, label);
+    final ok = _isCorrect(q, label);
+    await userProgressRepo.logAnswer(
+      q.id,
+      label,
+      ok,
+      examSetId: widget.examSetId,
+    );
+    await _saveRemainingTime();
 
-      await userProgressRepo.logAnswer(q.id, label, ok);
+    if (widget.gradeInstantly) {
       if (!ok) {
         await userProgressRepo.logWrongAnswer(q.id);
       } else {
@@ -298,14 +388,14 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       await WrongQuestionNotificationService.instance
           .syncCurrentReminderState();
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(ok ? 'Chính xác' : 'Sai rồi'),
-          backgroundColor: ok ? Colors.green : Colors.red,
-          duration: const Duration(milliseconds: 650),
-        ),
-      );
+      // if (!mounted) return;
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   // SnackBar(
+      //   //   content: Text(ok ? 'Chính xác' : 'Sai rồi'),
+      //   //   backgroundColor: ok ? Colors.green : Colors.red,
+      //   //   duration: const Duration(milliseconds: 650),
+      //   // ),
+      // );
     }
   }
 
@@ -388,7 +478,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                           horizontal: 16,
                           vertical: 8,
                         ),
-   
+
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

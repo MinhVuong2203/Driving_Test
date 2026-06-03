@@ -2,10 +2,12 @@ import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/ranks_dao.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
+import 'package:driving_test_prep/core/database/daos/user_progress_dao.dart';
 import 'package:driving_test_prep/data/repository/ranks_repository.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
+import 'package:driving_test_prep/data/repository/user_progress_repository.dart';
+import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_sets_quest_screen.dart';
-import 'package:driving_test_prep/features/practice/widgets/start_button.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:driving_test_prep/shared/widgets/car_animated_button.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +28,14 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
   late final SettingRepository _settingRepository = SettingRepository(
     SettingDao(DBProvider().db),
   );
+  late final UserProgressRepository _userProgressRepository =
+      UserProgressRepository(UserProgressDao(DBProvider().db));
   bool isChecked1 = true;
   bool isChecked2 = false;
   Rank? rank;
+  bool _isVipActive = false;
+  int _answeredCount = 0;
+  int _totalCount = 0;
 
   @override
   void initState() {
@@ -39,6 +46,10 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
   Future<void> loadRanks() async {
     final rs = await _ranksRepository.getRankById(widget.rankId);
     final setting = await _settingRepository.getSetting();
+    final currentVip = await UserVipService().getCurrentUserVip();
+    final progress = await _userProgressRepository.getExamSetProgressStatsById(
+      widget.exam.id,
+    );
     final gradeInstantly = setting?.models == 1;
 
     if (!mounted) return;
@@ -46,7 +57,42 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
       rank = rs;
       isChecked1 = !gradeInstantly;
       isChecked2 = gradeInstantly;
+      _isVipActive = currentVip != null;
+      _answeredCount = progress['answered'] ?? 0;
+      _totalCount = progress['total'] ?? 0;
     });
+  }
+
+  Future<void> _resetExamProgress() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Reset đề này?'),
+        content: const Text(
+          'Toàn bộ đáp án đã lưu của đề đang chọn sẽ được xóa.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Reset'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    await _userProgressRepository.resetExamSetProgress(widget.exam.id);
+    await loadRanks();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã reset tiến độ đề này.')));
   }
 
   @override
@@ -61,6 +107,14 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          if (_isVipActive && _answeredCount > 0)
+            IconButton(
+              tooltip: 'Reset đề',
+              icon: const Icon(Icons.restart_alt_rounded),
+              onPressed: _resetExamProgress,
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -134,6 +188,15 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
                 ],
               ),
             ),
+
+            if (_isVipActive && _answeredCount > 0) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _resetExamProgress,
+                icon: const Icon(Icons.restart_alt_rounded),
+                label: Text('Reset đề đã làm ($_answeredCount/$_totalCount)'),
+              ),
+            ],
 
             const SizedBox(height: 40),
 
@@ -218,25 +281,27 @@ class _ExamDetailScreenState extends State<ExamDetailScreen> {
             // StartButton(
             //   onTap: ()
             // ),
-
             Center(
               child: CarAnimatedButton(
-                  text: 'BẮT ĐẦU LÀM BÀI',
-                  width: 360,
-                  time: 500,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ExamSetsQuestScreen(
-                          examSetId: widget.exam.id,
-                          durationMinutes: rank?.time ?? 20,
-                          gradeInstantly: isChecked2,
-                          passScore: rank?.totalPass ?? 0,
-                        ),
+                text: 'BẮT ĐẦU LÀM BÀI',
+                width: 360,
+                time: 500,
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ExamSetsQuestScreen(
+                        examSetId: widget.exam.id,
+                        examTitle: widget.exam.name ?? 'Đề ${widget.exam.id}',
+                        durationMinutes: rank?.time ?? 20,
+                        gradeInstantly: isChecked2,
+                        passScore: rank?.totalPass ?? 0,
                       ),
-                    );
-                  },
+                    ),
+                  );
+                  if (!mounted) return;
+                  await loadRanks();
+                },
               ),
             ),
 
