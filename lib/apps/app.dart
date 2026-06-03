@@ -4,6 +4,7 @@ import 'package:driving_test_prep/core/database/DBProvider.dart';
 import 'package:driving_test_prep/core/database/daos/setting_dao.dart';
 import 'package:driving_test_prep/data/services/sqlite/question_image_cache_service.dart';
 import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
+import 'package:driving_test_prep/data/repository/traffic_violation_repository.dart';
 import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/features/overlay/screens/wrong_question_reminder_overlay.dart';
 import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
@@ -28,7 +29,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     QuestionImageCacheService.instance.startBackgroundDownload();
+    _warmUpTrafficViolations();
     loadSetting();
+  }
+
+  Future<void> _warmUpTrafficViolations() async {
+    try {
+      await TrafficViolationRepository.localFirst().syncIfNeeded();
+    } catch (_) {
+      // Lần đầu chưa có mạng/backend thì màn tra cứu sẽ thử sync lại khi cần.
+    }
   }
 
   @override
@@ -56,7 +66,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       themeNotifier.value = 1;
       rankNotifier.value = 'B';
     } else {
-      themeNotifier.value = setting.mode; // 👈 gán vào notifier
+      themeNotifier.value = setting.mode;
       rankNotifier.value = setting.rankId.trim().toUpperCase();
     }
 
@@ -91,7 +101,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       );
     }
 
-    // 👇 Lắng nghe thay đổi từ SettingsScreen
     return ValueListenableBuilder<int>(
       valueListenable: themeNotifier,
       builder: (context, modeValue, _) {
@@ -105,7 +114,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           builder: (context, child) {
             return Stack(
               children: [
-                ?child,
+                if (child != null) child,
                 const QuestionDataDownloadBanner(),
                 WrongQuestionReminderOverlay(
                   key: wrongQuestionReminderOverlayKey,
