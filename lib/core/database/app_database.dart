@@ -26,6 +26,7 @@ import 'tables/exam_groups_table.dart';
 import 'tables/ranks_table.dart';
 import 'tables/exam_sets_table.dart';
 import 'tables/exam_set_questions_table.dart';
+import 'tables/exam_set_progress_table.dart';
 import 'tables/practice_sessions_table.dart';
 import 'tables/user_answers_table.dart';
 import 'tables/wrong_questions_table.dart';
@@ -41,6 +42,7 @@ part 'app_database.g.dart';
     Ranks,
     ExamSets,
     ExamSetQuestions,
+    ExamSetProgress,
     PracticeSessions,
     UserAnswers,
     WrongQuestions,
@@ -58,7 +60,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 10;
 
   bool get logStatements => kDebugMode;
 
@@ -177,6 +179,57 @@ class AppDatabase extends _$AppDatabase {
         }
         if (!tableNames.contains('driving_center_page_caches')) {
           await m.createTable(drivingCenterPageCaches);
+        }
+      }
+
+      if (from < 8) {
+        final userAnswerColumns = await customSelect(
+          "PRAGMA table_info(user_answers)",
+        ).get();
+        final columnNames = userAnswerColumns
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!columnNames.contains('exam_set_id')) {
+          await m.addColumn(userAnswers, userAnswers.examSetId);
+        }
+      }
+
+      if (from < 9) {
+        final tableRows = await customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table'",
+        ).get();
+        final tableNames = tableRows
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!tableNames.contains('exam_set_progress')) {
+          await m.createTable(examSetProgress);
+        }
+      }
+
+      if (from < 10) {
+        final progressColumns = await customSelect(
+          "PRAGMA table_info(exam_set_progress)",
+        ).get();
+        final columnNames = progressColumns
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!columnNames.contains('total_questions')) {
+          await m.addColumn(examSetProgress, examSetProgress.totalQuestions);
+        }
+        if (!columnNames.contains('correct_answers')) {
+          await m.addColumn(examSetProgress, examSetProgress.correctAnswers);
+        }
+        if (!columnNames.contains('is_passed')) {
+          await m.addColumn(examSetProgress, examSetProgress.isPassed);
+        }
+        if (!columnNames.contains('submitted_at')) {
+          await m.addColumn(examSetProgress, examSetProgress.submittedAt);
         }
       }
     },

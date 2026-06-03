@@ -4,6 +4,7 @@ import 'package:driving_test_prep/core/database/app_database.dart';
 import 'package:driving_test_prep/core/database/daos/recognition_history_dao.dart';
 
 import 'package:driving_test_prep/data/repository/recognition_history_repository.dart';
+import 'package:driving_test_prep/data/repository/admob_config_repository.dart';
 import 'package:driving_test_prep/data/repository/usage_reponsitory.dart';
 import 'package:driving_test_prep/data/services/external/gemini_service.dart';
 import 'package:driving_test_prep/data/services/firebase/usage_service.dart';
@@ -14,16 +15,14 @@ import 'package:driving_test_prep/features/recognition_ai/widget/result_card.dar
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:driving_test_prep/shared/utils/constants/img_processor.dart';
 import 'package:driving_test_prep/shared/widgets/car_animated_button.dart';
+import 'package:driving_test_prep/shared/widgets/interstitial_ad_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RecognitionHomeScreen extends StatefulWidget {
   final VoidCallback? onUpgradeVip;
 
-  const RecognitionHomeScreen({
-    super.key,
-    this.onUpgradeVip,
-  });
+  const RecognitionHomeScreen({super.key, this.onUpgradeVip});
 
   @override
   State<RecognitionHomeScreen> createState() => _RecognitionHomeScreenState();
@@ -40,9 +39,12 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
 
   final picker = ImagePicker();
   final geminiService = GeminiService();
+  final _adHelper = InterstitialAdHelper();
+  final _adMobRepo = AdMobConfigRepository();
 
   late final RecognitionHistoryRepository historyRepo;
   late final UsageRepository usageRepo;
+  bool _adInitialized = false;
 
   // History
   List<RecognitionHistoryData> historyList = [];
@@ -63,21 +65,35 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
     _loadHistory();
 
     _loadUsage();
-
   }
 
   @override
   void dispose() {
+    _adHelper.dispose();
     super.dispose();
   }
 
   Future<void> _loadUsage() async {
     final remain = await usageRepo.getRemainingRecognition();
 
+    if (!mounted) return;
     setState(() {
       remaining = remain;
       isVip = remain == -1;
     });
+
+    if (!isVip) {
+      await _initAdIfNeeded();
+    }
+  }
+
+  Future<void> _initAdIfNeeded() async {
+    if (_adInitialized) return;
+    _adInitialized = true;
+
+    final config = await _adMobRepo.getConfig();
+    _adHelper.setAdUnitId(config.interstitialId);
+    _adHelper.loadAd();
   }
 
   /// Load history from database
@@ -121,6 +137,10 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
       final canUse = await usageRepo.canUseRecognition();
 
       if (!canUse) {
+        if (!isVip) {
+          await _adHelper.showAd();
+        }
+        if (!mounted) return;
         setState(() {
           result = "🚫 Bạn đã dùng hết 3 lần hôm nay";
           isLoading = false;
@@ -392,7 +412,9 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
             child: Text(
               isVip ? 'Gói VIP đang hoạt động' : 'Còn $remaining lượt hôm nay',
               style: TextStyle(
-                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.lightTextPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
               ),
@@ -409,10 +431,7 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFFF6B6B),
-            Color(0xFFFF8E53),
-          ],
+          colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -435,7 +454,9 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
-              isVip ? Icons.workspace_premium_rounded : Icons.all_inclusive_rounded,
+              isVip
+                  ? Icons.workspace_premium_rounded
+                  : Icons.all_inclusive_rounded,
               color: Colors.white,
             ),
           ),
@@ -454,7 +475,9 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  isVip ? 'Tài khoản VIP đang hoạt động' : 'Nâng cấp VIP để bỏ giới hạn mỗi ngày',
+                  isVip
+                      ? 'Tài khoản VIP đang hoạt động'
+                      : 'Nâng cấp VIP để bỏ giới hạn mỗi ngày',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 12,
@@ -497,7 +520,8 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final cacheSize =
-                            (constraints.maxWidth * MediaQuery.of(context).devicePixelRatio)
+                            (constraints.maxWidth *
+                                    MediaQuery.of(context).devicePixelRatio)
                                 .round();
 
                         return ClipRRect(
@@ -610,7 +634,11 @@ class _RecognitionHomeScreenState extends State<RecognitionHomeScreen> {
             secondaryColor: const Color(0xFF44A08D),
             isEnabled: !isLoading,
             borderRadius: 14,
-            icon: const Icon(Icons.photo_library, color: Colors.white, size: 20),
+            icon: const Icon(
+              Icons.photo_library,
+              color: Colors.white,
+              size: 20,
+            ),
             textStyle: const TextStyle(
               color: Colors.white,
               fontSize: 14,

@@ -1,8 +1,11 @@
 import 'package:driving_test_prep/data/models/driving_center_model.dart';
+import 'package:driving_test_prep/data/repository/admob_config_repository.dart';
 import 'package:driving_test_prep/data/repository/DrivingCenterRepository.dart';
+import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
 import 'package:driving_test_prep/features/driving_centers/screens/center_detail_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:driving_test_prep/shared/utils/constants/province_loader.dart';
+import 'package:driving_test_prep/shared/widgets/interstitial_ad_helper.dart';
 import 'package:flutter/material.dart';
 
 class CenterListScreen extends StatefulWidget {
@@ -15,6 +18,8 @@ class CenterListScreen extends StatefulWidget {
 class _CenterListScreenState extends State<CenterListScreen> {
   final DrivingCenterRepository _repository = DrivingCenterRepository();
   final ScrollController _scrollController = ScrollController();
+  final _adHelper = InterstitialAdHelper();
+  final _adMobRepo = AdMobConfigRepository();
 
   static const int _pageSize = 10;
 
@@ -28,6 +33,9 @@ class _CenterListScreenState extends State<CenterListScreen> {
   bool _hasMore = true;
   bool _isInitialLoading = false;
   bool _isLoadingMore = false;
+  bool _isVipActive = false;
+  bool _adInitialized = false;
+  Future<void>? _vipAdInitFuture;
   String? _errorMessage;
 
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
@@ -65,6 +73,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_handleScroll);
+    _vipAdInitFuture = _initVipAndAd();
     _initProvinceData();
   }
 
@@ -73,7 +82,34 @@ class _CenterListScreenState extends State<CenterListScreen> {
     _scrollController
       ..removeListener(_handleScroll)
       ..dispose();
+    _adHelper.dispose();
     super.dispose();
+  }
+
+  Future<void> _initVipAndAd() async {
+    final currentVip = await UserVipService().getCurrentUserVip();
+    if (!mounted) return;
+
+    _isVipActive = currentVip != null;
+    if (_isVipActive) return;
+
+    await _initAdIfNeeded();
+  }
+
+  Future<void> _initAdIfNeeded() async {
+    if (_adInitialized) return;
+    _adInitialized = true;
+
+    final config = await _adMobRepo.getConfig();
+    _adHelper.setAdUnitId(config.interstitialId);
+    _adHelper.loadAd();
+  }
+
+  Future<void> _showProvinceChangeAdIfNeeded() async {
+    await _vipAdInitFuture;
+    if (_isVipActive) return;
+    await _initAdIfNeeded();
+    await _adHelper.showAd();
   }
 
   Future<void> _initProvinceData() async {
@@ -83,7 +119,9 @@ class _CenterListScreenState extends State<CenterListScreen> {
       useDisplayName: false,
     );
 
-    debugPrint('✅ Load xong danh sách tỉnh/thành. Số lượng: ${provinces.length}');
+    debugPrint(
+      '✅ Load xong danh sách tỉnh/thành. Số lượng: ${provinces.length}',
+    );
 
     if (!mounted) return;
 
@@ -92,7 +130,6 @@ class _CenterListScreenState extends State<CenterListScreen> {
       _selectedProvince = provinces.isNotEmpty ? provinces.first : null;
 
       debugPrint('🎯 Tỉnh/thành đang chọn: $_selectedProvince');
-
     });
 
     _loadByProvince(reset: true);
@@ -186,8 +223,9 @@ class _CenterListScreenState extends State<CenterListScreen> {
       backgroundColor: _backgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor:
-        _isDark ? AppColors.darkAppBarBackground : AppColors.secondary,
+        backgroundColor: _isDark
+            ? AppColors.darkAppBarBackground
+            : AppColors.secondary,
         foregroundColor: AppColors.white,
         title: const Text(
           'Trung tâm đào tạo lái xe',
@@ -205,9 +243,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
       body: Column(
         children: [
           _buildProvinceFilter(),
-          Expanded(
-            child: _buildCenterContent(),
-          ),
+          Expanded(child: _buildCenterContent()),
         ],
       ),
     );
@@ -237,10 +273,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
             decoration: InputDecoration(
               labelText: 'Tỉnh / Thành phố',
               labelStyle: TextStyle(color: _textSecondaryColor),
-              prefixIcon: Icon(
-                Icons.location_city_outlined,
-                color: _iconColor,
-              ),
+              prefixIcon: Icon(Icons.location_city_outlined, color: _iconColor),
               filled: true,
               fillColor: _inputBackgroundColor,
               enabledBorder: OutlineInputBorder(
@@ -266,19 +299,18 @@ class _CenterListScreenState extends State<CenterListScreen> {
             items: _provinces.map((province) {
               return DropdownMenuItem<String>(
                 value: province,
-                child: Text(
-                  province,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(province, overflow: TextOverflow.ellipsis),
               );
             }).toList(),
-            onChanged: (value) {
+            onChanged: (value) async {
               if (value == null) return;
 
               setState(() {
                 _selectedProvince = value;
               });
 
+              await _showProvinceChangeAdIfNeeded();
+              if (!mounted) return;
               _loadByProvince(reset: true);
             },
           ),
@@ -388,9 +420,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
             children: [
               _buildCenterImage(center),
               const SizedBox(width: 10),
-              Expanded(
-                child: _buildCenterInfo(center),
-              ),
+              Expanded(child: _buildCenterInfo(center)),
             ],
           ),
         ),
@@ -403,12 +433,12 @@ class _CenterListScreenState extends State<CenterListScreen> {
       borderRadius: BorderRadius.circular(14),
       child: center.photoUrl.isNotEmpty
           ? Image.network(
-        center.photoUrl,
-        width: 96,
-        height: 96,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _imagePlaceholder(),
-      )
+              center.photoUrl,
+              width: 96,
+              height: 96,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => _imagePlaceholder(),
+            )
           : _imagePlaceholder(),
     );
   }
@@ -442,10 +472,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
               ),
             if (center.phoneNumber.isNotEmpty) ...[
               const SizedBox(height: 5),
-              _infoRow(
-                icon: Icons.phone_outlined,
-                text: center.phoneNumber,
-              ),
+              _infoRow(icon: Icons.phone_outlined, text: center.phoneNumber),
             ],
             const SizedBox(height: 8),
             Wrap(
@@ -456,7 +483,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
                   _chip(
                     icon: Icons.star,
                     text:
-                    '${center.rating.toStringAsFixed(1)} (${center.reviewCount})',
+                        '${center.rating.toStringAsFixed(1)} (${center.reviewCount})',
                     maxWidth: chipMaxWidth * 0.48,
                   ),
                 if (center.openingStatus.isNotEmpty)
@@ -511,9 +538,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
     double? maxWidth,
   }) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxWidth: maxWidth ?? double.infinity,
-      ),
+      constraints: BoxConstraints(maxWidth: maxWidth ?? double.infinity),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
@@ -526,11 +551,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 13,
-              color: _chipTextColor,
-            ),
+            Icon(icon, size: 13, color: _chipTextColor),
             const SizedBox(width: 4),
             Flexible(
               child: Text(
@@ -618,11 +639,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.location_off_outlined,
-              size: 54,
-              color: _textMutedColor,
-            ),
+            Icon(Icons.location_off_outlined, size: 54, color: _textMutedColor),
             const SizedBox(height: 12),
             Text(
               provinceName.isEmpty
@@ -648,9 +665,11 @@ class _CenterListScreenState extends State<CenterListScreen> {
   }
 
   String _buildAddressDisplay(DrivingCenter c) {
-    return [c.address, c.district, c.city]
-        .where((s) => s.trim().isNotEmpty)
-        .join(', ');
+    return [
+      c.address,
+      c.district,
+      c.city,
+    ].where((s) => s.trim().isNotEmpty).join(', ');
   }
 
   Widget _imagePlaceholder() {
