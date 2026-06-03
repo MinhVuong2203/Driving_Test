@@ -11,6 +11,8 @@ import 'package:driving_test_prep/shared/widgets/account_status_gate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../../data/repository/google_auth_repository.dart';
+import '../../../data/services/firebase/fcm_service.dart';
 import '../../../data/repository/social_auth_repository.dart';
 import '../widgets/other_login_method.dart';
 
@@ -78,6 +80,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
 
       final User? user = credential.user;
       if (user != null) {
+        await FcmService.initAndSaveToken(user.uid);
         return;
       }
     } on FirebaseAuthException catch (e) {
@@ -118,6 +121,13 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       if (!mounted) return;
 
       if (credential.user != null) {
+        return;
+      }
+
+      final user = credential.user;
+
+      if (user != null) {
+        await FcmService.initAndSaveToken(user.uid);
         return;
       }
     } on FirebaseAuthException catch (e) {

@@ -14,6 +14,8 @@ class PostModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? address;
+  final bool authorIsVip;
+  final String authorVipName;
 
   const PostModel({
     required this.postId,
@@ -29,6 +31,8 @@ class PostModel {
     required this.createdAt,
     required this.updatedAt,
     this.address,
+    required this.authorIsVip,
+    required this.authorVipName,
   });
 
   factory PostModel.fromFirestore(
@@ -54,6 +58,8 @@ class PostModel {
       createdAt: _toDateTime(data['createdAt']),
       updatedAt: _toDateTime(data['updatedAt']),
       address: (data['address'] ?? '').toString(),
+      authorIsVip: data['authorIsVip'] == true,
+      authorVipName: (data['authorVipName'] ?? '').toString(),
     );
   }
 
@@ -71,6 +77,8 @@ class PostModel {
       'createdAt': createdAt == null ? null : Timestamp.fromDate(createdAt!),
       'updatedAt': updatedAt == null ? null : Timestamp.fromDate(updatedAt!),
       'address': address,
+      'authorIsVip': authorIsVip,
+      'authorVipName': authorVipName,
     };
   }
 
@@ -88,6 +96,8 @@ class PostModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? address,
+    bool? authorIsVip,
+    String? authorVipName,
   }) {
     return PostModel(
       postId: postId ?? this.postId,
@@ -103,6 +113,8 @@ class PostModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       address: address ?? this.address,
+      authorIsVip: authorIsVip ?? this.authorIsVip,
+      authorVipName: authorVipName ?? this.authorVipName,
     );
   }
 
@@ -131,6 +143,8 @@ class PostModel {
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
       address: json['address']?.toString() ?? '',
+      authorIsVip: json['authorIsVip'] == true,
+      authorVipName: json['authorVipName']?.toString() ?? '',
     );
   }
 
