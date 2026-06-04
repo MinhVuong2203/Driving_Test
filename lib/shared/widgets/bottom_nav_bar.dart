@@ -57,7 +57,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     Icons.directions_car,
     Icons.qr_code_scanner,
     Icons.menu_book,
-    Icons.facebook,
+    Icons.comment_rounded,
     Icons.info,
   ];
 
