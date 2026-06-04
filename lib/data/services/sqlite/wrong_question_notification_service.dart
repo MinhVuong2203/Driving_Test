@@ -48,11 +48,7 @@ class WrongQuestionNotificationService {
       wrongQuestionReminderBackgroundHandler,
     );
 
-    await _messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await _messaging.requestPermission(alert: true, badge: true, sound: true);
 
     await _messaging.setForegroundNotificationPresentationOptions(
       alert: true,
@@ -93,7 +89,9 @@ class WrongQuestionNotificationService {
     bool markDirtyOnFailure = true,
   }) async {
     final settingRepo = SettingRepository(SettingDao(DBProvider().db));
-    final progressRepo = UserProgressRepository(UserProgressDao(DBProvider().db));
+    final progressRepo = UserProgressRepository(
+      UserProgressDao(DBProvider().db),
+    );
 
     try {
       final user = _auth.currentUser;
@@ -116,9 +114,8 @@ class WrongQuestionNotificationService {
       final lastSyncedReminderWrong =
           (setting?.lastSyncedReminderWrong ?? 0) == 1;
       final isDirty = (setting?.reminderSyncDirty ?? 1) == 1;
-      final tokenChanged = token != null &&
-          token.trim().isNotEmpty &&
-          token != _lastSyncedToken;
+      final tokenChanged =
+          token != null && token.trim().isNotEmpty && token != _lastSyncedToken;
       final userChanged = _lastSyncedUid != user.uid;
 
       if (!isDirty &&
@@ -163,6 +160,24 @@ class WrongQuestionNotificationService {
 
     _lastSyncedUid = null;
     _lastSyncedToken = null;
+  }
+
+  Future<void> removeCurrentUserToken() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final token = await _messaging.getToken();
+    if (token == null || token.trim().isEmpty) return;
+
+    await _firestore.collection('users').doc(user.uid).set({
+      'fcm_tokens': FieldValue.arrayRemove([token]),
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+
+    if (_lastSyncedUid == user.uid && _lastSyncedToken == token) {
+      _lastSyncedUid = null;
+      _lastSyncedToken = null;
+    }
   }
 
   bool _isWrongReminderMessage(RemoteMessage? message) {
