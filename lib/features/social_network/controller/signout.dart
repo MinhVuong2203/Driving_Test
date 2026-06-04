@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/repository/social_auth_repository.dart';
+import '../../../data/repository/google_auth_repository.dart';
+import '../../../data/services/sqlite/wrong_question_notification_service.dart';
 
 class SignOutController {
   static Future<void> signOut({
@@ -11,11 +12,12 @@ class SignOutController {
     final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
     setSigningOut(true);
     try {
-      await SocialAuthRepository.instance.signOut();
+      await WrongQuestionNotificationService.instance.removeCurrentUserToken();
+      await GoogleAuthRepository.instance.signOut();
     } catch (_) {
-      if (!isMounted()) return;
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Dang xuat that bai, thu lai nhe.')),
+      if (!context.mounted || !isMounted()) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Đăng xuất thất bại, thử lại nhé.')),
       );
     } finally {
       if (isMounted()) setSigningOut(false);
