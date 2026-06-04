@@ -53,6 +53,8 @@ dependencies:
   shared_preferences: ^2.5.5
   mailer: ^6.1.0
   speech_to_text: ^7.0.0
+  flutter_svg: ^2.3.0
+  share_plus: ^13.1.0
 
   # Thông báo
 
@@ -94,3 +96,4 @@ flutter:
     - assets/images/bien-bao/bien-hieu-lenh/
     - assets/images/bien-bao/bien-phu/
     - assets/images/bien-bao/bien-tren-cao-toc/
+    - assets/images/qr/

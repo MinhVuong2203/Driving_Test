@@ -19,6 +19,11 @@ const Color _kWhite = Color(0xFFFFFFFF);
 const Color _kGrey = Color(0xFF8A9BB0);
 const Color _kInputBg = Color(0xFFF0F3F8);
 const Color _kError = Color(0xFFD93025);
+const Color _kDarkBackground = Color(0xFF0F172A);
+const Color _kDarkCard = Color(0xFF111827);
+const Color _kDarkInputBg = Color(0xFF1F2937);
+const Color _kDarkText = Color(0xFFF8FAFC);
+const Color _kDarkMuted = Color(0xFFCBD5E1);
 
 typedef LoginSuccessCallback = Future<void> Function(User user);
 
@@ -215,13 +220,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final background = isDark ? _kDarkBackground : _kNavy;
+
     return StreamBuilder<User?>(
       stream: _authStateStream,
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            backgroundColor: _kNavy,
-            body: Center(child: CircularProgressIndicator(color: _kAmber)),
+          return Scaffold(
+            backgroundColor: background,
+            body: const Center(
+              child: CircularProgressIndicator(color: _kAmber),
+            ),
           );
         }
 
@@ -231,17 +241,13 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(backgroundColor: _kNavy, elevation: 0),
-          backgroundColor: _kNavy,
+          appBar: AppBar(backgroundColor: background, elevation: 0),
+          backgroundColor: background,
           body: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  const LoginHeader(
-                    navy: _kNavy,
-                    amber: _kAmber,
-                    white: _kWhite,
-                  ),
+                  LoginHeader(navy: background, amber: _kAmber, white: _kWhite),
                   _buildCard(),
                 ],
               ),
@@ -253,10 +259,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildCard() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? _kDarkCard : _kWhite;
+    final textColor = isDark ? _kDarkText : _kNavy;
+    final subTextColor = isDark ? _kDarkMuted : _kGrey;
+    final inputBg = isDark ? _kDarkInputBg : _kInputBg;
+
     return Container(
-      decoration: const BoxDecoration(
-        color: _kWhite,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       padding: const EdgeInsets.fromLTRB(28, 36, 28, 40),
       child: Form(
@@ -264,21 +276,21 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            const Text(
+            Text(
               'Đăng nhập',
               style: TextStyle(
-                color: _kNavy,
+                color: textColor,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Chào mừng bạn quay trở lại 👋',
-              style: TextStyle(color: _kGrey, fontSize: 13),
+              style: TextStyle(color: subTextColor, fontSize: 13),
             ),
             const SizedBox(height: 28),
-            const SectionLabel(text: 'Email', color: _kNavy),
+            SectionLabel(text: 'Email', color: textColor),
             const SizedBox(height: 6),
             LoginTextField(
               controller: _emailCtrl,
@@ -286,14 +298,14 @@ class _LoginScreenState extends State<LoginScreen> {
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
               validator: AuthValidators.email,
-              navy: _kNavy,
-              grey: _kGrey,
-              inputBg: _kInputBg,
+              navy: textColor,
+              grey: subTextColor,
+              inputBg: inputBg,
               amber: _kAmber,
               error: _kError,
             ),
             const SizedBox(height: 20),
-            const SectionLabel(text: 'Mật khẩu', color: _kNavy),
+            SectionLabel(text: 'Mật khẩu', color: textColor),
             const SizedBox(height: 6),
             ValueListenableBuilder<bool>(
               valueListenable: _obscurePassword,
@@ -308,15 +320,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       isObscured
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: _kGrey,
+                      color: subTextColor,
                       size: 20,
                     ),
                     onPressed: () => _obscurePassword.value = !isObscured,
                   ),
                   validator: AuthValidators.password,
-                  navy: _kNavy,
-                  grey: _kGrey,
-                  inputBg: _kInputBg,
+                  navy: textColor,
+                  grey: subTextColor,
+                  inputBg: inputBg,
                   amber: _kAmber,
                   error: _kError,
                 );
@@ -340,12 +352,12 @@ class _LoginScreenState extends State<LoginScreen> {
               onGoogleTap: googleSignIn,
               onFacebookTap: facebookSignIn,
             ),
-            const OrDivider(grey: _kGrey),
+            OrDivider(grey: subTextColor, textColor: subTextColor),
             const SizedBox(height: 16),
             SecondaryActionButton(
               label: 'Tạo tài khoản mới',
               onPressed: _register,
-              navy: _kNavy,
+              navy: textColor,
             ),
             const SizedBox(height: 28),
             Center(
@@ -353,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Bằng cách đăng nhập, bạn đồng ý với\nChính sách & Điều khoản sử dụng.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: _kGrey.withValues(alpha: 0.7),
+                  color: subTextColor.withValues(alpha: 0.75),
                   fontSize: 11,
                   height: 1.6,
                 ),
