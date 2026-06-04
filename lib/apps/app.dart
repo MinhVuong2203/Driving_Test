@@ -29,8 +29,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     QuestionImageCacheService.instance.startBackgroundDownload();
-    _warmUpTrafficViolations();
     loadSetting();
+  }
+
+  void _startDeferredServices() {
+    unawaited(_warmUpTrafficViolations());
   }
 
   Future<void> _warmUpTrafficViolations() async {
@@ -57,12 +60,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> loadSetting() async {
+    print('AppStartup: loadSetting start');
     final db = DBProvider().db;
+    print('AppStartup: DBProvider ready');
     final SettingRepository repo = SettingRepository(SettingDao(db));
+    print('AppStartup: getSetting start');
     final setting = await repo.getSetting();
+    print('AppStartup: getSetting done, hasSetting=${setting != null}');
 
     if (setting == null) {
+      print('AppStartup: insertDefault setting start');
       await repo.insertDefault();
+      print('AppStartup: insertDefault setting done');
       themeNotifier.value = 1;
       rankNotifier.value = 'B';
     } else {
@@ -70,8 +79,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       rankNotifier.value = setting.rankId.trim().toUpperCase();
     }
 
+    print('AppStartup: set loaded true');
     setState(() => _loaded = true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startDeferredServices();
+
       unawaited(
         Future.delayed(const Duration(milliseconds: 260), () {
           if (!mounted) return;
