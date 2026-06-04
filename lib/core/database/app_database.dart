@@ -77,6 +77,7 @@ class AppDatabase extends _$AppDatabase {
       await SeedsExamSets.seedExamSets(this);
       await SeedsExamSetQuestions.seedExamSetQuestions(this);
       await SeedsTrafficSigns.seedTrafficSigns(this);
+      debugPrint('✅ Database onCreate seed toàn bộ xong');
     },
     onUpgrade: (m, from, to) async {
       if (from < 2) {
