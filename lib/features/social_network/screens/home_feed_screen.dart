@@ -31,14 +31,15 @@ class HomeFeedScreen extends StatefulWidget {
 class _HomeFeedScreenState extends State<HomeFeedScreen> {
   final String BACKEND_URL = AppConfig.baseUrl;
 
-  late final PostApiRepository _postApiRepo =
-  PostApiRepository.instance(BACKEND_URL);
+  late final PostApiRepository _postApiRepo = PostApiRepository.instance(
+    BACKEND_URL,
+  );
 
   late final CommentApiRepository _commentApiRepo =
-  CommentApiRepository.instance(BACKEND_URL);
+      CommentApiRepository.instance(BACKEND_URL);
 
   late final NotificationApiRepository _notificationApiRepo =
-  NotificationApiRepository.instance(BACKEND_URL);
+      NotificationApiRepository.instance(BACKEND_URL);
 
   bool _isAdmin = false;
 
@@ -105,9 +106,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     });
 
     try {
-      final posts = await _postApiRepo.fetchPostsPaged(
-        limit: _pageSize,
-      );
+      final posts = await _postApiRepo.fetchPostsPaged(limit: _pageSize);
 
       _likedPostIds.clear();
       _localLikeCounts.clear();
@@ -131,9 +130,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _isInitialLoading = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi tải bài viết: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi tải bài viết: $e')));
     }
   }
 
@@ -168,9 +167,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _isLoadingMore = false;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi tải thêm bài viết: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi tải thêm bài viết: $e')));
     }
   }
 
@@ -206,9 +205,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
 
     return (
-    authorId: user.uid,
-    authorName: user.displayName ?? user.email ?? 'Người dùng',
-    authorAvatar: user.photoURL ?? defaultAvatar,
+      authorId: user.uid,
+      authorName: user.displayName ?? user.email ?? 'Người dùng',
+      authorAvatar: user.photoURL ?? defaultAvatar,
     );
   }
 
@@ -257,9 +256,13 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
     final dialogBg = isDark ? const Color(0xFF111827) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subTextColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF6B7280);
+    final subTextColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF6B7280);
     final inputBg = isDark ? const Color(0xFF1F2937) : const Color(0xFFF3F4F6);
-    final borderColor = isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB);
+    final borderColor = isDark
+        ? const Color(0xFF374151)
+        : const Color(0xFFE5E7EB);
 
     XFile? selectedImage;
     bool isPosting = false;
@@ -276,10 +279,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               ),
               title: Text(
                 'Tạo bài viết',
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w800),
               ),
               content: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.8,
@@ -290,15 +290,14 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       TextField(
                         controller: contentController,
                         maxLines: 4,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 15,
-                        ),
+                        style: TextStyle(color: textColor, fontSize: 15),
                         cursorColor: kAmber,
                         decoration: InputDecoration(
                           hintText: 'Bạn đang nghĩ gì?',
                           hintStyle: TextStyle(
-                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF9CA3AF),
+                            color: isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF9CA3AF),
                           ),
                           filled: true,
                           fillColor: inputBg,
@@ -312,7 +311,10 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(color: kAmber, width: 1.4),
+                            borderSide: const BorderSide(
+                              color: kAmber,
+                              width: 1.4,
+                            ),
                           ),
                         ),
                       ),
@@ -341,19 +343,19 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         onPressed: isPosting
                             ? null
                             : () async {
-                          final picker = ImagePicker();
+                                final picker = ImagePicker();
 
-                          final image = await picker.pickImage(
-                            source: ImageSource.gallery,
-                            imageQuality: 80,
-                          );
+                                final image = await picker.pickImage(
+                                  source: ImageSource.gallery,
+                                  imageQuality: 80,
+                                );
 
-                          if (image != null) {
-                            setDialogState(() {
-                              selectedImage = image;
-                            });
-                          }
-                        },
+                                if (image != null) {
+                                  setDialogState(() {
+                                    selectedImage = image;
+                                  });
+                                }
+                              },
                         icon: const Icon(Icons.image_outlined),
                         label: const Text('Chọn ảnh từ thư viện'),
                       ),
@@ -363,117 +365,124 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               ),
               actions: <Widget>[
                 TextButton(
-                  onPressed: isPosting ? null : () => Navigator.pop(dialogContext),
-                  child: Text(
-                    'Hủy',
-                    style: TextStyle(color: subTextColor),
-                  ),
+                  onPressed: isPosting
+                      ? null
+                      : () => Navigator.pop(dialogContext),
+                  child: Text('Hủy', style: TextStyle(color: subTextColor)),
                 ),
                 ElevatedButton(
                   onPressed: isPosting
                       ? null
                       : () async {
-                    final content = contentController.text.trim();
+                          final content = contentController.text.trim();
 
-                    if (content.isEmpty && selectedImage == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Vui lòng nhập nội dung hoặc chọn ảnh',
-                          ),
-                        ),
-                      );
-                      return;
-                    }
+                          if (content.isEmpty && selectedImage == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Vui lòng nhập nội dung hoặc chọn ảnh',
+                                ),
+                              ),
+                            );
+                            return;
+                          }
 
-                    setDialogState(() {
-                      isPosting = true;
-                    });
+                          setDialogState(() {
+                            isPosting = true;
+                          });
 
-                    try {
-                      String imageUrl = '';
+                          try {
+                            String imageUrl = '';
 
-                      if (selectedImage != null) {
-                        imageUrl = await _postApiRepo.uploadPostImage(
-                          File(selectedImage!.path),
-                        );
-                      }
+                            if (selectedImage != null) {
+                              imageUrl = await _postApiRepo.uploadPostImage(
+                                File(selectedImage!.path),
+                              );
+                            }
 
-                      final author = await _getAuthorInfo();
+                            final author = await _getAuthorInfo();
 
-                      final address = await _getCurrentAddress();
+                            final address = await _getCurrentAddress();
 
-                      final postId = DateTime.now()
-                          .microsecondsSinceEpoch
-                          .toString();
+                            final postId = DateTime.now().microsecondsSinceEpoch
+                                .toString();
 
-                      final createdPost = await _postApiRepo.createPost(
-                        postId: postId,
-                        authorId: author.authorId,
-                        authorName: author.authorName,
-                        authorAvatar: author.authorAvatar,
-                        content: content,
-                        imageUrl: imageUrl,
-                        address: address,
-                      );
-
-                      if (!mounted) return;
-
-                      Navigator.pop(dialogContext);
-
-                      setState(() {
-                        _posts.insert(0, createdPost);
-                        _localLikeCounts[createdPost.postId] = createdPost.likeCount;
-                      });
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Đăng bài thành công')),
-                      );
-
-                      Future.delayed(const Duration(seconds: 4), () async {
-                        if (!mounted) return;
-
-                        try {
-                          final checkedPost = await _postApiRepo.getPostById(createdPost.postId);
-
-                          if (checkedPost.isDeleted || !checkedPost.status) {
-                            setState(() {
-                              _posts.removeWhere((p) => p.postId == createdPost.postId);
-                              _localLikeCounts.remove(createdPost.postId);
-                              _likedPostIds.remove(createdPost.postId);
-                            });
+                            final createdPost = await _postApiRepo.createPost(
+                              postId: postId,
+                              authorId: author.authorId,
+                              authorName: author.authorName,
+                              authorAvatar: author.authorAvatar,
+                              content: content,
+                              imageUrl: imageUrl,
+                              address: address,
+                            );
 
                             if (!mounted) return;
 
+                            Navigator.pop(dialogContext);
+
+                            setState(() {
+                              _posts.insert(0, createdPost);
+                              _localLikeCounts[createdPost.postId] =
+                                  createdPost.likeCount;
+                            });
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Bài viết vi phạm tiêu chuẩn nên đã bị tự động xóa'),
+                                content: Text('Đăng bài thành công'),
                               ),
                             );
-                          }
-                        } catch (e) {
-                          debugPrint('Check moderation failed: $e');
-                        }
-                      });
-                    } catch (e) {
-                      setDialogState(() {
-                        isPosting = false;
-                      });
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Lỗi đăng bài: $e')),
-                      );
-                    }
-                  },
+                            Future.delayed(const Duration(seconds: 4), () async {
+                              if (!mounted) return;
+
+                              try {
+                                final checkedPost = await _postApiRepo
+                                    .getPostById(createdPost.postId);
+
+                                if (checkedPost.isDeleted ||
+                                    !checkedPost.status) {
+                                  setState(() {
+                                    _posts.removeWhere(
+                                      (p) => p.postId == createdPost.postId,
+                                    );
+                                    _localLikeCounts.remove(createdPost.postId);
+                                    _likedPostIds.remove(createdPost.postId);
+                                  });
+
+                                  if (!mounted) return;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Bài viết vi phạm tiêu chuẩn nên đã bị tự động xóa',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                debugPrint('Check moderation failed: $e');
+                              }
+                            });
+                          } catch (e) {
+                            setDialogState(() {
+                              isPosting = false;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Lỗi đăng bài: $e')),
+                            );
+                          }
+                        },
                   child: isPosting
                       ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Text('Đăng'),
                 ),
               ],
@@ -502,9 +511,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
             if (!mounted) return;
 
             setState(() {
-              final index = _posts.indexWhere(
-                    (p) => p.postId == post.postId,
-              );
+              final index = _posts.indexWhere((p) => p.postId == post.postId);
 
               if (index != -1) {
                 final oldPost = _posts[index];
@@ -544,11 +551,10 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       _likingPostIds.remove(post.postId);
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đã xóa bài viết')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã xóa bài viết')));
   }
-
 
   Future<void> _toggleLike(PostModel post) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -580,15 +586,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
     try {
       if (wasLiked) {
-        await _postApiRepo.unlikePost(
-          postId: post.postId,
-          userId: user.uid,
-        );
+        await _postApiRepo.unlikePost(postId: post.postId, userId: user.uid);
       } else {
-        await _postApiRepo.likePost(
-          postId: post.postId,
-          userId: user.uid,
-        );
+        await _postApiRepo.likePost(postId: post.postId, userId: user.uid);
       }
     } catch (e) {
       if (!mounted) return;
@@ -603,9 +603,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _localLikeCounts[post.postId] = oldCount;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Lỗi cập nhật like: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi cập nhật like: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -616,6 +616,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   }
 
   Future<void> _handleSignOut() async {
+    final confirmed = await _confirmSignOut();
+    if (!mounted || !confirmed) return;
+
     await SignOutController.signOut(
       context: context,
       setSigningOut: (value) {
@@ -623,6 +626,31 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       },
       isMounted: () => mounted,
     );
+  }
+
+  Future<bool> _confirmSignOut() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Đăng xuất'),
+          content: const Text('Bạn có chắc muốn đăng xuất khỏi tài khoản này?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Hủy'),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              icon: const Icon(Icons.logout_rounded, size: 18),
+              label: const Text('Đăng xuất'),
+            ),
+          ],
+        );
+      },
+    );
+
+    return result == true;
   }
 
   Future<void> _showNotifications() async {
@@ -640,10 +668,16 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
             final isDark = Theme.of(context).brightness == Brightness.dark;
 
             final bg = isDark ? const Color(0xFF111827) : Colors.white;
-            final cardBg = isDark ? const Color(0xFF1F2937) : const Color(0xFFF8FAFC);
+            final cardBg = isDark
+                ? const Color(0xFF1F2937)
+                : const Color(0xFFF8FAFC);
             final textColor = isDark ? Colors.white : const Color(0xFF111827);
-            final subColor = isDark ? const Color(0xFFCBD5E1) : const Color(0xFF6B7280);
-            final borderColor = isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB);
+            final subColor = isDark
+                ? const Color(0xFFCBD5E1)
+                : const Color(0xFF6B7280);
+            final borderColor = isDark
+                ? const Color(0xFF374151)
+                : const Color(0xFFE5E7EB);
 
             return Container(
               height: MediaQuery.of(context).size.height * 0.75,
@@ -692,80 +726,83 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                       ),
                     )
                   else if ((snapshot.data ?? []).isEmpty)
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            'Chưa có thông báo nào',
-                            style: TextStyle(color: subColor),
-                          ),
-                        ),
-                      )
-                    else
-                      Expanded(
-                        child: ListView.separated(
-                          itemCount: snapshot.data!.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            final item = snapshot.data![index];
-
-                            return InkWell(
-                              borderRadius: BorderRadius.circular(16),
-                              onTap: () async {
-                                await _notificationApiRepo.markAsRead(
-                                  item.notificationId,
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: item.isRead
-                                      ? cardBg
-                                      : const Color(0xFF2563EB).withValues(alpha: 0.16),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: borderColor),
-                                ),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: item.isRead
-                                          ? const Color(0xFF64748B)
-                                          : const Color(0xFFF59E0B),
-                                      child: const Icon(
-                                        Icons.notifications,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.title,
-                                            style: TextStyle(
-                                              color: textColor,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            item.message,
-                                            style: TextStyle(
-                                              color: subColor,
-                                              fontSize: 13,
-                                              height: 1.35,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Chưa có thông báo nào',
+                          style: TextStyle(color: subColor),
                         ),
                       ),
+                    )
+                  else
+                    Expanded(
+                      child: ListView.separated(
+                        itemCount: snapshot.data!.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final item = snapshot.data![index];
+
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () async {
+                              await _notificationApiRepo.markAsRead(
+                                item.notificationId,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: item.isRead
+                                    ? cardBg
+                                    : const Color(
+                                        0xFF2563EB,
+                                      ).withValues(alpha: 0.16),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: borderColor),
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: item.isRead
+                                        ? const Color(0xFF64748B)
+                                        : const Color(0xFFF59E0B),
+                                    child: const Icon(
+                                      Icons.notifications,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.title,
+                                          style: TextStyle(
+                                            color: textColor,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          item.message,
+                                          style: TextStyle(
+                                            color: subColor,
+                                            fontSize: 13,
+                                            height: 1.35,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                 ],
               ),
             );
@@ -794,100 +831,90 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         centerTitle: false,
         title: Text(
           'Bảng tin',
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w800),
         ),
         actions: <Widget>[
           IconButton(
             onPressed: _showNotifications,
-            icon: Icon(
-              Icons.notifications_none_rounded,
-              color: textColor,
-            ),
+            icon: Icon(Icons.notifications_none_rounded, color: textColor),
           ),
           IconButton(
             onPressed: _isSigningOut ? null : _handleSignOut,
-            icon: Icon(
-              Icons.person_outline_rounded,
-              color: textColor,
-            ),
+            icon: Icon(Icons.logout_rounded, color: textColor),
           ),
         ],
       ),
       body: _isInitialLoading
-          ? const Center(
-        child: CircularProgressIndicator(color: kAmber),
-      )
+          ? const Center(child: CircularProgressIndicator(color: kAmber))
           : RefreshIndicator(
-        onRefresh: _refreshPosts,
-        child: ListView(
-          controller: _scrollController,
-          children: <Widget>[
-            CreatePostBox(
-              currentUserName: user?.displayName ?? user?.email ?? 'Người dùng',
-              currentUserAvatar: user?.photoURL ?? '',
-              onCreatePost: _showCreatePostDialog,
-              backgroundColor: cardBg,
-              textColor: textColor,
-              subTextColor: subTextColor,
-              inputColor: isDark ? const Color(0xFF1F2937) : const Color(0xFFF1F5F9),
-            ),
-            if (_posts.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(24),
-                child: Center(
-                  child: Text(
-                    'Chưa có bài đăng nào',
-                    style: TextStyle(
-                      color: kGrey,
-                      fontSize: 15,
+              onRefresh: _refreshPosts,
+              child: ListView(
+                controller: _scrollController,
+                children: <Widget>[
+                  CreatePostBox(
+                    currentUserName:
+                        user?.displayName ?? user?.email ?? 'Người dùng',
+                    currentUserAvatar: user?.photoURL ?? '',
+                    onCreatePost: _showCreatePostDialog,
+                    backgroundColor: cardBg,
+                    textColor: textColor,
+                    subTextColor: subTextColor,
+                    inputColor: isDark
+                        ? const Color(0xFF1F2937)
+                        : const Color(0xFFF1F5F9),
+                  ),
+                  if (_posts.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Center(
+                        child: Text(
+                          'Chưa có bài đăng nào',
+                          style: TextStyle(color: kGrey, fontSize: 15),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  ..._posts.map((post) {
+                    final currentLikeCount =
+                        _localLikeCounts[post.postId] ?? post.likeCount;
+
+                    final currentUserId =
+                        FirebaseAuth.instance.currentUser?.uid;
+                    final canDelete =
+                        _isAdmin ||
+                        (currentUserId != null &&
+                            post.authorId == currentUserId);
+
+                    return PostCard(
+                      post: post.copyWith(likeCount: currentLikeCount),
+                      isLiked: _likedPostIds.contains(post.postId),
+                      isAdmin: _isAdmin,
+                      canDelete: canDelete,
+                      onLike: () => _toggleLike(post),
+                      onComment: () => _showCommentDialog(post),
+                      onDelete: () => _deletePost(post),
+                    );
+                  }),
+                  if (_isLoadingMore)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: CircularProgressIndicator(color: kAmber),
+                      ),
+                    ),
+                  if (!_hasMore && _posts.isNotEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(
+                        child: Text(
+                          'Đã tải hết bài viết',
+                          style: TextStyle(color: kGrey),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                ],
               ),
-            ..._posts.map(
-                  (post) {
-                final currentLikeCount =
-                    _localLikeCounts[post.postId] ?? post.likeCount;
-
-                final currentUserId = FirebaseAuth.instance.currentUser?.uid;
-                final canDelete =
-                    _isAdmin || (currentUserId != null && post.authorId == currentUserId);
-
-                return PostCard(
-                  post: post.copyWith(likeCount: currentLikeCount),
-                  isLiked: _likedPostIds.contains(post.postId),
-                  isAdmin: _isAdmin,
-                  canDelete: canDelete,
-                  onLike: () => _toggleLike(post),
-                  onComment: () => _showCommentDialog(post),
-                  onDelete: () => _deletePost(post),
-                );
-              },
             ),
-            if (_isLoadingMore)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(
-                  child: CircularProgressIndicator(color: kAmber),
-                ),
-              ),
-            if (!_hasMore && _posts.isNotEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(
-                  child: Text(
-                    'Đã tải hết bài viết',
-                    style: TextStyle(color: kGrey),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
     );
   }
 }
