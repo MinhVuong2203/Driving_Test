@@ -47,6 +47,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   final List<PostModel> _posts = <PostModel>[];
 
+  final Map<String, GlobalKey> _postKeys = <String, GlobalKey>{};
+
   final Set<String> _likedPostIds = <String>{};
   final Map<String, int> _localLikeCounts = <String, int>{};
   final Set<String> _likingPostIds = <String>{};
@@ -667,7 +669,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     return result == true;
   }
 
-  Future<void> _openNotificationComment(NotificationModel item) async {
+  Future<void> _openNotificationPostAndComments(NotificationModel item) async {
     await _notificationApiRepo.markAsRead(item.notificationId);
 
     if (item.postId.isEmpty) {
@@ -682,20 +684,23 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     PostModel? targetPost;
 
     try {
-      targetPost = _posts.firstWhere(
+      final existingIndex = _posts.indexWhere(
             (post) => post.postId == item.postId,
       );
-    } catch (_) {
-      try {
+
+      if (existingIndex != -1) {
+        targetPost = _posts[existingIndex];
+      } else {
         targetPost = await _postApiRepo.getPostById(item.postId);
-      } catch (e) {
-        debugPrint('Không tìm thấy bài viết từ thông báo: $e');
-        targetPost = null;
       }
+    } catch (e) {
+      debugPrint('Không tìm thấy bài viết từ thông báo: $e');
+      targetPost = null;
     }
 
     if (!mounted) return;
 
+    // Đóng bottom sheet thông báo trước
     Navigator.pop(context);
 
     if (targetPost == null) {
@@ -705,7 +710,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       return;
     }
 
-    await Future.delayed(const Duration(milliseconds: 250));
+    // Đưa bài viết được nhấn lên đầu bảng tin
+    setState(() {
+      _posts.removeWhere((post) => post.postId == targetPost!.postId);
+      _posts.insert(0, targetPost!);
+      _localLikeCounts[targetPost!.postId] = targetPost!.likeCount;
+    });
+
+    // Chờ UI render lại
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    if (!mounted) return;
+
+    // Scroll lên đầu để user thấy nội dung bài viết
+    if (_scrollController.hasClients) {
+      await _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    }
+
+    // Cho user nhìn thấy bài viết một chút rồi mới mở bình luận
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     if (!mounted) return;
 
@@ -803,8 +830,11 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                           return InkWell(
                             borderRadius: BorderRadius.circular(16),
+                            // onTap: () async {
+                            //   await _openNotificationComment(item);
+                            // },
                             onTap: () async {
-                              await _openNotificationComment(item);
+                              await _openNotificationPostAndComments(item);
                             },
                             child: Container(
                               padding: const EdgeInsets.all(14),
@@ -941,14 +971,24 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                         (currentUserId != null &&
                             post.authorId == currentUserId);
 
-                    return PostCard(
-                      post: post.copyWith(likeCount: currentLikeCount),
-                      isLiked: _likedPostIds.contains(post.postId),
-                      isAdmin: _isAdmin,
-                      canDelete: canDelete,
-                      onLike: () => _toggleLike(post),
-                      onComment: () => _showCommentDialog(post),
-                      onDelete: () => _deletePost(post),
+                    final displayPost = post.copyWith(likeCount: currentLikeCount);
+
+                    final postKey = _postKeys.putIfAbsent(
+                      post.postId,
+                          () => GlobalKey(),
+                    );
+
+                    return Container(
+                      key: postKey,
+                      child: PostCard(
+                        post: displayPost,
+                        isLiked: _likedPostIds.contains(post.postId),
+                        isAdmin: _isAdmin,
+                        canDelete: canDelete,
+                        onLike: () => _toggleLike(displayPost),
+                        onComment: () => _showCommentDialog(displayPost),
+                        onDelete: () => _deletePost(displayPost),
+                      ),
                     );
                   }),
                   if (_isLoadingMore)
