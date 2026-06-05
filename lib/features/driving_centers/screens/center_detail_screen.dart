@@ -1,15 +1,12 @@
 import 'package:driving_test_prep/data/models/driving_center_model.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 class CenterDetailScreen extends StatelessWidget {
   final DrivingCenter center;
 
-  const CenterDetailScreen({
-    super.key,
-    required this.center,
-  });
+  const CenterDetailScreen({super.key, required this.center});
 
   bool _isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -17,19 +14,11 @@ class CenterDetailScreen extends StatelessWidget {
   Color _backgroundColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkBackground : AppColors.lightBackground;
 
-  Color _surfaceColor(BuildContext context) =>
-      _isDark(context) ? AppColors.darkSurface : AppColors.lightSurface;
-
   Color _cardColor(BuildContext context) =>
       _isDark(context) ? AppColors.cardDark : AppColors.lightSurface;
 
   Color _primaryTextColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-
-  Color _secondaryTextColor(BuildContext context) =>
-      _isDark(context)
-          ? AppColors.darkTextSecondary
-          : AppColors.lightTextSecondary;
 
   Color _mutedTextColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkTextMuted : AppColors.lightTextMuted;
@@ -37,24 +26,89 @@ class CenterDetailScreen extends StatelessWidget {
   Color _borderColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkBorder : AppColors.lightBorder;
 
-  Color _chipBackgroundColor(BuildContext context) =>
-      _isDark(context)
-          ? AppColors.darkChipBackground
-          : AppColors.lightChipBackground;
+  Color _chipBackgroundColor(BuildContext context) => _isDark(context)
+      ? AppColors.darkChipBackground
+      : AppColors.lightChipBackground;
 
   Color _chipTextColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkChipText : AppColors.lightChipText;
 
   Color _placeholderColor(BuildContext context) =>
-      _isDark(context)
-          ? AppColors.darkInputBackground
-          : AppColors.primaryLight;
+      _isDark(context) ? AppColors.darkInputBackground : AppColors.primaryLight;
 
   Color _placeholderIconColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkIconDisabled : AppColors.iconLight;
 
   Color _shadowColor(BuildContext context) =>
       _isDark(context) ? AppColors.darkShadow : AppColors.lightShadow;
+
+  Future<void> _openAddressInMaps(BuildContext context) async {
+    final address = center.displayAddress.trim();
+    if (address.isEmpty) return;
+
+    final uri = Uri.https('www.google.com', '/maps/search/', {
+      'api': '1',
+      'query': address,
+    });
+
+    await _launchExternal(context, uri, 'Khong mo duoc Google Maps.');
+  }
+
+  Future<void> _openWebsite(BuildContext context) async {
+    final website = center.website.trim();
+    if (website.isEmpty) return;
+
+    final normalizedUrl = website.startsWith(RegExp(r'https?://'))
+        ? website
+        : 'https://$website';
+    final uri = Uri.tryParse(normalizedUrl);
+
+    if (uri == null || !uri.hasScheme) {
+      _showMessage(context, 'Lien ket website khong hop le.');
+      return;
+    }
+
+    await _launchExternal(context, uri, 'Khong mo duoc website.');
+  }
+
+  Future<void> _callPhoneNumber(BuildContext context) async {
+    final phoneNumber = center.phoneNumber.trim().replaceAll(
+      RegExp(r'[\s().-]'),
+      '',
+    );
+    if (phoneNumber.isEmpty) return;
+
+    await _launchExternal(
+      context,
+      Uri(scheme: 'tel', path: phoneNumber),
+      'Khong mo duoc ung dung goi dien.',
+    );
+  }
+
+  Future<void> _launchExternal(
+    BuildContext context,
+    Uri uri,
+    String errorMessage,
+  ) async {
+    try {
+      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      if (!context.mounted) return;
+      if (!opened) {
+        _showMessage(context, errorMessage);
+      }
+    } catch (_) {
+      if (context.mounted) {
+        _showMessage(context, errorMessage);
+      }
+    }
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,12 +160,13 @@ class CenterDetailScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(18),
       child: center.hasPhoto
           ? Image.network(
-        center.photoUrl,
-        height: 230,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _imagePlaceholder(context),
-      )
+              center.photoUrl,
+              height: 230,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  _imagePlaceholder(context),
+            )
           : _imagePlaceholder(context),
     );
   }
@@ -163,11 +218,7 @@ class CenterDetailScreen extends StatelessWidget {
                   '${center.reviewCount} đánh giá',
                 ),
               if (center.city.isNotEmpty)
-                _chip(
-                  context,
-                  Icons.location_city,
-                  center.city,
-                ),
+                _chip(context, Icons.location_city, center.city),
             ],
           ),
           const SizedBox(height: 16),
@@ -176,6 +227,9 @@ class CenterDetailScreen extends StatelessWidget {
             icon: Icons.location_on_outlined,
             label: 'Địa chỉ',
             value: center.displayAddress,
+            onTap: center.displayAddress.trim().isNotEmpty
+                ? () => _openAddressInMaps(context)
+                : null,
           ),
           if (center.district.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -261,20 +315,14 @@ class CenterDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _card(
-      BuildContext context, {
-        required Widget child,
-      }) {
+  Widget _card(BuildContext context, {required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: _cardColor(context),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: _borderColor(context),
-          width: 1,
-        ),
+        border: Border.all(color: _borderColor(context), width: 1),
         boxShadow: [
           BoxShadow(
             blurRadius: 14,
@@ -287,11 +335,7 @@ class CenterDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _chip(
-      BuildContext context,
-      IconData icon,
-      String text,
-      ) {
+  Widget _chip(BuildContext context, IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -301,11 +345,7 @@ class CenterDetailScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 15,
-            color: _chipTextColor(context),
-          ),
+          Icon(icon, size: 15, color: _chipTextColor(context)),
           const SizedBox(width: 5),
           Text(
             text,
@@ -320,20 +360,36 @@ class CenterDetailScreen extends StatelessWidget {
     );
   }
 
+  VoidCallback? _actionForInfoRow(BuildContext context, IconData icon) {
+    if (icon == Icons.location_on_outlined &&
+        center.displayAddress.trim().isNotEmpty) {
+      return () => _openAddressInMaps(context);
+    }
+
+    if (icon == Icons.phone_outlined && center.hasPhone) {
+      return () => _callPhoneNumber(context);
+    }
+
+    if (icon == Icons.language_outlined && center.hasWebsite) {
+      return () => _openWebsite(context);
+    }
+
+    return null;
+  }
+
   Widget _infoRow({
     required BuildContext context,
     required IconData icon,
     required String label,
     required String value,
+    VoidCallback? onTap,
   }) {
-    return Row(
+    final inferredOnTap = onTap ?? _actionForInfoRow(context, icon);
+    final isActionable = inferredOnTap != null;
+    final row = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 22,
-          color: AppColors.primary,
-        ),
+        Icon(icon, size: 22, color: AppColors.primary),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -351,7 +407,9 @@ class CenterDetailScreen extends StatelessWidget {
               Text(
                 value.isNotEmpty ? value : 'Chưa có dữ liệu',
                 style: TextStyle(
-                  color: _primaryTextColor(context),
+                  color: isActionable
+                      ? AppColors.primary
+                      : _primaryTextColor(context),
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   height: 1.35,
@@ -360,7 +418,29 @@ class CenterDetailScreen extends StatelessWidget {
             ],
           ),
         ),
+        if (isActionable) ...[
+          const SizedBox(width: 8),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 22,
+            color: _mutedTextColor(context),
+          ),
+        ],
       ],
+    );
+
+    if (!isActionable) return row;
+
+    return Material(
+      color: AppColors.transparent,
+      child: InkWell(
+        onTap: inferredOnTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: row,
+        ),
+      ),
     );
   }
 }

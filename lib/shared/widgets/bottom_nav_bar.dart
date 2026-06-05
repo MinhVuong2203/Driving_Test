@@ -145,7 +145,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<String> _labels = const [
     'Đào tạo',
-    'Quét',
+    'AI nhận diện',
     'Ôn thi',
     'Diễn đàn',
     'Thông tin',
@@ -259,7 +259,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
               child: const Icon(Icons.menu_book, color: AppColors.iconDark),
             ),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
 
           bottomNavigationBar: SafeArea(
             bottom: false,
@@ -291,7 +292,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: currentIndex == 2 ? Colors.blue : Colors.grey,
+                            color: currentIndex == 2
+                                ? Colors.blue
+                                : Colors.grey,
                           ),
                         ),
                       ),

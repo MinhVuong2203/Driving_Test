@@ -498,10 +498,12 @@ class _InfoScreenState extends State<InfoScreen> {
                       packages.length - 1,
                     );
 
+                    final pagerHeight = _vipPackagePagerHeight(context);
+
                     return Column(
                       children: [
                         SizedBox(
-                          height: 350,
+                          height: pagerHeight,
                           child: PageView.builder(
                             itemCount: packages.length,
                             onPageChanged: (index) {
@@ -583,6 +585,13 @@ class _InfoScreenState extends State<InfoScreen> {
       ),
     );
   }
+}
+
+double _vipPackagePagerHeight(BuildContext context) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1);
+  final scaledExtra = (textScale - 1).clamp(0.0, 1.0) * 180;
+
+  return 420 + scaledExtra;
 }
 
 class _ProfileLinksCard extends StatelessWidget {
