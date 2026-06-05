@@ -667,6 +667,51 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     return result == true;
   }
 
+  Future<void> _openNotificationComment(NotificationModel item) async {
+    await _notificationApiRepo.markAsRead(item.notificationId);
+
+    if (item.postId.isEmpty) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Thông báo này không có bài viết liên kết')),
+      );
+      return;
+    }
+
+    PostModel? targetPost;
+
+    try {
+      targetPost = _posts.firstWhere(
+            (post) => post.postId == item.postId,
+      );
+    } catch (_) {
+      try {
+        targetPost = await _postApiRepo.getPostById(item.postId);
+      } catch (e) {
+        debugPrint('Không tìm thấy bài viết từ thông báo: $e');
+        targetPost = null;
+      }
+    }
+
+    if (!mounted) return;
+
+    Navigator.pop(context);
+
+    if (targetPost == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không tìm thấy bài viết')),
+      );
+      return;
+    }
+
+    await Future.delayed(const Duration(milliseconds: 250));
+
+    if (!mounted) return;
+
+    await _showCommentDialog(targetPost);
+  }
+
   Future<void> _showNotifications() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -759,9 +804,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           return InkWell(
                             borderRadius: BorderRadius.circular(16),
                             onTap: () async {
-                              await _notificationApiRepo.markAsRead(
-                                item.notificationId,
-                              );
+                              await _openNotificationComment(item);
                             },
                             child: Container(
                               padding: const EdgeInsets.all(14),
