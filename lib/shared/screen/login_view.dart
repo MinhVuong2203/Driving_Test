@@ -189,35 +189,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void facebookSignIn() async {
-    if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final credential = await _socialAuthRepo.signInWithFacebook();
-      if (!mounted) return;
-
-      final user = credential.user;
-      if (user != null) {
-        await _handleLoginSuccess(user);
-        return;
-      }
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.message ?? 'Đăng nhập Facebook thất bại.';
-      });
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -348,10 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
               navy: _kNavy,
             ),
             const SizedBox(height: 16),
-            OtherLoginMethod(
-              onGoogleTap: googleSignIn,
-              onFacebookTap: facebookSignIn,
-            ),
+            OtherLoginMethod(onGoogleTap: googleSignIn),
             OrDivider(grey: subTextColor, textColor: subTextColor),
             const SizedBox(height: 16),
             SecondaryActionButton(
