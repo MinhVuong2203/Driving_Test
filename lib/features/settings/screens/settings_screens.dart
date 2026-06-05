@@ -9,7 +9,6 @@ import '../widgets/exam_version_section.dart';
 import '../widgets/gplx_selector_tile.dart';
 import '../widgets/scoring_mode_section.dart';
 import '../widgets/vibration_toggle_tile.dart';
-import '../widgets/delete_history_tile.dart';
 import '../widgets/settings_section_header.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -180,31 +179,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
           const SizedBox(height: 16),
-
-          const SettingsSectionHeader(title: 'DỮ LIỆU'),
-          DeleteHistoryTile(onTap: () => _showDeleteConfirmDialog(context)),
-        ],
-      ),
-    );
-  }
-
-  void _showDeleteConfirmDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Xoá dữ liệu lịch sử'),
-        content: const Text(
-          'Bạn có chắc chắn muốn xoá tất cả dữ liệu lịch sử ôn tập và làm bài thi thử?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Huỷ', style: TextStyle(color: Colors.blue)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Xoá', style: TextStyle(color: Colors.red)),
-          ),
         ],
       ),
     );

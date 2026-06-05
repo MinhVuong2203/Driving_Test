@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 
+import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
+
 class GplxTypeScreen extends StatefulWidget {
   final String currentSelected;
 
@@ -73,19 +75,36 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDark ? AppColors.darkBackground : AppColors.lightBackground;
+    final appBarColor =
+        isDark ? AppColors.darkAppBarBackground : AppColors.lightAppBarBackground;
+    final itemBackgroundColor =
+        isDark ? AppColors.cardDark : AppColors.cardLight;
+    final dividerColor =
+        isDark ? AppColors.darkDivider : AppColors.lightDivider;
+    final primaryTextColor =
+        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final secondaryTextColor =
+        isDark ? AppColors.darkTextMuted : AppColors.lightTextSecondary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E),
+      backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1C1C1E),
+        backgroundColor: appBarColor,
         elevation: 0,
+        systemOverlayStyle: isDark
+            ? SystemUiOverlayStyle.light.copyWith(statusBarColor: appBarColor)
+            : SystemUiOverlayStyle.dark.copyWith(statusBarColor: appBarColor),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.blue),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Chọn loại GPLX',
           style: TextStyle(
-            color: Colors.white,
+            color: primaryTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -110,8 +129,8 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
                       padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
                       child: Text(
                         group['group'] as String,
-                        style: const TextStyle(
-                          color: Colors.grey,
+                        style: TextStyle(
+                          color: secondaryTextColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.5,
@@ -132,7 +151,7 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
                                       () => _selected = item['code']!);
                             },
                             child: Container(
-                              color: const Color(0xFF2C2C2E),
+                              color: itemBackgroundColor,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 14),
                               child: Row(
@@ -144,8 +163,8 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
                                       children: [
                                         Text(
                                           item['code']!,
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          style: TextStyle(
+                                            color: primaryTextColor,
                                             fontSize: 17,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -153,8 +172,8 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
                                         const SizedBox(height: 2),
                                         Text(
                                           item['desc']!,
-                                          style: const TextStyle(
-                                            color: Colors.white54,
+                                          style: TextStyle(
+                                            color: secondaryTextColor,
                                             fontSize: 14,
                                           ),
                                           maxLines: 2,
@@ -166,15 +185,15 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
                                   ),
                                   if (isSelected)
                                     const Icon(Icons.check,
-                                        color: Colors.blue, size: 22),
+                                        color: AppColors.primary, size: 22),
                                 ],
                               ),
                             ),
                           ),
                           if (!isLast)
-                            const Divider(
+                            Divider(
                               height: 1,
-                              color: Color(0xFF3A3A3C),
+                              color: dividerColor,
                               indent: 16,
                             ),
                         ],
@@ -195,7 +214,7 @@ class _GplxTypeScreenState extends State<GplxTypeScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context, _selected),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
