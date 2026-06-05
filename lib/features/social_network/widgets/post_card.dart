@@ -189,13 +189,14 @@ class PostCard extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () => _showMoreMenu(context),
-                icon: Icon(
-                  Icons.more_horiz_rounded,
-                  color: subTextColor,
+              if (canDelete)
+                IconButton(
+                  onPressed: () => _showMoreMenu(context),
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
+                    color: subTextColor,
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 12),
