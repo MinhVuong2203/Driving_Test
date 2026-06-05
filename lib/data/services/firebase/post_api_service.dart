@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
 import 'auth_api_headers.dart';
@@ -202,6 +203,8 @@ class PostApiService {
     if (res.statusCode != 200) {
       throw Exception('Failed to load posts: ${res.body}');
     }
+
+    debugPrint('PAGED POSTS RAW: ${res.body}');
 
     final List data = jsonDecode(res.body) as List;
 
