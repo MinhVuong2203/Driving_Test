@@ -193,8 +193,13 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     await _loadInitialPosts();
   }
 
-  Future<({String authorId, String authorName, String authorAvatar})>
-  _getAuthorInfo() async {
+  Future<({
+  String authorId,
+  String authorName,
+  String authorAvatar,
+  bool authorIsVip,
+  String authorVipName,
+  })> _getAuthorInfo() async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -204,10 +209,19 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     const defaultAvatar =
         'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
 
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final data = userDoc.data();
+
     return (
-      authorId: user.uid,
-      authorName: user.displayName ?? user.email ?? 'Người dùng',
-      authorAvatar: user.photoURL ?? defaultAvatar,
+    authorId: user.uid,
+    authorName: user.displayName ?? user.email ?? 'Người dùng',
+    authorAvatar: user.photoURL ?? defaultAvatar,
+    authorIsVip: data?['isVip'] == true,
+    authorVipName: (data?['vipName'] ?? 'VIP').toString(),
     );
   }
 
