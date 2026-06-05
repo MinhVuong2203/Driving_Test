@@ -33,14 +33,19 @@ class AccountStatusGate extends StatelessWidget {
           stream: FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)
-              .snapshots(),
+              .snapshots(includeMetadataChanges: true),
           builder: (context, userSnapshot) {
             if (userSnapshot.connectionState == ConnectionState.waiting &&
                 !userSnapshot.hasData) {
               return const _AccountStatusLoading();
             }
 
-            final data = userSnapshot.data?.data();
+            final userDoc = userSnapshot.data;
+            if (userDoc == null || !userDoc.exists) {
+              return const _AccountStatusLoading();
+            }
+
+            final data = userDoc.data();
             final status = data?['status']?.toString().trim().toLowerCase();
             final unlockAt = _parseUnlockAt(data?['unlockAt']);
 
@@ -48,12 +53,16 @@ class AccountStatusGate extends StatelessWidget {
               return child;
             }
 
+            if (userDoc.metadata.isFromCache) {
+              return const _AccountStatusLoading();
+            }
+
             if (status == 'locked' &&
                 unlockAt != null &&
                 unlockAt.isBefore(DateTime.now()) &&
                 userSnapshot.data != null) {
               return _AccountAutoUnlock(
-                userRef: userSnapshot.data!.reference,
+                userRef: userDoc.reference,
                 featureName: featureName,
                 child: child,
               );
