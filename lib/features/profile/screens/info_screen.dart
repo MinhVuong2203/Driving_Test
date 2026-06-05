@@ -17,6 +17,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:driving_test_prep/features/profile/screens/feedback_screen.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -561,6 +562,11 @@ class _InfoScreenState extends State<InfoScreen> {
               textColor: textColor,
               mutedColor: mutedColor,
               onTermsTap: () => _openUrl(AppConfig.termsOfUseUrl),
+              onFeedbackTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+                );
+              },
               onContactTap: () => _openUrl(AppConfig.developmentTeamUrl),
               onPrivacyTap: () => _openUrl(AppConfig.privacyPolicyUrl),
             ),
@@ -584,6 +590,7 @@ class _ProfileLinksCard extends StatelessWidget {
   final Color textColor;
   final Color mutedColor;
   final VoidCallback onTermsTap;
+  final VoidCallback onFeedbackTap;
   final VoidCallback onContactTap;
   final VoidCallback onPrivacyTap;
 
@@ -592,6 +599,7 @@ class _ProfileLinksCard extends StatelessWidget {
     required this.textColor,
     required this.mutedColor,
     required this.onTermsTap,
+    required this.onFeedbackTap,
     required this.onContactTap,
     required this.onPrivacyTap,
   });
@@ -616,6 +624,16 @@ class _ProfileLinksCard extends StatelessWidget {
             textColor: textColor,
             mutedColor: mutedColor,
             onTap: onTermsTap,
+          ),
+          _ProfileDivider(isDark: isDark),
+          _ProfileLinkTile(
+            icon: Icons.feedback_rounded,
+            iconColor: AppColors.primary,
+            title: 'Báo lỗi, gửi góp ý',
+            subtitle: 'Gửi phản hồi hoặc báo cáo sự cố ứng dụng',
+            textColor: textColor,
+            mutedColor: mutedColor,
+            onTap: onFeedbackTap,
           ),
           _ProfileDivider(isDark: isDark),
           _ProfileLinkTile(
