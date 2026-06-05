@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class OtherLoginMethod extends StatelessWidget {
-  const OtherLoginMethod({super.key, this.onGoogleTap, this.onFacebookTap});
+  const OtherLoginMethod({super.key, this.onGoogleTap});
 
   final VoidCallback? onGoogleTap;
-  final VoidCallback? onFacebookTap;
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +47,6 @@ class OtherLoginMethod extends StatelessWidget {
                 icon: Icons.g_mobiledata_rounded,
                 label: 'Google',
                 onTap: onGoogleTap,
-                backgroundColor: buttonBg,
-                textColor: textColor,
-                borderColor: borderColor,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _LoginMethodButton(
-                icon: Icons.facebook_rounded,
-                label: 'Facebook',
-                onTap: onFacebookTap,
                 backgroundColor: buttonBg,
                 textColor: textColor,
                 borderColor: borderColor,

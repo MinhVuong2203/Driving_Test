@@ -11,7 +11,6 @@ import 'package:driving_test_prep/shared/widgets/account_status_gate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../../data/repository/google_auth_repository.dart';
 import '../../../data/services/firebase/fcm_service.dart';
 import '../../../data/repository/social_auth_repository.dart';
 import '../widgets/other_login_method.dart';
@@ -134,33 +133,6 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
       if (!mounted) return;
       setState(() {
         _error = e.message ?? 'Đăng nhập Google thất bại.';
-      });
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  void facebookSignIn() async {
-    if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final credential = await _socialAuthRepo.signInWithFacebook();
-      if (!mounted) return;
-
-      if (credential.user != null) {
-        return;
-      }
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.message ?? 'Đăng nhập Facebook thất bại.';
       });
     } finally {
       if (mounted) {
@@ -300,10 +272,7 @@ class _EmailLoginScreenState extends State<EmailLoginScreen> {
               navy: _kNavy,
             ),
             const SizedBox(height: 16),
-            OtherLoginMethod(
-              onGoogleTap: googleSignIn,
-              onFacebookTap: facebookSignIn,
-            ),
+            OtherLoginMethod(onGoogleTap: googleSignIn),
             const OrDivider(grey: _kGrey),
             const SizedBox(height: 16),
             SecondaryActionButton(
