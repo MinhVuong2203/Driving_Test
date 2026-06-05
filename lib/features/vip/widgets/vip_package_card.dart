@@ -43,7 +43,7 @@ class VipPackageCard extends StatelessWidget {
           border: Border.all(color: themeColor, width: 1.4),
           boxShadow: [
             BoxShadow(
-              color: themeColor.withOpacity(0.16),
+              color: themeColor.withValues(alpha: 0.16),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
@@ -58,7 +58,7 @@ class VipPackageCard extends StatelessWidget {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: themeColor.withOpacity(0.12),
+                    color: themeColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -86,12 +86,16 @@ class VipPackageCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  _formatPrice(package.vipPrice),
-                  style: TextStyle(
-                    color: themeColor,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
+                Expanded(
+                  child: Text(
+                    _formatPrice(package.vipPrice),
+                    style: TextStyle(
+                      color: themeColor,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (package.priceInline != null &&
@@ -123,6 +127,8 @@ class VipPackageCard extends StatelessWidget {
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -145,6 +151,8 @@ class VipPackageCard extends StatelessWidget {
                               fontSize: 13.5,
                               height: 1.25,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -188,7 +196,7 @@ class VipPackageCard extends StatelessWidget {
         buffer.write('.');
       }
     }
-    return '${buffer}đ';
+    return '$bufferđ';
   }
 
   static Color _themeColor(String theme) {
