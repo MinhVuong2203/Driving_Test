@@ -17,6 +17,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:driving_test_prep/features/profile/screens/feedback_screen.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({super.key});
@@ -497,10 +498,12 @@ class _InfoScreenState extends State<InfoScreen> {
                       packages.length - 1,
                     );
 
+                    final pagerHeight = _vipPackagePagerHeight(context);
+
                     return Column(
                       children: [
                         SizedBox(
-                          height: 350,
+                          height: pagerHeight,
                           child: PageView.builder(
                             itemCount: packages.length,
                             onPageChanged: (index) {
@@ -561,6 +564,11 @@ class _InfoScreenState extends State<InfoScreen> {
               textColor: textColor,
               mutedColor: mutedColor,
               onTermsTap: () => _openUrl(AppConfig.termsOfUseUrl),
+              onFeedbackTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+                );
+              },
               onContactTap: () => _openUrl(AppConfig.developmentTeamUrl),
               onPrivacyTap: () => _openUrl(AppConfig.privacyPolicyUrl),
             ),
@@ -579,11 +587,19 @@ class _InfoScreenState extends State<InfoScreen> {
   }
 }
 
+double _vipPackagePagerHeight(BuildContext context) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1);
+  final scaledExtra = (textScale - 1).clamp(0.0, 1.0) * 180;
+
+  return 420 + scaledExtra;
+}
+
 class _ProfileLinksCard extends StatelessWidget {
   final bool isDark;
   final Color textColor;
   final Color mutedColor;
   final VoidCallback onTermsTap;
+  final VoidCallback onFeedbackTap;
   final VoidCallback onContactTap;
   final VoidCallback onPrivacyTap;
 
@@ -592,6 +608,7 @@ class _ProfileLinksCard extends StatelessWidget {
     required this.textColor,
     required this.mutedColor,
     required this.onTermsTap,
+    required this.onFeedbackTap,
     required this.onContactTap,
     required this.onPrivacyTap,
   });
@@ -616,6 +633,16 @@ class _ProfileLinksCard extends StatelessWidget {
             textColor: textColor,
             mutedColor: mutedColor,
             onTap: onTermsTap,
+          ),
+          _ProfileDivider(isDark: isDark),
+          _ProfileLinkTile(
+            icon: Icons.feedback_rounded,
+            iconColor: AppColors.primary,
+            title: 'Báo lỗi, gửi góp ý',
+            subtitle: 'Gửi phản hồi hoặc báo cáo sự cố ứng dụng',
+            textColor: textColor,
+            mutedColor: mutedColor,
+            onTap: onFeedbackTap,
           ),
           _ProfileDivider(isDark: isDark),
           _ProfileLinkTile(

@@ -69,31 +69,11 @@ class PostHeader extends StatelessWidget {
                     ),
                   ),
                   if (post.authorIsVip) ...[
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(999),
-                        gradient: const LinearGradient(
-                          colors: <Color>[
-                            Color(0xFFF59E0B),
-                            Color(0xFFFACC15),
-                          ],
-                        ),
-                      ),
-                      child: Text(
-                        post.authorVipName.isNotEmpty
-                            ? post.authorVipName
-                            : 'VIP',
-                        style: const TextStyle(
-                          color: Color(0xFF111827),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                    const SizedBox(width: 5),
+                    const Icon(
+                      Icons.verified,
+                      color: Color(0xFF1877F2),
+                      size: 18,
                     ),
                   ],
                 ],

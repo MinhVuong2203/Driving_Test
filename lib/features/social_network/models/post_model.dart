@@ -143,7 +143,8 @@ class PostModel {
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
       address: json['address']?.toString() ?? '',
-      authorIsVip: json['authorIsVip'] == true,
+      authorIsVip: json['authorIsVip'] == true ||
+          json['authorIsVip']?.toString().toLowerCase() == 'true',
       authorVipName: json['authorVipName']?.toString() ?? '',
     );
   }

@@ -155,13 +155,28 @@ class PostCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      post.authorName,
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Flexible(
+                          child: Text(
+                            post.authorName,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        if (post.authorIsVip) ...[
+                          const SizedBox(width: 5),
+                          const Icon(
+                            Icons.verified,
+                            color: Color(0xFF1877F2),
+                            size: 18,
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -174,13 +189,14 @@ class PostCard extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () => _showMoreMenu(context),
-                icon: Icon(
-                  Icons.more_horiz_rounded,
-                  color: subTextColor,
+              if (canDelete)
+                IconButton(
+                  onPressed: () => _showMoreMenu(context),
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
+                    color: subTextColor,
+                  ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 12),

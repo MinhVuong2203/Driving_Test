@@ -222,11 +222,12 @@
     "ofRankA": 1,
     "ofRankB1": 1,
     "is_critical": 1,
-    "correct_answer": "D",
-    "explanation": " Chỉ được phép đua xe khi có sự cho phép của cơ quan chức năng nhằm đảm bảo an toàn, trật tự và không gây nguy hiểm cho người và phương tiện khác.",
+    "correct_answer": "C",
+    "explanation": "Chỉ được phép đua xe khi có sự cho phép của cơ quan chức năng nhằm đảm bảo an toàn, trật tự và không gây nguy hiểm cho người và phương tiện khác.",
     "answer_a": "Trên đường phố không có người qua lại.",
     "answer_b": "Được người dân ủng hộ.",
     "answer_c": "Được cơ quan có thẩm quyền cấp phép."
+
   },
   {
     "id": 22,

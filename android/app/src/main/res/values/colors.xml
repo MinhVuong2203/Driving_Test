@@ -1,3 +1,4 @@
 <resources>
     <color name="notification_icon_color">#6366F1</color>
+    <color name="splash_background">#6366F1</color>
 </resources>
