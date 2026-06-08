@@ -121,11 +121,11 @@ Có thể tạo file `dart_defines.env` ở thư mục gốc theo mẫu trên. F
 
 Web admin/public: https://drivingtestadminfe-production.up.railway.app/
 
-| Loại tài khoản      | Email/Tên đăng nhập | Mật khẩu | Ghi chú |
-| ------------------- | ------------------- | -------- | ------- |
-| Tài khoản thường    |                     |          |         |
-| Tài khoản VIP       |                     |          |         |
-| Tài khoản web/admin |                     |          |         |
+| Loại tài khoản      | Email/Tên đăng nhập       | Mật khẩu |
+| ------------------- | ------------------------- | -------- |
+| Tài khoản thường    | 1982donua@gmail.com       | 123123   |
+| Tài khoản VIP       | minhnguyen14536@gmail.com | 123123   |
+| Tài khoản web/admin | vuonghihihihi@gmail.com   | 123123   |
 
 ## Cấu hình quan trọng
 
@@ -143,6 +143,45 @@ Web admin/public: https://drivingtestadminfe-production.up.railway.app/
 - Cần kết nối mạng để dùng đăng nhập Firebase, mạng xã hội, VIP/PayOS, đồng bộ vi phạm, nhận diện biển báo, upload ảnh, thông báo và các API backend.
 - Tính năng đăng ký OTP chỉ gửi được email khi truyền đúng `SENDER_EMAIL` và `APP_PASSWORD`.
 - Google/Facebook Login cần cấu hình đúng SHA-1/SHA-256, OAuth redirect và app id/token trên Firebase Console/Facebook Developer nếu đổi package name hoặc Firebase project.
-- Nếu chạy iOS, cần kiểm tra/bổ sung quyền trong `ios/Runner/Info.plist` cho camera, thư viện ảnh và vị trí vì app có dùng `image_picker` và `geolocator`.
 - Nếu build Android lỗi Gradle/JVM, kiểm tra lại Java đang dùng là JDK 17 trở lên.
 - Dữ liệu câu hỏi, đề thi, hạng bằng, biển báo và tỉnh/thành được đóng gói trong thư mục `assets/json` và ảnh trong `assets/images`; không xóa các asset đã khai báo trong `pubspec.yaml`.
+
+## Project sử dụng Firebase và SQLite
+
+Nhóm đã cấu hình sẵn file `google-services.json` cho Android.
+Thông tin collection/document mẫu cần có để hệ thống hoạt động:
+
+### Firebase Firestore
+
+| Collection           | Mục đích lưu trữ                                           |
+| -------------------- | ---------------------------------------------------------- |
+| `users`              | Thông tin người dùng, email, vai trò, trạng thái tài khoản |
+| `posts`              | Bài viết cộng đồng của người dùng                          |
+| `comments`           | Bình luận trong các bài viết                               |
+| `vipPackages`        | Danh sách gói VIP, giá, thời hạn, trạng thái               |
+| `paymentOrders`      | Thông tin giao dịch thanh toán VIP                         |
+| `notifications`      | Thông báo gửi đến người dùng                               |
+| `drivingCenters`     | Thông tin trung tâm đào tạo lái xe                         |
+| `Traffic_violations` | Dữ liệu lỗi vi phạm giao thông                             |
+| `moderationKeywords` | Từ khóa dùng để kiểm duyệt nội dung                        |
+
+### SQLite local
+
+| Bảng                  | Mục đích lưu trữ                                            |
+| --------------------- | ----------------------------------------------------------- |
+| `questions`           | Nội dung 600 câu hỏi GPLX                                   |
+| `topics`              | Danh sách chủ đề ôn tập                                     |
+| `ranks`               | Các hạng giấy phép lái xe                                   |
+| `exam_sets`           | Thông tin các bộ đề thi                                     |
+| `exam_set_questions`  | Liên kết câu hỏi với từng bộ đề                             |
+| `exam_history`        | Lịch sử làm bài thi của người dùng                          |
+| `user_answers`        | Đáp án người dùng đã chọn                                   |
+| `wrong_questions`     | Các câu hỏi người dùng trả lời sai                          |
+| `saved_questions`     | Các câu hỏi người dùng đã lưu                               |
+| `traffic_signs`       | Dữ liệu biển báo giao thông                                 |
+| `traffic_violations`  | Dữ liệu lỗi vi phạm giao thông                              |
+| `driving_centers`     | Dữ liệu trung tâm đào tạo lái xe                            |
+| `recognition_history` | Lịch sử nhận diện biển báo bằng AI                          |
+| `setting`             | Cấu hình cá nhân như hạng GPLX, giao diện, chế độ chấm điểm |
+
+Script tạo database, Dữ liệu mẫu cần thiết, File cấu hình kết nối đã setup sẵn trong project
