@@ -76,31 +76,29 @@ flutter pub get
 flutter devices
 ```
 
+Sau đó chọn thiết bị phù hợp
+
 5. Chạy Android:
 
 ```bash
-flutter run -d android --dart-define-from-file=dart_defines.env
+flutter run --dart-define-from-file=dart_defines.env
 ```
 
-6. Chạy web:
+Lưu ý: phải có file dart_defines.env trước khi chạy (đặt ngang hàng với lib)
 
-```bash
-flutter run -d chrome --dart-define-from-file=dart_defines.env
-```
-
-7. Build APK release:
+6. Build APK release:
 
 ```bash
  flutter build apk --release --split-per-abi --dart-define-from-file=dart_defines.env
 ```
 
-8. Nếu thay đổi schema Drift/database hoặc file có annotation cần generate lại:
+7. Nếu thay đổi schema Drift/database hoặc file có annotation cần generate lại:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-9. Nếu thay icon app:
+8. Nếu thay icon app:
 
 ```bash
 dart run flutter_launcher_icons
