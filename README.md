@@ -2,6 +2,11 @@
 
 Ứng dụng Flutter hỗ trợ ôn tập lý thuyết giấy phép lái xe, luyện đề, tra cứu biển báo, tra cứu lỗi vi phạm giao thông, bản đồ trung tâm đào tạo, diễn đàn nội bộ, tài khoản VIP, thông báo nhắc câu sai và nhận diện biển báo bằng AI thông qua backend.
 
+## Tài liệu báo cáo
+
+Bạn có thể xem file báo cáo tại đây:
+[Xem file báo cáo PDF](./Kiến%20thức%20lái%20xe%20word.pdf)
+
 ## Công nghệ sử dụng
 
 - Flutter cho mobile/web.
