@@ -145,7 +145,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   final List<String> _labels = const [
     'Đào tạo',
-    'AI nhận diện',
+    'Nhận diện',
     'Ôn thi',
     'Diễn đàn',
     'Thông tin',
