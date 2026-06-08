@@ -1,143 +1,148 @@
-ÔN LUYỆN GPLX
-Ứng dụng mobile phục vụ cho ôn thi GPLX với 600 câu hỏi phục vụ cho tất cả các loại bằng lái
+# Kiến thức lái xe 600
+
+Ứng dụng Flutter hỗ trợ ôn tập lý thuyết giấy phép lái xe, luyện đề, tra cứu biển báo, tra cứu lỗi vi phạm giao thông, bản đồ trung tâm đào tạo, diễn đàn nội bộ, tài khoản VIP, thông báo nhắc câu sai và nhận diện biển báo bằng AI thông qua backend.
+
+## Công nghệ sử dụng
+
+- Flutter cho mobile/web.
+- Dart.
+- Firebase: `firebase_core`, `firebase_auth`, `cloud_firestore`.
+- Drift ORM + SQLite local: lưu dữ liệu câu hỏi, đề thi, biển báo, tiến trình học, lịch sử, câu sai.
+- REST API qua package `http`.
+- Web admin/public: `https://drivingtestadminfe-production.up.railway.app/`.
+- Google Sign-In, Facebook Login.
+- Google Mobile Ads/AdMob.
+- OpenStreetMap qua `flutter_map` và `latlong2`.
+- Geolocation/geocoding.
+- Image picker, xử lý ảnh, speech-to-text, local notifications, app links, email OTP qua Gmail SMTP.
+
+## Phiên bản Flutter/Dart
+
+Phiên bản đang dùng khi kiểm tra project:
 
 ```bash
-- Màn hình chính
- + Home: Tổng quan tiến độ học, truy cập nhanh các tính năng
-- Ôn luyện
- + Danh sách chủ đề: Hiển thị các chủ đề câu hỏi (biển báo, sa hình, luật giao thông...)
- + Làm bài theo chủ đề: Giao diện câu hỏi trắc nghiệm, có giải thích đáp án
- + Kết quả bài làm: Điểm số, số câu đúng/sai, gợi ý ôn lại
- + Danh sách câu sai: Tổng hợp các câu đã làm sai để ôn lại
-- Thi thử
- + Cài đặt đề thi: Chọn số câu, thời gian, loại bằng (A1, B1, B2...)
- + Thi thử: Giao diện mô phỏng phòng thi thật, đếm giờ, cảnh báo câu điểm liệt
- + Kết quả thi thử: Điểm số, xếp loại đậu/rớt, phân tích chi tiết từng câu
-- Thống kê
- + Thống kê tổng quan: Biểu đồ tỉ lệ đúng/sai theo chủ đề, streak học hàng ngày
- + Lịch sử làm bài: Danh sách các lần thi thử đã thực hiện
-- Tìm trung tâm
- + Bản đồ trung tâm: Hiển thị các trung tâm dạy lái xe gần vị trí người dùng
- + Chi tiết trung tâm: Thông tin, đánh giá, số điện thoại, chỉ đường
-- Hỗ trợ AI
- + Nhận diện biển báo: Chụp ảnh biển báo ngoài đường, app giải thích ngay
- + Hỏi đáp AI: Chat với AI để giải thích câu hỏi khó hiểu
-- Cộng đồng
- + Feed cộng đồng: Chia sẻ tips, kinh nghiệm lái xe giữa người dùng
- + Chi tiết bài đăng: Xem và bình luận bài chia sẻ
-- Cá nhân & Cài đặt
- + Hồ sơ cá nhân: Thông tin người dùng, huy hiệu đạt được
- + Cài đặt: Thông báo, giao diện (dark/light mode).
+Flutter 3.38.3
+Dart 3.10.1
+DevTools 2.51.1
 ```
-Cấu trúc file 
+
+Ràng buộc SDK trong `pubspec.yaml`:
+
+```yaml
+environment:
+  sdk: ^3.10.1
+```
+
+## Package/dependency
+
+Các dependency chính được khai báo trong `pubspec.yaml`:
+
+| Nhóm                   | Package                                                                   |
+| ---------------------- | ------------------------------------------------------------------------- |
+| Core/UI                | `flutter`, `cupertino_icons`, `flutter_svg`                               |
+| Network/API            | `http`, `url_launcher`, `app_links`                                       |
+| Firebase               | `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_messaging` |
+| Auth                   | `google_sign_in`, `flutter_facebook_auth`                                 |
+| Local database         | `drift`, `sqlite3_flutter_libs`, `sqlite3`, `path_provider`, `path`       |
+| Media/AI               | `image_picker`, `image`, `speech_to_text`                                 |
+| Map/location           | `flutter_map`, `latlong2`, `geolocator`, `geocoding`                      |
+| Notification/ads/share | `flutter_local_notifications`, `google_mobile_ads`, `share_plus`          |
+| Storage/email          | `shared_preferences`, `mailer`                                            |
+
+Dev dependency:
+
+- `flutter_test`
+- `flutter_lints`
+- `flutter_launcher_icons`
+- `drift_dev`
+- `build_runner`
+
+Không cần cài từng package thủ công. Chạy `flutter pub get` để Flutter tải toàn bộ dependency.
+
+## Cài đặt và chạy project
+
+1. Cài Flutter SDK 3.38.3 hoặc phiên bản tương thích Dart `^3.10.1`.
+2. Cài Android Studio/Android SDK. Khi build Android cần dùng JDK 17 trở lên.
+3. Clone project và mở terminal tại thư mục gốc:
+
 ```bash
-lib/
-├── app/
-├── core/
-│   ├── database/
-│   │   ├── tables/
-│   │   ├── daos/
-│   │   └── seeds/
-│   └── network/
-│
-├── data/
-│   ├── datasource/
-│   │   ├── remote/
-│   │   └── external/
-│   ├── models/
-│   ├── mapper/
-│   └── repository/
-│
-├── features/
-│   ├── topic/
-│   ├── question/
-│   ├── exam/
-│   └── driving_center/
-│
-├── shared/
-│   ├── widgets/
-│   └── utils/
-│
-└── main.dart
+cd driving_test
+flutter pub get
 ```
+
+4. Kiểm tra thiết bị:
+
 ```bash
-#  Flutter App Structure (Drift + API)
-# Tổng quan kiến trúc
-
-App sử dụng **Layered Architecture + Repository Pattern**:
-UI → Repository → (Local DB + API)
--------------------------------------------------------
-
-## 📂 Cấu trúc thư mục
-### core/
-
-Chứa các thành phần nền tảng dùng chung:
-
-* `database/`: SQLite (Drift), tables, DAO, seed data
-* `network/`: cấu hình API (Dio, interceptor, endpoints)
-
----
-
-### data/
-
-Xử lý toàn bộ dữ liệu của app:
-
-* `datasource/`
-
-  * `remote/`: API server của hệ thống
-  * `external/`: API bên thứ 3 (Google, map, ...)
-* `models/`: model dùng cho API (JSON)
-* `mapper/`: convert giữa API model ↔ Drift (DB)
-* `repository/`: lớp trung gian, quyết định lấy dữ liệu từ API hay DB
-
----
-
-### features/
-
-Chia theo từng chức năng (module):
-
-* topic/
-* question/
-* exam/
-* driving_center/
-
-Mỗi feature chứa UI + state management (Provider/Riverpod/Bloc)
-
----
-
-### shared/
-
-Dùng chung toàn app:
-
-* `widgets/`: widget reusable
-* `utils/`: constants, helper
-
----
-
-## 🔄 Data Flow
-
-UI (features)
-→ Repository
-→ (DAO - Drift / Remote API / External API)
-
----
-
-## 📝 Quy ước
-
-* Drift model chỉ dùng cho database
-* API dùng model riêng (`models/`)
-* Luôn dùng `mapper` để convert dữ liệu
-* Không gọi API trực tiếp trong UI
-* Repository là nơi xử lý dữ liệu trung tâm
-
----
-
-## 🎯 Mục tiêu
-
-* Code rõ ràng, dễ maintain
-* Tách biệt DB, API, UI
-* Hỗ trợ offline (cache bằng Drift)
+flutter devices
 ```
 
+5. Chạy Android:
 
+```bash
+flutter run -d android --dart-define-from-file=dart_defines.env
+```
 
+6. Chạy web:
+
+```bash
+flutter run -d chrome --dart-define-from-file=dart_defines.env
+```
+
+7. Build APK release:
+
+```bash
+ flutter build apk --release --split-per-abi --dart-define-from-file=dart_defines.env
+```
+
+8. Nếu thay đổi schema Drift/database hoặc file có annotation cần generate lại:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+9. Nếu thay icon app:
+
+```bash
+dart run flutter_launcher_icons
+```
+
+## Biến môi trường/dart define
+
+Tính năng gửi OTP qua email dùng `String.fromEnvironment`, cần truyền 2 biến sau khi chạy/build:
+
+```env
+SENDER_EMAIL=
+APP_PASSWORD=
+```
+
+Có thể tạo file `dart_defines.env` ở thư mục gốc theo mẫu trên. File này đang được ignore trong git, không nên commit mật khẩu ứng dụng/email thật.
+
+## Tài khoản test
+
+Web admin/public: https://drivingtestadminfe-production.up.railway.app/
+
+| Loại tài khoản      | Email/Tên đăng nhập | Mật khẩu | Ghi chú |
+| ------------------- | ------------------- | -------- | ------- |
+| Tài khoản thường    |                     |          |         |
+| Tài khoản VIP       |                     |          |         |
+| Tài khoản web/admin |                     |          |         |
+
+## Cấu hình quan trọng
+
+- Firebase project hiện tại: `myapp-8fb3f`.
+- App khởi tạo Firebase tại `lib/main.dart` bằng `lib/firebase_options.dart`.
+- Android cần file `android/app/google-services.json`.
+- Backend API đang được cấu hình tại `lib/shared/utils/constants/app_config.dart`.
+- Public/admin web URL cũng được cấu hình tại `AppConfig.publicPageBaseUrl`.
+- AdMob trong AndroidManifest đang dùng test App ID của Google. Một số vị trí quảng cáo lấy config từ API, nếu API lỗi sẽ fallback về test ad unit.
+- App có dùng quyền Internet, camera, microphone, location và notification.
+
+## Lưu ý để project hoạt động
+
+- Nên chạy trên Android trước vì Firebase options đã cấu hình Android/iOS/Web; Windows/macOS/Linux chưa được cấu hình trong `firebase_options.dart`.
+- Cần kết nối mạng để dùng đăng nhập Firebase, mạng xã hội, VIP/PayOS, đồng bộ vi phạm, nhận diện biển báo, upload ảnh, thông báo và các API backend.
+- Tính năng đăng ký OTP chỉ gửi được email khi truyền đúng `SENDER_EMAIL` và `APP_PASSWORD`.
+- Google/Facebook Login cần cấu hình đúng SHA-1/SHA-256, OAuth redirect và app id/token trên Firebase Console/Facebook Developer nếu đổi package name hoặc Firebase project.
+- Nếu chạy iOS, cần kiểm tra/bổ sung quyền trong `ios/Runner/Info.plist` cho camera, thư viện ảnh và vị trí vì app có dùng `image_picker` và `geolocator`.
+- Nếu build Android lỗi Gradle/JVM, kiểm tra lại Java đang dùng là JDK 17 trở lên.
+- Dữ liệu câu hỏi, đề thi, hạng bằng, biển báo và tỉnh/thành được đóng gói trong thư mục `assets/json` và ảnh trong `assets/images`; không xóa các asset đã khai báo trong `pubspec.yaml`.
