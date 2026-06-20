@@ -68,7 +68,7 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
-      // 👇 SEED DATA
+
       await SeedsSetting.seedsSetting(this);
       await SeedsTopics.seedTopics(this);
       await SeedsExamGroups.seedExamGroups(this);
@@ -96,6 +96,7 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(savedQuestions);
         }
       }
+
       if (from < 3) {
         final settingColumns = await customSelect(
           "PRAGMA table_info(setting)",
@@ -112,6 +113,7 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(setting, setting.reminderSyncDirty);
         }
       }
+
       if (from < 4) {
         final settingColumns = await customSelect(
           "PRAGMA table_info(setting)",
@@ -125,6 +127,7 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(setting, setting.lastSyncedReminderWrong);
         }
       }
+
       if (from < 5) {
         final userAnswerColumns = await customSelect(
           "PRAGMA table_info(user_answers)",
@@ -137,15 +140,30 @@ class AppDatabase extends _$AppDatabase {
         if (!columnNames.contains('rank_id')) {
           await m.addColumn(userAnswers, userAnswers.rankId);
         }
+
         await customStatement("""
-          UPDATE user_answers
-          SET rank_id = (
-            SELECT rank_id
-            FROM setting
-            WHERE setting_id = 1
-          )
-          WHERE rank_id IS NULL
-          """);
+        UPDATE user_answers
+        SET rank_id = (
+          SELECT rank_id
+          FROM setting
+          WHERE setting_id = 1
+        )
+        WHERE rank_id IS NULL
+      """);
+      }
+
+      if (from < 6) {
+        final tableRows = await customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table'",
+        ).get();
+        final tableNames = tableRows
+            .map((row) => row.data['name'] as String?)
+            .whereType<String>()
+            .toSet();
+
+        if (!tableNames.contains('traffic_violation_records')) {
+          await m.createTable(trafficViolationRecords);
+        }
       }
 
       if (from < 7) {

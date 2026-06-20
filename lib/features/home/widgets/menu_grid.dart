@@ -56,11 +56,13 @@ class MenuGrid extends StatelessWidget {
         icon: Icons.change_history_rounded,
         text: 'Sa hình',
         color: const Color(0xFF8B5CF6),
+        route: const ExamTopicQuetsScreen(topicId: 6, mode: 0),
       ),
       _MenuItem(
         icon: Icons.lightbulb_rounded,
         text: 'Mẹo',
         color: const Color(0xFFEA580C),
+        route: const TipsScreen(),
       ),
       _MenuItem(
         icon: Icons.traffic_rounded,

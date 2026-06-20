@@ -65,6 +65,8 @@ class _ProgressCardState extends State<ProgressCard> {
   Widget build(BuildContext context) {
     double progress = total == 0 ? 0 : answered / total;
     if (progress > 1.0) progress = 1.0;
+    final percentText = '${(progress * 100).toInt()}%';
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -83,15 +85,62 @@ class _ProgressCardState extends State<ProgressCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Tiến độ ôn tập',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0866FF).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.trending_up_rounded,
+                  color: Color(0xFF0866FF),
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Tiến độ ôn tập',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF22C55E).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  percentText,
+                  style: const TextStyle(
+                    color: Color(0xFF16A34A),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(value: progress),
-          const SizedBox(height: 6),
+          const SizedBox(height: 16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: const Color(0xFFE2E8F0),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFF0866FF),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
           if (isLoading)
-            const Text('Đang tải...')
+            const Center(child: Text('Đang tải...'))
           else
             Row(
               children: [

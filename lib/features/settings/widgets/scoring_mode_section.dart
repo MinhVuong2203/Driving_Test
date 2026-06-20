@@ -15,11 +15,15 @@ class ScoringModeSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.cardDark : AppColors.cardLight;
-    final primaryTextColor =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final secondaryTextColor =
-        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
-    final dividerColor = isDark ? AppColors.darkDivider : AppColors.lightDivider;
+    final primaryTextColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final secondaryTextColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
+    final dividerColor = isDark
+        ? AppColors.darkDivider
+        : AppColors.lightDivider;
 
     return Column(
       children: [
@@ -39,9 +43,7 @@ class ScoringModeSection extends StatelessWidget {
           textColor: primaryTextColor,
         ),
         Container(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? AppColors.cardDark
-              : AppColors.cardLight,
+          color: cardColor,
 
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
           child: Column(
@@ -92,9 +94,7 @@ class _ScoringOptionTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? AppColors.cardDark
-            : AppColors.cardLight,
+        color: cardColor,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
