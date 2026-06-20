@@ -21,7 +21,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
   final _adHelper = InterstitialAdHelper();
   final _adMobRepo = AdMobConfigRepository();
 
-  static const int _pageSize = 10;
+  static const int _pageSize = 5;
 
   final List<DrivingCenter> _centers = [];
 
@@ -112,6 +112,16 @@ class _CenterListScreenState extends State<CenterListScreen> {
     await _adHelper.showAd();
   }
 
+  Future<void> _showLoadMoreAdIfNeeded() async {
+    await _vipAdInitFuture;
+    if (_isVipActive) return;
+    await _initAdIfNeeded();
+    debugPrint(
+      '[DrivingCenters][Ad] Hien thi quang cao khi user thuong load them',
+    );
+    await _adHelper.showAd();
+  }
+
   Future<void> _initProvinceData() async {
     debugPrint('🔄 Bắt đầu load danh sách tỉnh/thành từ utils...');
 
@@ -184,6 +194,11 @@ class _CenterListScreenState extends State<CenterListScreen> {
       );
 
       if (!mounted || requestId != _requestSerial) return;
+
+      if (!reset && result.items.isNotEmpty) {
+        await _showLoadMoreAdIfNeeded();
+        if (!mounted || requestId != _requestSerial) return;
+      }
 
       setState(() {
         _centers.addAll(result.items);
@@ -258,7 +273,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1160),
           child: DropdownButtonFormField<String>(
-            value: _selectedProvince,
+            initialValue: _selectedProvince,
             isExpanded: true,
             dropdownColor: _isDark
                 ? AppColors.darkSelectMenuBackground
@@ -437,7 +452,7 @@ class _CenterListScreenState extends State<CenterListScreen> {
               width: 96,
               height: 96,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _imagePlaceholder(),
+              errorBuilder: (_, _, _) => _imagePlaceholder(),
             )
           : _imagePlaceholder(),
     );
