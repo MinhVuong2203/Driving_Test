@@ -7,6 +7,7 @@ import 'package:driving_test_prep/data/services/firebase/vip_firebase_service.da
 import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
 import 'package:driving_test_prep/features/social_network/controller/signout.dart';
 import 'package:driving_test_prep/features/vip/widgets/vip_package_card.dart';
+import 'package:driving_test_prep/shared/screen/in_app_webview_screen.dart';
 import 'package:driving_test_prep/shared/screen/login_view.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
@@ -118,13 +119,21 @@ class _InfoScreenState extends State<InfoScreen> {
     }
   }
 
-  Future<void> _openUrl(String url) async {
-    final uri = Uri.parse(url);
-    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
-
-    if (!opened) {
-      _showMessage('Không mở được liên kết.');
+  Future<void> _openWebView({
+    required String url,
+    required String title,
+  }) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !uri.hasScheme) {
+      _showMessage('Liên kết không hợp lệ.');
+      return;
     }
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => InAppWebViewScreen(initialUrl: url, title: title),
+      ),
+    );
   }
 
   Future<void> _shareDownloadApp() async {
@@ -563,21 +572,33 @@ class _InfoScreenState extends State<InfoScreen> {
               isDark: isDark,
               textColor: textColor,
               mutedColor: mutedColor,
-              onTermsTap: () => _openUrl(AppConfig.termsOfUseUrl),
+              onTermsTap: () => _openWebView(
+                url: AppConfig.termsOfUseUrl,
+                title: 'Điều khoản sử dụng',
+              ),
               onFeedbackTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const FeedbackScreen()),
                 );
               },
-              onContactTap: () => _openUrl(AppConfig.developmentTeamUrl),
-              onPrivacyTap: () => _openUrl(AppConfig.privacyPolicyUrl),
+              onContactTap: () => _openWebView(
+                url: AppConfig.developmentTeamUrl,
+                title: 'Liên hệ',
+              ),
+              onPrivacyTap: () => _openWebView(
+                url: AppConfig.privacyPolicyUrl,
+                title: 'Chính sách riêng tư',
+              ),
             ),
             const SizedBox(height: 18),
             _DownloadAppCard(
               isDark: isDark,
               textColor: textColor,
               qrAssetPath: AppConfig.downloadQrAsset,
-              onDownloadTap: () => _openUrl(AppConfig.downloadAppUrl),
+              onDownloadTap: () => _openWebView(
+                url: AppConfig.downloadAppUrl,
+                title: 'Tải ứng dụng',
+              ),
               onShareTap: _shareDownloadApp,
             ),
           ],
