@@ -16,6 +16,10 @@ class PostModel {
   final String? address;
   final bool authorIsVip;
   final String authorVipName;
+  final String videoUrl;
+  final String videoPublicId;
+  final double videoDuration;
+  final int videoBytes;
 
   const PostModel({
     required this.postId,
@@ -33,6 +37,10 @@ class PostModel {
     this.address,
     required this.authorIsVip,
     required this.authorVipName,
+    required this.videoUrl,
+    required this.videoPublicId,
+    required this.videoDuration,
+    required this.videoBytes,
   });
 
   factory PostModel.fromFirestore(
@@ -60,6 +68,10 @@ class PostModel {
       address: (data['address'] ?? '').toString(),
       authorIsVip: data['authorIsVip'] == true,
       authorVipName: (data['authorVipName'] ?? '').toString(),
+      videoUrl: (data['videoUrl'] ?? '').toString(),
+      videoPublicId: (data['videoPublicId'] ?? '').toString(),
+      videoDuration: _toDouble(data['videoDuration']),
+      videoBytes: _toInt(data['videoBytes']),
     );
   }
 
@@ -79,6 +91,10 @@ class PostModel {
       'address': address,
       'authorIsVip': authorIsVip,
       'authorVipName': authorVipName,
+      'videoUrl': videoUrl,
+      'videoPublicId': videoPublicId,
+      'videoDuration': videoDuration,
+      'videoBytes': videoBytes,
     };
   }
 
@@ -98,6 +114,10 @@ class PostModel {
     String? address,
     bool? authorIsVip,
     String? authorVipName,
+    String? videoUrl,
+    String? videoPublicId,
+    double? videoDuration,
+    int? videoBytes,
   }) {
     return PostModel(
       postId: postId ?? this.postId,
@@ -115,6 +135,10 @@ class PostModel {
       address: address ?? this.address,
       authorIsVip: authorIsVip ?? this.authorIsVip,
       authorVipName: authorVipName ?? this.authorVipName,
+      videoUrl: videoUrl ?? this.videoUrl,
+      videoPublicId: videoPublicId ?? this.videoPublicId,
+      videoDuration: videoDuration ?? this.videoDuration,
+      videoBytes: videoBytes ?? this.videoBytes,
     );
   }
 
@@ -146,6 +170,10 @@ class PostModel {
       authorIsVip: json['authorIsVip'] == true ||
           json['authorIsVip']?.toString().toLowerCase() == 'true',
       authorVipName: json['authorVipName']?.toString() ?? '',
+      videoUrl: json['videoUrl']?.toString() ?? '',
+      videoPublicId: json['videoPublicId']?.toString() ?? '',
+      videoDuration: _toDouble(json['videoDuration']),
+      videoBytes: _toInt(json['videoBytes']),
     );
   }
 
@@ -157,6 +185,16 @@ class PostModel {
       return DateTime.fromMillisecondsSinceEpoch(value);
     }
     return null;
+  }
+
+  static double _toDouble(dynamic value) {
+    if (value is num) return value.toDouble();
+    return double.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static int _toInt(dynamic value) {
+    if (value is num) return value.toInt();
+    return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 
 }

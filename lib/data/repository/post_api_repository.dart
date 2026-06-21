@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:driving_test_prep/data/services/firebase/post_api_service.dart';
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
+import 'package:driving_test_prep/features/social_network/models/video_upload_result.dart';
 
 class PostApiRepository {
   PostApiRepository._(this._postApiService);
@@ -23,6 +24,10 @@ class PostApiRepository {
     required String authorAvatar,
     required String content,
     String imageUrl = '',
+    String videoUrl = '',
+    String videoPublicId = '',
+    double videoDuration = 0,
+    int videoBytes = 0,
     required String address,
   }) {
     return _postApiService.createPost(
@@ -32,6 +37,10 @@ class PostApiRepository {
       authorAvatar: authorAvatar,
       content: content,
       imageUrl: imageUrl,
+      videoUrl: videoUrl,
+      videoPublicId: videoPublicId,
+      videoDuration: videoDuration,
+      videoBytes: videoBytes,
       address: address,
     );
   }
@@ -101,5 +110,13 @@ class PostApiRepository {
       limit: limit,
       lastCreatedAt: lastCreatedAt,
     );
+  }
+
+  Future<VideoUploadResult> uploadPostVideo(File file) {
+    return _postApiService.uploadPostVideo(file);
+  }
+
+  Future<void> deleteUploadedVideo(String publicId) {
+    return _postApiService.deleteUploadedVideo(publicId);
   }
 }

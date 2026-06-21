@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
 import 'auth_api_headers.dart';
+import 'package:driving_test_prep/features/social_network/models/video_upload_result.dart';
 
 class PostApiService {
   PostApiService(this.baseUrl);
@@ -47,6 +48,10 @@ class PostApiService {
   Future<PostModel> createPost({
     required String content,
     String imageUrl = '',
+    String videoUrl = '',
+    String videoPublicId = '',
+    double videoDuration = 0,
+    int videoBytes = 0,
     required String postId,
     required String authorId,
     required String authorName,
@@ -65,6 +70,10 @@ class PostApiService {
         'authorAvatar': authorAvatar,
         'content': content,
         'imageUrl': imageUrl,
+        'videoUrl': videoUrl,
+        'videoPublicId': videoPublicId,
+        'videoDuration': videoDuration,
+        'videoBytes': videoBytes,
         'createdAt': nowUtc,
         'updatedAt': nowUtc,
         'address': address,
@@ -72,10 +81,19 @@ class PostApiService {
     );
 
     if (res.statusCode < 200 || res.statusCode >= 300) {
-      throw Exception('Failed to create post: ${res.statusCode} - ${res.body}');
+      String message = res.body;
+
+      try {
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        message = data['message']?.toString() ?? res.body;
+      } catch (_) {}
+
+      throw Exception(message);
     }
 
-    return PostModel.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+    return PostModel.fromJson(
+      jsonDecode(res.body) as Map<String, dynamic>,
+    );
   }
 
   Future<void> updatePost(
@@ -212,4 +230,61 @@ class PostApiService {
         .map((e) => PostModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  Future<VideoUploadResult> uploadPostVideo(File file) async {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/api/Post/upload-video'),
+    );
+
+    request.headers.addAll(
+      await AuthApiHeaders.bearer(),
+    );
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'file',
+        file.path,
+        filename: file.uri.pathSegments.last,
+      ),
+    );
+
+    final streamedResponse = await request.send();
+    final responseBody = await streamedResponse.stream.bytesToString();
+
+    if (streamedResponse.statusCode < 200 ||
+        streamedResponse.statusCode >= 300) {
+      String message = responseBody;
+
+      try {
+        final data = jsonDecode(responseBody) as Map<String, dynamic>;
+        message = data['message']?.toString() ?? responseBody;
+      } catch (_) {}
+
+      throw Exception(message);
+    }
+
+    final data = jsonDecode(responseBody) as Map<String, dynamic>;
+
+    return VideoUploadResult.fromJson(data);
+  }
+
+  Future<void> deleteUploadedVideo(String publicId) async {
+    if (publicId.trim().isEmpty) return;
+
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/Post/video'),
+      headers: await AuthApiHeaders.json(),
+      body: jsonEncode({
+        'publicId': publicId,
+      }),
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(
+        'Không thể xóa video: ${response.statusCode} - ${response.body}',
+      );
+    }
+  }
+
 }
