@@ -112,11 +112,19 @@ class PostApiRepository {
     );
   }
 
-  Future<VideoUploadResult> uploadPostVideo(File file) {
-    return _postApiService.uploadPostVideo(file);
+  Future<VideoUploadResult> uploadPostVideo(
+      File file,
+      ) {
+    return _postApiService.uploadPostVideo(
+      file,
+    );
   }
 
-  Future<void> deleteUploadedVideo(String publicId) {
-    return _postApiService.deleteUploadedVideo(publicId);
+  Future<void> deleteUploadedVideo(
+      String publicId,
+      ) {
+    return _postApiService.deleteUploadedVideo(
+      publicId,
+    );
   }
 }
