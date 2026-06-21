@@ -4,22 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:video_player/video_player.dart';
 
+import '../../../data/repository/comment_api_repository.dart';
 import '../../../data/repository/notification_api_repository.dart';
 import '../../../data/repository/post_api_repository.dart';
-import '../../../data/repository/comment_api_repository.dart';
-import '../../../data/services/firebase/notification_api_service.dart';
-import '../models/comment_model.dart';
 import '../controller/signout.dart';
 import '../models/notification_model.dart';
 import '../models/post_model.dart';
+import '../models/video_upload_result.dart';
 import '../widgets/comment_bottom_sheet.dart';
 import '../widgets/create_post_box.dart';
 import '../widgets/post_card.dart';
 import '../widgets/social_colors.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({super.key});
@@ -29,25 +29,20 @@ class HomeFeedScreen extends StatefulWidget {
 }
 
 class _HomeFeedScreenState extends State<HomeFeedScreen> {
-  final String BACKEND_URL = AppConfig.baseUrl;
+  final String backendUrl = AppConfig.baseUrl;
 
-  late final PostApiRepository _postApiRepo = PostApiRepository.instance(
-    BACKEND_URL,
-  );
+  late final PostApiRepository _postApiRepo =
+  PostApiRepository.instance(backendUrl);
 
   late final CommentApiRepository _commentApiRepo =
-      CommentApiRepository.instance(BACKEND_URL);
+  CommentApiRepository.instance(backendUrl);
 
   late final NotificationApiRepository _notificationApiRepo =
-      NotificationApiRepository.instance(BACKEND_URL);
-
-  bool _isAdmin = false;
+  NotificationApiRepository.instance(backendUrl);
 
   final ScrollController _scrollController = ScrollController();
 
   final List<PostModel> _posts = <PostModel>[];
-
-  final Map<String, GlobalKey> _postKeys = <String, GlobalKey>{};
 
   final Set<String> _likedPostIds = <String>{};
   final Map<String, int> _localLikeCounts = <String, int>{};
@@ -55,6 +50,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   final int _pageSize = 10;
 
+  bool _isAdmin = false;
   bool _isInitialLoading = false;
   bool _isLoadingMore = false;
   bool _hasMore = true;
@@ -63,6 +59,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   @override
   void initState() {
     super.initState();
+
     _loadCurrentUserRole();
     _loadInitialPosts();
 
@@ -85,6 +82,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   Future<void> _loadCurrentUserRole() async {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user == null) return;
 
     final snap = await FirebaseFirestore.instance
@@ -108,7 +106,9 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     });
 
     try {
-      final posts = await _postApiRepo.fetchPostsPaged(limit: _pageSize);
+      final posts = await _postApiRepo.fetchPostsPaged(
+        limit: _pageSize,
+      );
 
       _likedPostIds.clear();
       _localLikeCounts.clear();
@@ -132,14 +132,18 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _isInitialLoading = false;
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi tải bài viết: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi tải bài viết: $e'),
+        ),
+      );
     }
   }
 
   Future<void> _loadMorePosts() async {
-    if (_isLoadingMore || !_hasMore || _posts.isEmpty) return;
+    if (_isLoadingMore || !_hasMore || _posts.isEmpty) {
+      return;
+    }
 
     setState(() {
       _isLoadingMore = true;
@@ -169,14 +173,17 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _isLoadingMore = false;
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi tải thêm bài viết: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi tải thêm bài viết: $e'),
+        ),
+      );
     }
   }
 
   Future<void> _loadLikeStatus(List<PostModel> posts) async {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user == null) return;
 
     for (final post in posts) {
@@ -195,13 +202,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     await _loadInitialPosts();
   }
 
-  Future<({
-  String authorId,
-  String authorName,
-  String authorAvatar,
-  bool authorIsVip,
-  String authorVipName,
-  })> _getAuthorInfo() async {
+  Future<
+      ({
+      String authorId,
+      String authorName,
+      String authorAvatar,
+      })> _getAuthorInfo() async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -209,29 +215,24 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     }
 
     const defaultAvatar =
-        'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
-
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
-
-    final data = userDoc.data();
+        'https://www.gravatar.com/avatar/'
+        '00000000000000000000000000000000?d=mp&f=y';
 
     return (
     authorId: user.uid,
     authorName: user.displayName ?? user.email ?? 'Người dùng',
     authorAvatar: user.photoURL ?? defaultAvatar,
-    authorIsVip: data?['isVip'] == true,
-    authorVipName: (data?['vipName'] ?? 'VIP').toString(),
     );
   }
 
   Future<String> _getCurrentAddress() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final serviceEnabled =
+    await Geolocator.isLocationServiceEnabled();
+
     if (!serviceEnabled) return '';
 
-    LocationPermission permission = await Geolocator.checkPermission();
+    LocationPermission permission =
+    await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -255,268 +256,758 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
     final p = placemarks.first;
 
-    return [
+    return <String?>[
       p.street,
       p.subLocality,
       p.locality,
       p.subAdministrativeArea,
       p.administrativeArea,
       p.country,
-    ].where((e) => e != null && e.trim().isNotEmpty).join(', ');
+    ]
+        .whereType<String>()
+        .where((value) => value.trim().isNotEmpty)
+        .join(', ');
   }
 
   Future<void> _showCreatePostDialog() async {
     final contentController = TextEditingController();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final dialogBg = isDark ? const Color(0xFF111827) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subTextColor = isDark
-        ? const Color(0xFFCBD5E1)
-        : const Color(0xFF6B7280);
-    final inputBg = isDark ? const Color(0xFF1F2937) : const Color(0xFFF3F4F6);
-    final borderColor = isDark
-        ? const Color(0xFF374151)
-        : const Color(0xFFE5E7EB);
-
     XFile? selectedImage;
+    XFile? selectedVideo;
+
+    VideoPlayerController? videoPreviewController;
+
     bool isPosting = false;
+    bool isPreparingVideo = false;
 
-    await showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              backgroundColor: dialogBg,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+    VideoUploadResult? uploadedVideo;
+
+    Future<void> pickVideo(
+        void Function(void Function()) setDialogState,
+        ) async {
+      if (isPosting || isPreparingVideo) return;
+
+      setDialogState(() {
+        isPreparingVideo = true;
+      });
+
+      try {
+        final picker = ImagePicker();
+
+        final pickedVideo = await picker.pickVideo(
+          source: ImageSource.gallery,
+        );
+
+        if (pickedVideo == null) return;
+
+        final controller = VideoPlayerController.file(
+          File(pickedVideo.path),
+        );
+
+        await controller.initialize();
+
+        final duration = controller.value.duration;
+
+        if (duration <= Duration.zero) {
+          await controller.dispose();
+
+          throw Exception(
+            'Không thể đọc thời lượng video',
+          );
+        }
+
+        if (duration > const Duration(seconds: 30)) {
+          await controller.dispose();
+
+          if (!mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Video chỉ được tối đa 30 giây. '
+                    'Video đã chọn dài ${duration.inSeconds} giây.',
               ),
-              title: Text(
-                'Tạo bài viết',
-                style: TextStyle(color: textColor, fontWeight: FontWeight.w800),
-              ),
-              content: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        controller: contentController,
-                        maxLines: 4,
-                        style: TextStyle(color: textColor, fontSize: 15),
-                        cursorColor: kAmber,
-                        decoration: InputDecoration(
-                          hintText: 'Bạn đang nghĩ gì?',
-                          hintStyle: TextStyle(
-                            color: isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF9CA3AF),
-                          ),
-                          filled: true,
-                          fillColor: inputBg,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(color: borderColor),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(color: borderColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(
-                              color: kAmber,
-                              width: 1.4,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      if (selectedImage != null)
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.7,
-                          height: 180,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.file(
-                              File(selectedImage!.path),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark ? Colors.white : kNavy,
-                          side: BorderSide(color: borderColor),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: isPosting
-                            ? null
-                            : () async {
-                                final picker = ImagePicker();
+            ),
+          );
 
-                                final image = await picker.pickImage(
-                                  source: ImageSource.gallery,
-                                  imageQuality: 80,
-                                );
+          return;
+        }
 
-                                if (image != null) {
-                                  setDialogState(() {
-                                    selectedImage = image;
-                                  });
-                                }
-                              },
-                        icon: const Icon(Icons.image_outlined),
-                        label: const Text('Chọn ảnh từ thư viện'),
-                      ),
-                    ],
+        await videoPreviewController?.dispose();
+
+        setDialogState(() {
+          selectedImage = null;
+          selectedVideo = pickedVideo;
+          videoPreviewController = controller;
+        });
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Không thể chọn video: $e'),
+          ),
+        );
+      } finally {
+        setDialogState(() {
+          isPreparingVideo = false;
+        });
+      }
+    }
+
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) {
+          return StatefulBuilder(
+            builder: (context, setDialogState) {
+              final isDark =
+                  Theme.of(dialogContext).brightness ==
+                      Brightness.dark;
+
+              final dialogBg = isDark
+                  ? const Color(0xFF111827)
+                  : Colors.white;
+
+              final textColor = isDark
+                  ? Colors.white
+                  : const Color(0xFF111827);
+
+              final subTextColor = isDark
+                  ? const Color(0xFFCBD5E1)
+                  : const Color(0xFF6B7280);
+
+              final inputBg = isDark
+                  ? const Color(0xFF1F2937)
+                  : const Color(0xFFF3F4F6);
+
+              final borderColor = isDark
+                  ? const Color(0xFF374151)
+                  : const Color(0xFFE5E7EB);
+
+              return PopScope(
+                canPop: !isPosting,
+                child: AlertDialog(
+                  backgroundColor: dialogBg,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: isPosting
-                      ? null
-                      : () => Navigator.pop(dialogContext),
-                  child: Text('Hủy', style: TextStyle(color: subTextColor)),
-                ),
-                ElevatedButton(
-                  onPressed: isPosting
-                      ? null
-                      : () async {
-                          final content = contentController.text.trim();
-
-                          if (content.isEmpty && selectedImage == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Vui lòng nhập nội dung hoặc chọn ảnh',
+                  title: Text(
+                    'Tạo bài viết',
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  content: SizedBox(
+                    width:
+                    MediaQuery.of(context).size.width * 0.82,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          TextField(
+                            controller: contentController,
+                            maxLines: 4,
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: 15,
+                            ),
+                            cursorColor: kAmber,
+                            decoration: InputDecoration(
+                              hintText: 'Bạn đang nghĩ gì?',
+                              hintStyle: TextStyle(
+                                color: isDark
+                                    ? const Color(0xFF94A3B8)
+                                    : const Color(0xFF9CA3AF),
+                              ),
+                              filled: true,
+                              fillColor: inputBg,
+                              border: OutlineInputBorder(
+                                borderRadius:
+                                BorderRadius.circular(14),
+                                borderSide: BorderSide(
+                                  color: borderColor,
                                 ),
                               ),
-                            );
-                            return;
-                          }
+                              enabledBorder:
+                              OutlineInputBorder(
+                                borderRadius:
+                                BorderRadius.circular(14),
+                                borderSide: BorderSide(
+                                  color: borderColor,
+                                ),
+                              ),
+                              focusedBorder:
+                              OutlineInputBorder(
+                                borderRadius:
+                                BorderRadius.circular(14),
+                                borderSide:
+                                const BorderSide(
+                                  color: kAmber,
+                                  width: 1.4,
+                                ),
+                              ),
+                            ),
+                          ),
 
-                          setDialogState(() {
-                            isPosting = true;
-                          });
+                          // Preview ảnh
+                          if (selectedImage != null) ...[
+                            const SizedBox(height: 12),
+                            Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius:
+                                  BorderRadius.circular(14),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    height: 190,
+                                    child: Image.file(
+                                      File(selectedImage!.path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: IconButton.filled(
+                                    style:
+                                    IconButton.styleFrom(
+                                      backgroundColor:
+                                      Colors.black54,
+                                    ),
+                                    onPressed: isPosting
+                                        ? null
+                                        : () {
+                                      setDialogState(() {
+                                        selectedImage =
+                                        null;
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.close_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
 
-                          try {
-                            String imageUrl = '';
+                          // Preview video
+                          if (selectedVideo != null &&
+                              videoPreviewController != null &&
+                              videoPreviewController!
+                                  .value.isInitialized) ...[
+                            const SizedBox(height: 12),
+                            ClipRRect(
+                              borderRadius:
+                              BorderRadius.circular(14),
+                              child: AspectRatio(
+                                aspectRatio:
+                                videoPreviewController!
+                                    .value
+                                    .aspectRatio ==
+                                    0
+                                    ? 16 / 9
+                                    : videoPreviewController!
+                                    .value.aspectRatio,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    VideoPlayer(
+                                      videoPreviewController!,
+                                    ),
+                                    Container(
+                                      color: Colors.black26,
+                                    ),
 
-                            if (selectedImage != null) {
-                              imageUrl = await _postApiRepo.uploadPostImage(
-                                File(selectedImage!.path),
-                              );
-                            }
+                                    // Nút phát/tạm dừng
+                                    IconButton.filled(
+                                      onPressed: () async {
+                                        if (videoPreviewController!
+                                            .value.isPlaying) {
+                                          await videoPreviewController!
+                                              .pause();
+                                        } else {
+                                          await videoPreviewController!
+                                              .play();
+                                        }
 
-                            final author = await _getAuthorInfo();
+                                        setDialogState(() {});
+                                      },
+                                      icon: Icon(
+                                        videoPreviewController!
+                                            .value.isPlaying
+                                            ? Icons.pause_rounded
+                                            : Icons
+                                            .play_arrow_rounded,
+                                        size: 34,
+                                      ),
+                                    ),
 
-                            final address = await _getCurrentAddress();
+                                    // Nút xóa video đã chọn
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: IconButton.filled(
+                                        style:
+                                        IconButton.styleFrom(
+                                          backgroundColor:
+                                          Colors.black54,
+                                        ),
+                                        onPressed: isPosting
+                                            ? null
+                                            : () async {
+                                          final oldController =
+                                              videoPreviewController;
 
-                            final postId = DateTime.now().microsecondsSinceEpoch
-                                .toString();
+                                          setDialogState(
+                                                () {
+                                              selectedVideo =
+                                              null;
+                                              videoPreviewController =
+                                              null;
+                                            },
+                                          );
 
-                            final createdPost = await _postApiRepo.createPost(
-                              postId: postId,
-                              authorId: author.authorId,
-                              authorName: author.authorName,
-                              authorAvatar: author.authorAvatar,
-                              content: content,
-                              imageUrl: imageUrl,
-                              address: address,
-                            );
+                                          await oldController
+                                              ?.dispose();
+                                        },
+                                        icon: const Icon(
+                                          Icons.close_rounded,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
 
-                            if (!mounted) return;
+                                    // Hiển thị thời lượng
+                                    Positioned(
+                                      bottom: 8,
+                                      right: 10,
+                                      child: Container(
+                                        padding:
+                                        const EdgeInsets
+                                            .symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration:
+                                        BoxDecoration(
+                                          color: Colors.black54,
+                                          borderRadius:
+                                          BorderRadius
+                                              .circular(99),
+                                        ),
+                                        child: Text(
+                                          '${videoPreviewController!.value.duration.inSeconds}s / 30s',
+                                          style:
+                                          const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight:
+                                            FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
 
-                            Navigator.pop(dialogContext);
+                          const SizedBox(height: 12),
 
-                            setState(() {
-                              _posts.insert(0, createdPost);
-                              _localLikeCounts[createdPost.postId] =
-                                  createdPost.likeCount;
-                            });
+                          // Nút chọn ảnh và video
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  style:
+                                  OutlinedButton.styleFrom(
+                                    foregroundColor: isDark
+                                        ? Colors.white
+                                        : kNavy,
+                                    side: BorderSide(
+                                      color: borderColor,
+                                    ),
+                                    shape:
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(12),
+                                    ),
+                                  ),
+                                  onPressed:
+                                  isPosting ||
+                                      isPreparingVideo
+                                      ? null
+                                      : () async {
+                                    final picker =
+                                    ImagePicker();
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đăng bài thành công'),
+                                    final image =
+                                    await picker
+                                        .pickImage(
+                                      source:
+                                      ImageSource
+                                          .gallery,
+                                      imageQuality: 80,
+                                    );
+
+                                    if (image == null) {
+                                      return;
+                                    }
+
+                                    final oldController =
+                                        videoPreviewController;
+
+                                    setDialogState(() {
+                                      selectedImage =
+                                          image;
+                                      selectedVideo =
+                                      null;
+                                      videoPreviewController =
+                                      null;
+                                    });
+
+                                    await oldController
+                                        ?.dispose();
+                                  },
+                                  icon: const Icon(
+                                    Icons.image_outlined,
+                                  ),
+                                  label: const Text('Ảnh'),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  style:
+                                  OutlinedButton.styleFrom(
+                                    foregroundColor: isDark
+                                        ? Colors.white
+                                        : kNavy,
+                                    side: BorderSide(
+                                      color: borderColor,
+                                    ),
+                                    shape:
+                                    RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius
+                                          .circular(12),
+                                    ),
+                                  ),
+                                  onPressed:
+                                  isPosting ||
+                                      isPreparingVideo
+                                      ? null
+                                      : () => pickVideo(
+                                    setDialogState,
+                                  ),
+                                  icon: isPreparingVideo
+                                      ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child:
+                                    CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                      : const Icon(
+                                    Icons
+                                        .video_library_outlined,
+                                  ),
+                                  label:
+                                  const Text('Video'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: isPosting
+                          ? null
+                          : () async {
+                        await videoPreviewController
+                            ?.pause();
+
+                        if (dialogContext.mounted) {
+                          Navigator.pop(
+                            dialogContext,
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Hủy',
+                        style: TextStyle(
+                          color: subTextColor,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: isPosting
+                          ? null
+                          : () async {
+                        final content =
+                        contentController.text.trim();
+
+                        if (content.isEmpty &&
+                            selectedImage == null &&
+                            selectedVideo == null) {
+                          ScaffoldMessenger.of(
+                            dialogContext,
+                          ).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Vui lòng nhập nội dung, '
+                                    'chọn ảnh hoặc chọn video',
+                              ),
+                            ),
+                          );
+
+                          return;
+                        }
+
+                        setDialogState(() {
+                          isPosting = true;
+                        });
+
+                        try {
+                          String imageUrl = '';
+
+                          uploadedVideo = null;
+
+                          // Upload ảnh
+                          if (selectedImage != null) {
+                            imageUrl =
+                            await _postApiRepo
+                                .uploadPostImage(
+                              File(
+                                selectedImage!.path,
                               ),
                             );
+                          }
 
-                            Future.delayed(const Duration(seconds: 4), () async {
+                          // Upload video
+                          if (selectedVideo != null) {
+                            uploadedVideo =
+                            await _postApiRepo
+                                .uploadPostVideo(
+                              File(
+                                selectedVideo!.path,
+                              ),
+                            );
+                          }
+
+                          final author =
+                          await _getAuthorInfo();
+
+                          final address =
+                          await _getCurrentAddress();
+
+                          final postId = DateTime.now()
+                              .microsecondsSinceEpoch
+                              .toString();
+
+                          final createdPost =
+                          await _postApiRepo
+                              .createPost(
+                            postId: postId,
+                            authorId:
+                            author.authorId,
+                            authorName:
+                            author.authorName,
+                            authorAvatar:
+                            author.authorAvatar,
+                            content: content,
+                            imageUrl: imageUrl,
+                            videoUrl:
+                            uploadedVideo
+                                ?.videoUrl ??
+                                '',
+                            videoPublicId:
+                            uploadedVideo
+                                ?.videoPublicId ??
+                                '',
+                            videoDuration:
+                            uploadedVideo
+                                ?.duration ??
+                                0,
+                            videoBytes:
+                            uploadedVideo?.bytes ??
+                                0,
+                            address: address,
+                          );
+
+                          if (!mounted) return;
+
+                          if (dialogContext.mounted) {
+                            Navigator.pop(
+                              dialogContext,
+                            );
+                          }
+
+                          setState(() {
+                            _posts.insert(
+                              0,
+                              createdPost,
+                            );
+
+                            _localLikeCounts[
+                            createdPost.postId] =
+                                createdPost.likeCount;
+                          });
+
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Đăng bài thành công',
+                              ),
+                            ),
+                          );
+
+                          // Kiểm tra bài có bị AI xóa không
+                          Future.delayed(
+                            const Duration(seconds: 4),
+                                () async {
                               if (!mounted) return;
 
                               try {
-                                final checkedPost = await _postApiRepo
-                                    .getPostById(createdPost.postId);
+                                final checkedPost =
+                                await _postApiRepo
+                                    .getPostById(
+                                  createdPost.postId,
+                                );
 
-                                if (checkedPost.isDeleted ||
+                                if (checkedPost
+                                    .isDeleted ||
                                     !checkedPost.status) {
                                   setState(() {
                                     _posts.removeWhere(
-                                      (p) => p.postId == createdPost.postId,
+                                          (post) =>
+                                      post.postId ==
+                                          createdPost
+                                              .postId,
                                     );
-                                    _localLikeCounts.remove(createdPost.postId);
-                                    _likedPostIds.remove(createdPost.postId);
+
+                                    _localLikeCounts
+                                        .remove(
+                                      createdPost.postId,
+                                    );
+
+                                    _likedPostIds.remove(
+                                      createdPost.postId,
+                                    );
                                   });
 
                                   if (!mounted) return;
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  ScaffoldMessenger.of(
+                                    context,
+                                  ).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        'Bài viết vi phạm tiêu chuẩn nên đã bị tự động xóa',
+                                        'Bài viết vi phạm '
+                                            'tiêu chuẩn nên đã '
+                                            'bị tự động xóa',
                                       ),
                                     ),
                                   );
                                 }
                               } catch (e) {
-                                debugPrint('Check moderation failed: $e');
+                                debugPrint(
+                                  'Check moderation failed: $e',
+                                );
                               }
-                            });
-                          } catch (e) {
-                            setDialogState(() {
-                              isPosting = false;
-                            });
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Lỗi đăng bài: $e')),
-                            );
+                            },
+                          );
+                        } catch (e) {
+                          // Nếu upload video thành công
+                          // nhưng tạo bài thất bại,
+                          // xóa video khỏi Cloudinary
+                          if (uploadedVideo != null &&
+                              uploadedVideo!
+                                  .videoPublicId
+                                  .isNotEmpty) {
+                            try {
+                              await _postApiRepo
+                                  .deleteUploadedVideo(
+                                uploadedVideo!
+                                    .videoPublicId,
+                              );
+                            } catch (deleteError) {
+                              debugPrint(
+                                'Không thể dọn video '
+                                    'Cloudinary: '
+                                    '$deleteError',
+                              );
+                            }
                           }
-                        },
-                  child: isPosting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text('Đăng'),
+
+                          if (!dialogContext.mounted) {
+                            return;
+                          }
+
+                          setDialogState(() {
+                            isPosting = false;
+                          });
+
+                          ScaffoldMessenger.of(
+                            dialogContext,
+                          ).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Lỗi đăng bài: $e',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: isPosting
+                          ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child:
+                        CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : const Text('Đăng'),
+                    ),
+                  ],
                 ),
-              ],
-            );
-          },
-        );
-      },
-    );
+              );
+            },
+          );
+        },
+      );
+    } finally {
+      await videoPreviewController?.dispose();
+      contentController.dispose();
+    }
   }
 
-  Future<void> _showCommentDialog(PostModel post) async {
+  Future<void> _showCommentDialog(
+      PostModel post,
+      ) async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: kWhite,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(24),
+        ),
       ),
       builder: (_) {
         return CommentBottomSheet(
@@ -527,13 +1018,16 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
             if (!mounted) return;
 
             setState(() {
-              final index = _posts.indexWhere((p) => p.postId == post.postId);
+              final index = _posts.indexWhere(
+                    (item) => item.postId == post.postId,
+              );
 
               if (index != -1) {
                 final oldPost = _posts[index];
 
                 _posts[index] = oldPost.copyWith(
-                  commentCount: oldPost.commentCount + 1,
+                  commentCount:
+                  oldPost.commentCount + 1,
                 );
               }
             });
@@ -544,15 +1038,22 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   }
 
   Future<void> _deletePost(PostModel post) async {
-    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final currentUserId =
+        FirebaseAuth.instance.currentUser?.uid;
 
-    final canDelete =
-        _isAdmin || (currentUserId != null && post.authorId == currentUserId);
+    final canDelete = _isAdmin ||
+        (currentUserId != null &&
+            post.authorId == currentUserId);
 
     if (!canDelete) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bạn không có quyền xóa bài viết này')),
+        const SnackBar(
+          content: Text(
+            'Bạn không có quyền xóa bài viết này',
+          ),
+        ),
       );
+
       return;
     }
 
@@ -561,15 +1062,20 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     if (!mounted) return;
 
     setState(() {
-      _posts.removeWhere((item) => item.postId == post.postId);
+      _posts.removeWhere(
+            (item) => item.postId == post.postId,
+      );
+
       _likedPostIds.remove(post.postId);
       _localLikeCounts.remove(post.postId);
       _likingPostIds.remove(post.postId);
     });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã xóa bài viết')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Đã xóa bài viết'),
+      ),
+    );
   }
 
   Future<void> _toggleLike(PostModel post) async {
@@ -577,16 +1083,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bạn cần đăng nhập để thích bài viết')),
+        const SnackBar(
+          content: Text(
+            'Bạn cần đăng nhập để thích bài viết',
+          ),
+        ),
       );
+
       return;
     }
 
-    if (_likingPostIds.contains(post.postId)) return;
+    if (_likingPostIds.contains(post.postId)) {
+      return;
+    }
 
-    final wasLiked = _likedPostIds.contains(post.postId);
-    final oldCount = _localLikeCounts[post.postId] ?? post.likeCount;
-    final newCount = wasLiked ? oldCount - 1 : oldCount + 1;
+    final wasLiked =
+    _likedPostIds.contains(post.postId);
+
+    final oldCount =
+        _localLikeCounts[post.postId] ??
+            post.likeCount;
+
+    final newCount =
+    wasLiked ? oldCount - 1 : oldCount + 1;
 
     setState(() {
       _likingPostIds.add(post.postId);
@@ -597,14 +1116,21 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         _likedPostIds.add(post.postId);
       }
 
-      _localLikeCounts[post.postId] = newCount < 0 ? 0 : newCount;
+      _localLikeCounts[post.postId] =
+      newCount < 0 ? 0 : newCount;
     });
 
     try {
       if (wasLiked) {
-        await _postApiRepo.unlikePost(postId: post.postId, userId: user.uid);
+        await _postApiRepo.unlikePost(
+          postId: post.postId,
+          userId: user.uid,
+        );
       } else {
-        await _postApiRepo.likePost(postId: post.postId, userId: user.uid);
+        await _postApiRepo.likePost(
+          postId: post.postId,
+          userId: user.uid,
+        );
       }
     } catch (e) {
       if (!mounted) return;
@@ -616,12 +1142,17 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
           _likedPostIds.remove(post.postId);
         }
 
-        _localLikeCounts[post.postId] = oldCount;
+        _localLikeCounts[post.postId] =
+            oldCount;
       });
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi cập nhật like: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Lỗi cập nhật like: $e',
+          ),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -633,12 +1164,17 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   Future<void> _handleSignOut() async {
     final confirmed = await _confirmSignOut();
+
     if (!mounted || !confirmed) return;
 
     await SignOutController.signOut(
       context: context,
       setSigningOut: (value) {
-        if (mounted) setState(() => _isSigningOut = value);
+        if (mounted) {
+          setState(() {
+            _isSigningOut = value;
+          });
+        }
       },
       isMounted: () => mounted,
     );
@@ -650,15 +1186,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Đăng xuất'),
-          content: const Text('Bạn có chắc muốn đăng xuất khỏi tài khoản này?'),
+          content: const Text(
+            'Bạn có chắc muốn đăng xuất khỏi '
+                'tài khoản này?',
+          ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(false),
+              onPressed: () {
+                Navigator.of(
+                  dialogContext,
+                ).pop(false);
+              },
               child: const Text('Hủy'),
             ),
             FilledButton.icon(
-              onPressed: () => Navigator.of(dialogContext).pop(true),
-              icon: const Icon(Icons.logout_rounded, size: 18),
+              onPressed: () {
+                Navigator.of(
+                  dialogContext,
+                ).pop(true);
+              },
+              icon: const Icon(
+                Icons.logout_rounded,
+                size: 18,
+              ),
               label: const Text('Đăng xuất'),
             ),
           ],
@@ -669,15 +1219,24 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     return result == true;
   }
 
-  Future<void> _openNotificationPostAndComments(NotificationModel item) async {
-    await _notificationApiRepo.markAsRead(item.notificationId);
+  Future<void> _openNotificationPostAndComments(
+      NotificationModel item,
+      ) async {
+    await _notificationApiRepo.markAsRead(
+      item.notificationId,
+    );
 
     if (item.postId.isEmpty) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Thông báo này không có bài viết liên kết')),
+        const SnackBar(
+          content: Text(
+            'Thông báo này không có bài viết liên kết',
+          ),
+        ),
       );
+
       return;
     }
 
@@ -691,99 +1250,142 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       if (existingIndex != -1) {
         targetPost = _posts[existingIndex];
       } else {
-        targetPost = await _postApiRepo.getPostById(item.postId);
+        targetPost =
+        await _postApiRepo.getPostById(
+          item.postId,
+        );
       }
     } catch (e) {
-      debugPrint('Không tìm thấy bài viết từ thông báo: $e');
+      debugPrint(
+        'Không tìm thấy bài viết từ thông báo: $e',
+      );
+
       targetPost = null;
     }
 
     if (!mounted) return;
 
-    // Đóng bottom sheet thông báo trước
+    // Đóng bảng thông báo
     Navigator.pop(context);
 
     if (targetPost == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Không tìm thấy bài viết')),
+        const SnackBar(
+          content: Text('Không tìm thấy bài viết'),
+        ),
       );
+
       return;
     }
 
-    // Đưa bài viết được nhấn lên đầu bảng tin
+    final selectedPost = targetPost;
+
+    // Đưa bài được nhấn thông báo lên đầu feed
     setState(() {
-      _posts.removeWhere((post) => post.postId == targetPost!.postId);
-      _posts.insert(0, targetPost!);
-      _localLikeCounts[targetPost!.postId] = targetPost!.likeCount;
+      _posts.removeWhere(
+            (post) =>
+        post.postId == selectedPost.postId,
+      );
+
+      _posts.insert(0, selectedPost);
+
+      _localLikeCounts[selectedPost.postId] =
+          selectedPost.likeCount;
     });
 
-    // Chờ UI render lại
-    await Future.delayed(const Duration(milliseconds: 300));
+    // Chờ ListView render lại
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    );
 
     if (!mounted) return;
 
-    // Scroll lên đầu để user thấy nội dung bài viết
+    // Scroll lên đầu để thấy bài viết
     if (_scrollController.hasClients) {
       await _scrollController.animateTo(
         0,
-        duration: const Duration(milliseconds: 600),
+        duration:
+        const Duration(milliseconds: 600),
         curve: Curves.easeInOut,
       );
     }
 
-    // Cho user nhìn thấy bài viết một chút rồi mới mở bình luận
-    await Future.delayed(const Duration(milliseconds: 1000));
+    // Cho người dùng thấy nội dung bài viết
+    await Future.delayed(
+      const Duration(milliseconds: 1000),
+    );
 
     if (!mounted) return;
 
-    await _showCommentDialog(targetPost);
+    // Sau đó mở phần bình luận
+    await _showCommentDialog(selectedPost);
   }
 
   Future<void> _showNotifications() async {
     final user = FirebaseAuth.instance.currentUser;
+
     if (user == null) return;
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (_) {
-        return FutureBuilder<List<NotificationModel>>(
-          future: _notificationApiRepo.getUserNotifications(user.uid),
+        return FutureBuilder<
+            List<NotificationModel>>(
+          future: _notificationApiRepo
+              .getUserNotifications(user.uid),
           builder: (context, snapshot) {
-            final isDark = Theme.of(context).brightness == Brightness.dark;
+            final isDark =
+                Theme.of(context).brightness ==
+                    Brightness.dark;
 
-            final bg = isDark ? const Color(0xFF111827) : Colors.white;
+            final bg = isDark
+                ? const Color(0xFF111827)
+                : Colors.white;
+
             final cardBg = isDark
                 ? const Color(0xFF1F2937)
                 : const Color(0xFFF8FAFC);
-            final textColor = isDark ? Colors.white : const Color(0xFF111827);
+
+            final textColor = isDark
+                ? Colors.white
+                : const Color(0xFF111827);
+
             final subColor = isDark
                 ? const Color(0xFFCBD5E1)
                 : const Color(0xFF6B7280);
+
             final borderColor = isDark
                 ? const Color(0xFF374151)
                 : const Color(0xFFE5E7EB);
 
             return Container(
-              height: MediaQuery.of(context).size.height * 0.75,
+              height:
+              MediaQuery.of(context).size.height *
+                  0.75,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: bg,
-                borderRadius: const BorderRadius.vertical(
+                borderRadius:
+                const BorderRadius.vertical(
                   top: Radius.circular(24),
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
                 children: [
                   Center(
                     child: Container(
                       width: 42,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: subColor.withValues(alpha: 0.4),
-                        borderRadius: BorderRadius.circular(99),
+                        color: subColor.withValues(
+                          alpha: 0.4,
+                        ),
+                        borderRadius:
+                        BorderRadius.circular(99),
                       ),
                     ),
                   ),
@@ -793,103 +1395,149 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     style: TextStyle(
                       color: textColor,
                       fontSize: 22,
-                      fontWeight: FontWeight.w800,
+                      fontWeight:
+                      FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  if (snapshot.connectionState == ConnectionState.waiting)
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting)
                     const Expanded(
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child:
+                        CircularProgressIndicator(),
+                      ),
                     )
                   else if (snapshot.hasError)
                     Expanded(
                       child: Center(
                         child: Text(
                           'Không thể tải thông báo',
-                          style: TextStyle(color: subColor),
+                          style: TextStyle(
+                            color: subColor,
+                          ),
                         ),
                       ),
                     )
-                  else if ((snapshot.data ?? []).isEmpty)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'Chưa có thông báo nào',
-                          style: TextStyle(color: subColor),
-                        ),
-                      ),
-                    )
-                  else
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: snapshot.data!.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final item = snapshot.data![index];
-
-                          return InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            // onTap: () async {
-                            //   await _openNotificationComment(item);
-                            // },
-                            onTap: () async {
-                              await _openNotificationPostAndComments(item);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: item.isRead
-                                    ? cardBg
-                                    : const Color(
-                                        0xFF2563EB,
-                                      ).withValues(alpha: 0.16),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: borderColor),
-                              ),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: item.isRead
-                                        ? const Color(0xFF64748B)
-                                        : const Color(0xFFF59E0B),
-                                    child: const Icon(
-                                      Icons.notifications,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: TextStyle(
-                                            color: textColor,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          item.message,
-                                          style: TextStyle(
-                                            color: subColor,
-                                            fontSize: 13,
-                                            height: 1.35,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                  else if ((snapshot.data ?? [])
+                        .isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Chưa có thông báo nào',
+                            style: TextStyle(
+                              color: subColor,
                             ),
-                          );
-                        },
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: ListView.separated(
+                          itemCount:
+                          snapshot.data!.length,
+                          separatorBuilder: (_, __) {
+                            return const SizedBox(
+                              height: 10,
+                            );
+                          },
+                          itemBuilder:
+                              (context, index) {
+                            final item =
+                            snapshot.data![index];
+
+                            return InkWell(
+                              borderRadius:
+                              BorderRadius.circular(
+                                16,
+                              ),
+                              onTap: () async {
+                                await _openNotificationPostAndComments(
+                                  item,
+                                );
+                              },
+                              child: Container(
+                                padding:
+                                const EdgeInsets.all(
+                                  14,
+                                ),
+                                decoration:
+                                BoxDecoration(
+                                  color: item.isRead
+                                      ? cardBg
+                                      : const Color(
+                                    0xFF2563EB,
+                                  ).withValues(
+                                    alpha: 0.16,
+                                  ),
+                                  borderRadius:
+                                  BorderRadius.circular(
+                                    16,
+                                  ),
+                                  border: Border.all(
+                                    color: borderColor,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor:
+                                      item.isRead
+                                          ? const Color(
+                                        0xFF64748B,
+                                      )
+                                          : const Color(
+                                        0xFFF59E0B,
+                                      ),
+                                      child: const Icon(
+                                        Icons.notifications,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 12,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Text(
+                                            item.title,
+                                            style:
+                                            TextStyle(
+                                              color:
+                                              textColor,
+                                              fontWeight:
+                                              FontWeight
+                                                  .w800,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 4,
+                                          ),
+                                          Text(
+                                            item.message,
+                                            style:
+                                            TextStyle(
+                                              color:
+                                              subColor,
+                                              fontSize: 13,
+                                              height: 1.35,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
                 ],
               ),
             );
@@ -901,14 +1549,27 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user =
+        FirebaseAuth.instance.currentUser;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark =
+        Theme.of(context).brightness ==
+            Brightness.dark;
 
-    final feedBg = isDark ? const Color(0xFF0F172A) : kFeedBg;
-    final cardBg = isDark ? const Color(0xFF111827) : kWhite;
-    final textColor = isDark ? Colors.white : kNavy;
-    final subTextColor = isDark ? const Color(0xFFCBD5E1) : kGrey;
+    final feedBg = isDark
+        ? const Color(0xFF0F172A)
+        : kFeedBg;
+
+    final cardBg = isDark
+        ? const Color(0xFF111827)
+        : kWhite;
+
+    final textColor =
+    isDark ? Colors.white : kNavy;
+
+    final subTextColor = isDark
+        ? const Color(0xFFCBD5E1)
+        : kGrey;
 
     return Scaffold(
       backgroundColor: feedBg,
@@ -918,100 +1579,148 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         centerTitle: false,
         title: Text(
           'Bảng tin',
-          style: TextStyle(color: textColor, fontWeight: FontWeight.w800),
+          style: TextStyle(
+            color: textColor,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         actions: <Widget>[
           IconButton(
             onPressed: _showNotifications,
-            icon: Icon(Icons.notifications_none_rounded, color: textColor),
+            icon: Icon(
+              Icons.notifications_none_rounded,
+              color: textColor,
+            ),
           ),
           IconButton(
-            onPressed: _isSigningOut ? null : _handleSignOut,
-            icon: Icon(Icons.logout_rounded, color: textColor),
+            onPressed:
+            _isSigningOut
+                ? null
+                : _handleSignOut,
+            icon: Icon(
+              Icons.logout_rounded,
+              color: textColor,
+            ),
           ),
         ],
       ),
       body: _isInitialLoading
-          ? const Center(child: CircularProgressIndicator(color: kAmber))
+          ? const Center(
+        child: CircularProgressIndicator(
+          color: kAmber,
+        ),
+      )
           : RefreshIndicator(
-              onRefresh: _refreshPosts,
-              child: ListView(
-                controller: _scrollController,
-                children: <Widget>[
-                  CreatePostBox(
-                    currentUserName:
-                        user?.displayName ?? user?.email ?? 'Người dùng',
-                    currentUserAvatar: user?.photoURL ?? '',
-                    onCreatePost: _showCreatePostDialog,
-                    backgroundColor: cardBg,
-                    textColor: textColor,
-                    subTextColor: subTextColor,
-                    inputColor: isDark
-                        ? const Color(0xFF1F2937)
-                        : const Color(0xFFF1F5F9),
-                  ),
-                  if (_posts.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(24),
-                      child: Center(
-                        child: Text(
-                          'Chưa có bài đăng nào',
-                          style: TextStyle(color: kGrey, fontSize: 15),
-                        ),
-                      ),
-                    ),
-                  ..._posts.map((post) {
-                    final currentLikeCount =
-                        _localLikeCounts[post.postId] ?? post.likeCount;
-
-                    final currentUserId =
-                        FirebaseAuth.instance.currentUser?.uid;
-                    final canDelete =
-                        _isAdmin ||
-                        (currentUserId != null &&
-                            post.authorId == currentUserId);
-
-                    final displayPost = post.copyWith(likeCount: currentLikeCount);
-
-                    final postKey = _postKeys.putIfAbsent(
-                      post.postId,
-                          () => GlobalKey(),
-                    );
-
-                    return Container(
-                      key: postKey,
-                      child: PostCard(
-                        post: displayPost,
-                        isLiked: _likedPostIds.contains(post.postId),
-                        isAdmin: _isAdmin,
-                        canDelete: canDelete,
-                        onLike: () => _toggleLike(displayPost),
-                        onComment: () => _showCommentDialog(displayPost),
-                        onDelete: () => _deletePost(displayPost),
-                      ),
-                    );
-                  }),
-                  if (_isLoadingMore)
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(
-                        child: CircularProgressIndicator(color: kAmber),
-                      ),
-                    ),
-                  if (!_hasMore && _posts.isNotEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(
-                        child: Text(
-                          'Đã tải hết bài viết',
-                          style: TextStyle(color: kGrey),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 20),
-                ],
-              ),
+        onRefresh: _refreshPosts,
+        child: ListView(
+          controller: _scrollController,
+          children: <Widget>[
+            CreatePostBox(
+              currentUserName:
+              user?.displayName ??
+                  user?.email ??
+                  'Người dùng',
+              currentUserAvatar:
+              user?.photoURL ?? '',
+              onCreatePost:
+              _showCreatePostDialog,
+              backgroundColor: cardBg,
+              textColor: textColor,
+              subTextColor: subTextColor,
+              inputColor: isDark
+                  ? const Color(0xFF1F2937)
+                  : const Color(0xFFF1F5F9),
             ),
+
+            if (_posts.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(
+                  child: Text(
+                    'Chưa có bài đăng nào',
+                    style: TextStyle(
+                      color: kGrey,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+
+            ..._posts.map((post) {
+              final currentLikeCount =
+                  _localLikeCounts[
+                  post.postId] ??
+                      post.likeCount;
+
+              final currentUserId =
+                  FirebaseAuth.instance
+                      .currentUser
+                      ?.uid;
+
+              final canDelete = _isAdmin ||
+                  (currentUserId != null &&
+                      post.authorId ==
+                          currentUserId);
+
+              final displayPost =
+              post.copyWith(
+                likeCount:
+                currentLikeCount,
+              );
+
+              return PostCard(
+                post: displayPost,
+                isLiked:
+                _likedPostIds.contains(
+                  post.postId,
+                ),
+                isAdmin: _isAdmin,
+                canDelete: canDelete,
+                onLike: () {
+                  _toggleLike(displayPost);
+                },
+                onComment: () {
+                  _showCommentDialog(
+                    displayPost,
+                  );
+                },
+                onDelete: () {
+                  _deletePost(
+                    displayPost,
+                  );
+                },
+              );
+            }),
+
+            if (_isLoadingMore)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child:
+                  CircularProgressIndicator(
+                    color: kAmber,
+                  ),
+                ),
+              ),
+
+            if (!_hasMore &&
+                _posts.isNotEmpty)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: Text(
+                    'Đã tải hết bài viết',
+                    style: TextStyle(
+                      color: kGrey,
+                    ),
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
     );
   }
 }
