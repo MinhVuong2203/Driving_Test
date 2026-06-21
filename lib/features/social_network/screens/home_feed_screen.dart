@@ -20,6 +20,7 @@ import '../widgets/comment_bottom_sheet.dart';
 import '../widgets/create_post_box.dart';
 import '../widgets/post_card.dart';
 import '../widgets/social_colors.dart';
+import 'package:file_picker/file_picker.dart' as fp;
 
 class HomeFeedScreen extends StatefulWidget {
   const HomeFeedScreen({super.key});
@@ -269,11 +270,14 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         .join(', ');
   }
 
+
+
   Future<void> _showCreatePostDialog() async {
     final contentController = TextEditingController();
 
     XFile? selectedImage;
-    XFile? selectedVideo;
+    File? selectedVideoFile;
+    String selectedVideoName = '';
 
     VideoPlayerController? videoPreviewController;
 
@@ -282,8 +286,81 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
     VideoUploadResult? uploadedVideo;
 
+    Future<void> disposeVideoController(
+        VideoPlayerController? controller,
+        ) async {
+      if (controller == null) return;
+
+      try {
+        await controller.pause();
+      } catch (_) {}
+
+      try {
+        await controller.dispose();
+      } catch (e) {
+        debugPrint('Dispose video controller error: $e');
+      }
+    }
+
+    Future<void> removeCurrentVideo(
+        StateSetter setDialogState,
+        ) async {
+      final oldController = videoPreviewController;
+
+      setDialogState(() {
+        selectedVideoFile = null;
+        selectedVideoName = '';
+        videoPreviewController = null;
+      });
+
+      await WidgetsBinding.instance.endOfFrame;
+
+      await disposeVideoController(oldController);
+    }
+
+    Future<void> pickImage(
+        StateSetter setDialogState,
+        ) async {
+      if (isPosting || isPreparingVideo) return;
+
+      try {
+        final picker = ImagePicker();
+
+        final image = await picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 80,
+        );
+
+        if (image == null) return;
+
+        final oldController = videoPreviewController;
+
+        setDialogState(() {
+          selectedImage = image;
+          selectedVideoFile = null;
+          selectedVideoName = '';
+          videoPreviewController = null;
+        });
+
+        await WidgetsBinding.instance.endOfFrame;
+
+        await disposeVideoController(oldController);
+      } catch (e) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Không thể chọn ảnh: '
+                  '${e.toString().replaceFirst('Exception: ', '')}',
+            ),
+          ),
+        );
+      }
+    }
+
     Future<void> pickVideo(
-        void Function(void Function()) setDialogState,
+        StateSetter setDialogState,
         ) async {
       if (isPosting || isPreparingVideo) return;
 
@@ -292,60 +369,117 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       });
 
       try {
-        final picker = ImagePicker();
-
-        final pickedVideo = await picker.pickVideo(
-          source: ImageSource.gallery,
+        final result = await fp.FilePicker.pickFiles(
+          type: fp.FileType.any,
+          allowMultiple: false,
+          withData: false,
         );
 
-        if (pickedVideo == null) return;
-
-        final controller = VideoPlayerController.file(
-          File(pickedVideo.path),
-        );
-
-        await controller.initialize();
-
-        final duration = controller.value.duration;
-
-        if (duration <= Duration.zero) {
-          await controller.dispose();
-
-          throw Exception(
-            'Không thể đọc thời lượng video',
-          );
+        if (result == null || result.files.isEmpty) {
+          return;
         }
 
-        if (duration > const Duration(seconds: 30)) {
-          await controller.dispose();
+        final platformFile = result.files.single;
+        final filePath = platformFile.path;
+
+        if (filePath == null || filePath.trim().isEmpty) {
+          throw Exception('Không thể lấy đường dẫn file');
+        }
+
+        final videoFile = File(filePath);
+
+        if (!await videoFile.exists()) {
+          throw Exception('File được chọn không tồn tại');
+        }
+
+        final videoBytes = await videoFile.length();
+
+        if (videoBytes <= 0) {
+          throw Exception('File được chọn bị rỗng');
+        }
+
+        const maxVideoBytes = 100 * 1024 * 1024;
+
+        if (videoBytes > maxVideoBytes) {
+          throw Exception('Video không được vượt quá 100 MB');
+        }
+
+        VideoPlayerController? newController;
+
+        try {
+          newController = VideoPlayerController.file(videoFile);
+
+          await newController.initialize();
+
+          final duration = newController.value.duration;
+
+          if (duration <= Duration.zero) {
+            throw Exception(
+              'Không thể xác định thời lượng video',
+            );
+          }
+
+          if (duration > const Duration(seconds: 30)) {
+            throw Exception(
+              'Video chỉ được tối đa 30 giây. '
+                  'Video đã chọn dài ${duration.inSeconds} giây.',
+            );
+          }
+
+          final oldController = videoPreviewController;
+
+          setDialogState(() {
+            selectedImage = null;
+            selectedVideoFile = videoFile;
+            selectedVideoName = platformFile.name;
+            videoPreviewController = newController;
+          });
+
+          await WidgetsBinding.instance.endOfFrame;
+
+          await disposeVideoController(oldController);
+        } catch (previewError) {
+          debugPrint(
+            'Không thể xem trước video: $previewError',
+          );
+
+          await disposeVideoController(newController);
+
+          final oldController = videoPreviewController;
+
+          setDialogState(() {
+            selectedImage = null;
+            selectedVideoFile = videoFile;
+            selectedVideoName = platformFile.name;
+            videoPreviewController = null;
+          });
+
+          await WidgetsBinding.instance.endOfFrame;
+
+          await disposeVideoController(oldController);
 
           if (!mounted) return;
 
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text(
-                'Video chỉ được tối đa 30 giây. '
-                    'Video đã chọn dài ${duration.inSeconds} giây.',
+                'Thiết bị không xem trước được định dạng này. '
+                    'Video vẫn được chọn và backend sẽ kiểm tra khi đăng.',
               ),
             ),
           );
-
-          return;
         }
-
-        await videoPreviewController?.dispose();
-
-        setDialogState(() {
-          selectedImage = null;
-          selectedVideo = pickedVideo;
-          videoPreviewController = controller;
-        });
       } catch (e) {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Không thể chọn video: $e'),
+            content: Text(
+              e.toString().replaceFirst(
+                'Exception: ',
+                '',
+              ),
+            ),
           ),
         );
       } finally {
@@ -358,12 +492,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
     try {
       await showDialog<void>(
         context: context,
+        barrierDismissible: false,
         builder: (dialogContext) {
           return StatefulBuilder(
             builder: (context, setDialogState) {
               final isDark =
-                  Theme.of(dialogContext).brightness ==
-                      Brightness.dark;
+                  Theme.of(dialogContext).brightness == Brightness.dark;
 
               final dialogBg = isDark
                   ? const Color(0xFF111827)
@@ -400,8 +534,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     ),
                   ),
                   content: SizedBox(
-                    width:
-                    MediaQuery.of(context).size.width * 0.82,
+                    width: MediaQuery.of(context).size.width * 0.82,
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -424,26 +557,20 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                               filled: true,
                               fillColor: inputBg,
                               border: OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(14),
                                 borderSide: BorderSide(
                                   color: borderColor,
                                 ),
                               ),
-                              enabledBorder:
-                              OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.circular(14),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
                                 borderSide: BorderSide(
                                   color: borderColor,
                                 ),
                               ),
-                              focusedBorder:
-                              OutlineInputBorder(
-                                borderRadius:
-                                BorderRadius.circular(14),
-                                borderSide:
-                                const BorderSide(
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: const BorderSide(
                                   color: kAmber,
                                   width: 1.4,
                                 ),
@@ -457,8 +584,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             Stack(
                               children: [
                                 ClipRRect(
-                                  borderRadius:
-                                  BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(14),
                                   child: SizedBox(
                                     width: double.infinity,
                                     height: 190,
@@ -472,17 +598,14 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                                   top: 8,
                                   right: 8,
                                   child: IconButton.filled(
-                                    style:
-                                    IconButton.styleFrom(
-                                      backgroundColor:
-                                      Colors.black54,
+                                    style: IconButton.styleFrom(
+                                      backgroundColor: Colors.black54,
                                     ),
                                     onPressed: isPosting
                                         ? null
                                         : () {
                                       setDialogState(() {
-                                        selectedImage =
-                                        null;
+                                        selectedImage = null;
                                       });
                                     },
                                     icon: const Icon(
@@ -495,20 +618,17 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             ),
                           ],
 
-                          // Preview video
-                          if (selectedVideo != null &&
+                          // Preview video khi thiết bị hỗ trợ định dạng
+                          if (selectedVideoFile != null &&
                               videoPreviewController != null &&
                               videoPreviewController!
                                   .value.isInitialized) ...[
                             const SizedBox(height: 12),
                             ClipRRect(
-                              borderRadius:
-                              BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(14),
                               child: AspectRatio(
-                                aspectRatio:
-                                videoPreviewController!
-                                    .value
-                                    .aspectRatio ==
+                                aspectRatio: videoPreviewController!
+                                    .value.aspectRatio ==
                                     0
                                     ? 16 / 9
                                     : videoPreviewController!
@@ -520,19 +640,26 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                                       videoPreviewController!,
                                     ),
                                     Container(
-                                      color: Colors.black26,
+                                      color: videoPreviewController!
+                                          .value.isPlaying
+                                          ? Colors.transparent
+                                          : Colors.black26,
                                     ),
-
-                                    // Nút phát/tạm dừng
                                     IconButton.filled(
-                                      onPressed: () async {
-                                        if (videoPreviewController!
-                                            .value.isPlaying) {
-                                          await videoPreviewController!
-                                              .pause();
+                                      onPressed: isPosting
+                                          ? null
+                                          : () async {
+                                        final controller =
+                                            videoPreviewController;
+
+                                        if (controller == null) {
+                                          return;
+                                        }
+
+                                        if (controller.value.isPlaying) {
+                                          await controller.pause();
                                         } else {
-                                          await videoPreviewController!
-                                              .play();
+                                          await controller.play();
                                         }
 
                                         setDialogState(() {});
@@ -541,39 +668,23 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                                         videoPreviewController!
                                             .value.isPlaying
                                             ? Icons.pause_rounded
-                                            : Icons
-                                            .play_arrow_rounded,
+                                            : Icons.play_arrow_rounded,
                                         size: 34,
                                       ),
                                     ),
-
-                                    // Nút xóa video đã chọn
                                     Positioned(
                                       top: 8,
                                       right: 8,
                                       child: IconButton.filled(
-                                        style:
-                                        IconButton.styleFrom(
-                                          backgroundColor:
-                                          Colors.black54,
+                                        style: IconButton.styleFrom(
+                                          backgroundColor: Colors.black54,
                                         ),
                                         onPressed: isPosting
                                             ? null
                                             : () async {
-                                          final oldController =
-                                              videoPreviewController;
-
-                                          setDialogState(
-                                                () {
-                                              selectedVideo =
-                                              null;
-                                              videoPreviewController =
-                                              null;
-                                            },
+                                          await removeCurrentVideo(
+                                            setDialogState,
                                           );
-
-                                          await oldController
-                                              ?.dispose();
                                         },
                                         icon: const Icon(
                                           Icons.close_rounded,
@@ -581,33 +692,25 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                                         ),
                                       ),
                                     ),
-
-                                    // Hiển thị thời lượng
                                     Positioned(
-                                      bottom: 8,
                                       right: 10,
+                                      bottom: 8,
                                       child: Container(
-                                        padding:
-                                        const EdgeInsets
-                                            .symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                           horizontal: 8,
                                           vertical: 4,
                                         ),
-                                        decoration:
-                                        BoxDecoration(
+                                        decoration: BoxDecoration(
                                           color: Colors.black54,
                                           borderRadius:
-                                          BorderRadius
-                                              .circular(99),
+                                          BorderRadius.circular(99),
                                         ),
                                         child: Text(
                                           '${videoPreviewController!.value.duration.inSeconds}s / 30s',
-                                          style:
-                                          const TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 12,
-                                            fontWeight:
-                                            FontWeight.w700,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                         ),
                                       ),
@@ -618,64 +721,97 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             ),
                           ],
 
+                          // Video đã chọn nhưng thiết bị không preview được
+                          if (selectedVideoFile != null &&
+                              videoPreviewController == null) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: inputBg,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: borderColor,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.video_file_outlined,
+                                    color: textColor,
+                                    size: 38,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          selectedVideoName.isNotEmpty
+                                              ? selectedVideoName
+                                              : 'Video đã chọn',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: textColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Không thể xem trước trên thiết bị',
+                                          style: TextStyle(
+                                            color: subTextColor,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: isPosting
+                                        ? null
+                                        : () {
+                                      setDialogState(() {
+                                        selectedVideoFile = null;
+                                        selectedVideoName = '';
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.close_rounded,
+                                      color: subTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+
                           const SizedBox(height: 12),
 
-                          // Nút chọn ảnh và video
                           Row(
                             children: [
                               Expanded(
                                 child: OutlinedButton.icon(
-                                  style:
-                                  OutlinedButton.styleFrom(
-                                    foregroundColor: isDark
-                                        ? Colors.white
-                                        : kNavy,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor:
+                                    isDark ? Colors.white : kNavy,
                                     side: BorderSide(
                                       color: borderColor,
                                     ),
-                                    shape:
-                                    RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                   onPressed:
-                                  isPosting ||
-                                      isPreparingVideo
+                                  isPosting || isPreparingVideo
                                       ? null
-                                      : () async {
-                                    final picker =
-                                    ImagePicker();
-
-                                    final image =
-                                    await picker
-                                        .pickImage(
-                                      source:
-                                      ImageSource
-                                          .gallery,
-                                      imageQuality: 80,
-                                    );
-
-                                    if (image == null) {
-                                      return;
-                                    }
-
-                                    final oldController =
-                                        videoPreviewController;
-
-                                    setDialogState(() {
-                                      selectedImage =
-                                          image;
-                                      selectedVideo =
-                                      null;
-                                      videoPreviewController =
-                                      null;
-                                    });
-
-                                    await oldController
-                                        ?.dispose();
-                                  },
+                                      : () => pickImage(
+                                    setDialogState,
+                                  ),
                                   icon: const Icon(
                                     Icons.image_outlined,
                                   ),
@@ -685,24 +821,18 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: OutlinedButton.icon(
-                                  style:
-                                  OutlinedButton.styleFrom(
-                                    foregroundColor: isDark
-                                        ? Colors.white
-                                        : kNavy,
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor:
+                                    isDark ? Colors.white : kNavy,
                                     side: BorderSide(
                                       color: borderColor,
                                     ),
-                                    shape:
-                                    RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius
-                                          .circular(12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                   onPressed:
-                                  isPosting ||
-                                      isPreparingVideo
+                                  isPosting || isPreparingVideo
                                       ? null
                                       : () => pickVideo(
                                     setDialogState,
@@ -711,21 +841,29 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                                       ? const SizedBox(
                                     width: 18,
                                     height: 18,
-                                    child:
-                                    CircularProgressIndicator(
+                                    child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                     ),
                                   )
                                       : const Icon(
-                                    Icons
-                                        .video_library_outlined,
+                                    Icons.video_library_outlined,
                                   ),
-                                  label:
-                                  const Text('Video'),
+                                  label: const Text('Video'),
                                 ),
                               ),
                             ],
                           ),
+
+                          if (selectedVideoFile != null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Video tối đa 30 giây và 100 MB',
+                              style: TextStyle(
+                                color: subTextColor,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -734,15 +872,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                     TextButton(
                       onPressed: isPosting
                           ? null
-                          : () async {
-                        await videoPreviewController
-                            ?.pause();
-
-                        if (dialogContext.mounted) {
-                          Navigator.pop(
-                            dialogContext,
-                          );
-                        }
+                          : () {
+                        Navigator.pop(dialogContext);
                       },
                       child: Text(
                         'Hủy',
@@ -760,7 +891,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                         if (content.isEmpty &&
                             selectedImage == null &&
-                            selectedVideo == null) {
+                            selectedVideoFile == null) {
                           ScaffoldMessenger.of(
                             dialogContext,
                           ).showSnackBar(
@@ -781,34 +912,23 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                         try {
                           String imageUrl = '';
-
                           uploadedVideo = null;
 
-                          // Upload ảnh
                           if (selectedImage != null) {
                             imageUrl =
-                            await _postApiRepo
-                                .uploadPostImage(
-                              File(
-                                selectedImage!.path,
-                              ),
+                            await _postApiRepo.uploadPostImage(
+                              File(selectedImage!.path),
                             );
                           }
 
-                          // Upload video
-                          if (selectedVideo != null) {
+                          if (selectedVideoFile != null) {
                             uploadedVideo =
-                            await _postApiRepo
-                                .uploadPostVideo(
-                              File(
-                                selectedVideo!.path,
-                              ),
+                            await _postApiRepo.uploadPostVideo(
+                              selectedVideoFile!,
                             );
                           }
 
-                          final author =
-                          await _getAuthorInfo();
-
+                          final author = await _getAuthorInfo();
                           final address =
                           await _getCurrentAddress();
 
@@ -817,56 +937,39 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                               .toString();
 
                           final createdPost =
-                          await _postApiRepo
-                              .createPost(
+                          await _postApiRepo.createPost(
                             postId: postId,
-                            authorId:
-                            author.authorId,
-                            authorName:
-                            author.authorName,
-                            authorAvatar:
-                            author.authorAvatar,
+                            authorId: author.authorId,
+                            authorName: author.authorName,
+                            authorAvatar: author.authorAvatar,
                             content: content,
                             imageUrl: imageUrl,
                             videoUrl:
-                            uploadedVideo
-                                ?.videoUrl ??
-                                '',
+                            uploadedVideo?.videoUrl ?? '',
                             videoPublicId:
-                            uploadedVideo
-                                ?.videoPublicId ??
-                                '',
+                            uploadedVideo?.videoPublicId ?? '',
                             videoDuration:
-                            uploadedVideo
-                                ?.duration ??
-                                0,
+                            uploadedVideo?.duration ?? 0,
                             videoBytes:
-                            uploadedVideo?.bytes ??
-                                0,
+                            uploadedVideo?.bytes ?? 0,
                             address: address,
                           );
 
                           if (!mounted) return;
 
                           if (dialogContext.mounted) {
-                            Navigator.pop(
-                              dialogContext,
-                            );
+                            Navigator.pop(dialogContext);
                           }
 
                           setState(() {
-                            _posts.insert(
-                              0,
-                              createdPost,
-                            );
+                            _posts.insert(0, createdPost);
 
                             _localLikeCounts[
                             createdPost.postId] =
                                 createdPost.likeCount;
                           });
 
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
                                 'Đăng bài thành công',
@@ -874,7 +977,6 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             ),
                           );
 
-                          // Kiểm tra bài có bị AI xóa không
                           Future.delayed(
                             const Duration(seconds: 4),
                                 () async {
@@ -882,24 +984,20 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                               try {
                                 final checkedPost =
-                                await _postApiRepo
-                                    .getPostById(
+                                await _postApiRepo.getPostById(
                                   createdPost.postId,
                                 );
 
-                                if (checkedPost
-                                    .isDeleted ||
+                                if (checkedPost.isDeleted ||
                                     !checkedPost.status) {
                                   setState(() {
                                     _posts.removeWhere(
                                           (post) =>
                                       post.postId ==
-                                          createdPost
-                                              .postId,
+                                          createdPost.postId,
                                     );
 
-                                    _localLikeCounts
-                                        .remove(
+                                    _localLikeCounts.remove(
                                       createdPost.postId,
                                     );
 
@@ -910,14 +1008,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
                                   if (!mounted) return;
 
-                                  ScaffoldMessenger.of(
-                                    context,
-                                  ).showSnackBar(
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                        'Bài viết vi phạm '
-                                            'tiêu chuẩn nên đã '
-                                            'bị tự động xóa',
+                                        'Bài viết vi phạm tiêu chuẩn '
+                                            'nên đã bị tự động xóa',
                                       ),
                                     ),
                                   );
@@ -930,31 +1026,27 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                             },
                           );
                         } catch (e) {
-                          // Nếu upload video thành công
-                          // nhưng tạo bài thất bại,
-                          // xóa video khỏi Cloudinary
+                          /*
+                               * Nếu video đã được upload lên Cloudinary
+                               * nhưng tạo bài thất bại thì xóa video rác.
+                               */
                           if (uploadedVideo != null &&
                               uploadedVideo!
-                                  .videoPublicId
-                                  .isNotEmpty) {
+                                  .videoPublicId.isNotEmpty) {
                             try {
                               await _postApiRepo
                                   .deleteUploadedVideo(
-                                uploadedVideo!
-                                    .videoPublicId,
+                                uploadedVideo!.videoPublicId,
                               );
                             } catch (deleteError) {
                               debugPrint(
-                                'Không thể dọn video '
-                                    'Cloudinary: '
+                                'Không thể xóa video Cloudinary: '
                                     '$deleteError',
                               );
                             }
                           }
 
-                          if (!dialogContext.mounted) {
-                            return;
-                          }
+                          if (!dialogContext.mounted) return;
 
                           setDialogState(() {
                             isPosting = false;
@@ -965,7 +1057,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           ).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Lỗi đăng bài: $e',
+                                'Lỗi đăng bài: '
+                                    '${e.toString().replaceFirst('Exception: ', '')}',
                               ),
                             ),
                           );
@@ -975,8 +1068,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child:
-                        CircularProgressIndicator(
+                        child: CircularProgressIndicator(
                           strokeWidth: 2,
                           color: Colors.white,
                         ),
@@ -991,7 +1083,12 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
         },
       );
     } finally {
-      await videoPreviewController?.dispose();
+      final controller = videoPreviewController;
+
+      videoPreviewController = null;
+
+      await disposeVideoController(controller);
+
       contentController.dispose();
     }
   }
