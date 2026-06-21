@@ -11,5 +11,9 @@ class AppConfig {
   static const developmentTeamUrl = "$publicPageBaseUrl/development-team";
   static const privacyPolicyUrl = "$publicPageBaseUrl/privacy-policy";
   static const downloadAppUrl = "$publicPageBaseUrl/download-app";
+  static const appUpdateManifestUrl =
+      "$publicPageBaseUrl/downloads/app-update.json";
+  static const appUpdateApkUrl =
+      "$publicPageBaseUrl/downloads/app-release.apk";
   static const downloadQrAsset = "assets/images/qr/qrcode.svg";
 }
