@@ -7,7 +7,9 @@ import 'package:driving_test_prep/data/repository/setting_reponsitory.dart';
 import 'package:driving_test_prep/data/repository/traffic_violation_repository.dart';
 import 'package:driving_test_prep/data/services/sqlite/wrong_question_notification_service.dart';
 import 'package:driving_test_prep/features/overlay/screens/wrong_question_reminder_overlay.dart';
+import 'package:driving_test_prep/shared/utils/app_navigator.dart';
 import 'package:driving_test_prep/shared/utils/app_state_notifiers.dart';
+import 'package:driving_test_prep/shared/widgets/app_update_gate.dart';
 import 'package:driving_test_prep/shared/widgets/bottom_nav_bar.dart';
 import 'package:driving_test_prep/shared/widgets/question_data_download_banner.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +122,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       builder: (context, modeValue, _) {
         return MaterialApp(
           title: "GPLX App",
+          navigatorKey: appNavigatorKey,
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),
@@ -129,6 +132,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             return Stack(
               children: [
                 ?child,
+                const AppUpdateGate(),
                 const QuestionDataDownloadBanner(),
                 WrongQuestionReminderOverlay(
                   key: wrongQuestionReminderOverlayKey,
