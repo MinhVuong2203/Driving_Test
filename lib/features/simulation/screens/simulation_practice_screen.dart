@@ -1,5 +1,6 @@
 import 'package:driving_test_prep/data/models/simulation_situation_model.dart';
 import 'package:driving_test_prep/data/repository/simulation_situation_repository.dart';
+import 'package:driving_test_prep/features/simulation/screens/simulation_history_screen.dart';
 import 'package:driving_test_prep/features/simulation/screens/simulation_situation_list_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +93,21 @@ class _SimulationPracticeScreenState extends State<SimulationPracticeScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
             children: [
               _SummaryPanel(total: situations.length),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SimulationHistoryScreen(
+                        situations: situations,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history_rounded),
+                label: const Text('Xem lịch sử làm'),
+              ),
               const SizedBox(height: 16),
               Text(
                 'Chọn chủ đề',
