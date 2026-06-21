@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:driving_test_prep/features/social_network/models/post_model.dart';
 import 'auth_api_headers.dart';
 import 'package:driving_test_prep/features/social_network/models/video_upload_result.dart';
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 
 class PostApiService {
   PostApiService(this.baseUrl);
@@ -231,10 +233,88 @@ class PostApiService {
         .toList();
   }
 
-  Future<VideoUploadResult> uploadPostVideo(File file) async {
+  Future<VideoUploadResult> uploadPostVideo(
+      File file,
+      ) async {
+    if (!await file.exists()) {
+      throw Exception('File video không tồn tại');
+    }
+
+    final fileLength = await file.length();
+
+    if (fileLength <= 0) {
+      throw Exception('File video rỗng');
+    }
+
+    const maxFileBytes = 100 * 1024 * 1024;
+
+    if (fileLength > maxFileBytes) {
+      throw Exception(
+        'Video không được vượt quá 100 MB',
+      );
+    }
+
+    final fileName = file.uri.pathSegments.isNotEmpty
+        ? file.uri.pathSegments.last
+        : 'video_${DateTime.now().millisecondsSinceEpoch}';
+
+    /*
+   * Đọc một phần đầu file để MIME package kiểm tra magic bytes,
+   * không chỉ dựa vào đuôi file.
+   */
+    final randomAccessFile = await file.open();
+
+    Uint8List headerBytes;
+
+    try {
+      final lengthToRead =
+      fileLength < 64 ? fileLength : 64;
+
+      headerBytes = await randomAccessFile.read(
+        lengthToRead,
+      );
+    } finally {
+      await randomAccessFile.close();
+    }
+
+    var mimeType = lookupMimeType(
+      file.path,
+      headerBytes: headerBytes,
+    );
+
+    /*
+   * Có định dạng video lạ không nằm trong bảng MIME.
+   * Không chặn upload, sử dụng MIME chung.
+   * BE và Cloudinary sẽ xác minh file thật.
+   */
+    mimeType ??= 'application/octet-stream';
+
+    final mimeParts = mimeType.split('/');
+
+    final MediaType contentType;
+
+    if (mimeParts.length == 2) {
+      contentType = MediaType(
+        mimeParts[0],
+        mimeParts[1],
+      );
+    } else {
+      contentType = MediaType(
+        'application',
+        'octet-stream',
+      );
+    }
+
+    debugPrint('VIDEO PATH: ${file.path}');
+    debugPrint('VIDEO NAME: $fileName');
+    debugPrint('VIDEO MIME: $mimeType');
+    debugPrint('VIDEO BYTES: $fileLength');
+
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('$baseUrl/api/Post/upload-video'),
+      Uri.parse(
+        '$baseUrl/api/Post/upload-video',
+      ),
     );
 
     request.headers.addAll(
@@ -245,44 +325,92 @@ class PostApiService {
       await http.MultipartFile.fromPath(
         'file',
         file.path,
-        filename: file.uri.pathSegments.last,
+        filename: fileName,
+        contentType: contentType,
       ),
     );
 
     final streamedResponse = await request.send();
-    final responseBody = await streamedResponse.stream.bytesToString();
+
+    final responseBody =
+    await streamedResponse.stream.bytesToString();
+
+    debugPrint(
+      'UPLOAD VIDEO STATUS: '
+          '${streamedResponse.statusCode}',
+    );
+
+    debugPrint(
+      'UPLOAD VIDEO RESPONSE: $responseBody',
+    );
 
     if (streamedResponse.statusCode < 200 ||
         streamedResponse.statusCode >= 300) {
-      String message = responseBody;
+      String errorMessage = responseBody;
 
       try {
-        final data = jsonDecode(responseBody) as Map<String, dynamic>;
-        message = data['message']?.toString() ?? responseBody;
+        final decoded = jsonDecode(responseBody);
+
+        if (decoded is Map<String, dynamic>) {
+          errorMessage =
+              decoded['message']?.toString() ??
+                  responseBody;
+
+          final detail =
+              decoded['detail']?.toString() ?? '';
+
+          if (detail.isNotEmpty) {
+            errorMessage =
+            '$errorMessage\n$detail';
+          }
+        }
       } catch (_) {}
 
-      throw Exception(message);
+      throw Exception(errorMessage);
     }
 
-    final data = jsonDecode(responseBody) as Map<String, dynamic>;
+    final decoded = jsonDecode(responseBody);
 
-    return VideoUploadResult.fromJson(data);
+    if (decoded is! Map<String, dynamic>) {
+      throw Exception(
+        'Phản hồi upload video không hợp lệ',
+      );
+    }
+
+    final result =
+    VideoUploadResult.fromJson(decoded);
+
+    if (result.videoUrl.isEmpty ||
+        result.videoPublicId.isEmpty) {
+      throw Exception(
+        'Backend không trả về thông tin video',
+      );
+    }
+
+    return result;
   }
 
-  Future<void> deleteUploadedVideo(String publicId) async {
+  Future<void> deleteUploadedVideo(
+      String publicId,
+      ) async {
     if (publicId.trim().isEmpty) return;
 
     final response = await http.delete(
-      Uri.parse('$baseUrl/api/Post/video'),
+      Uri.parse(
+        '$baseUrl/api/Post/video',
+      ),
       headers: await AuthApiHeaders.json(),
       body: jsonEncode({
         'publicId': publicId,
       }),
     );
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (response.statusCode < 200 ||
+        response.statusCode >= 300) {
       throw Exception(
-        'Không thể xóa video: ${response.statusCode} - ${response.body}',
+        'Không thể xóa video: '
+            '${response.statusCode} - '
+            '${response.body}',
       );
     }
   }

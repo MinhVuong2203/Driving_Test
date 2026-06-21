@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/post_model.dart';
 import 'social_colors.dart';
+import 'post_video_player.dart';
 
 class PostCard extends StatelessWidget {
   final PostModel post;
@@ -227,6 +228,13 @@ class PostCard extends StatelessWidget {
                   },
                 ),
               ),
+            ),
+          ],
+
+          if (_isValidUrl(post.videoUrl)) ...[
+            const SizedBox(height: 12),
+            PostVideoPlayer(
+              videoUrl: post.videoUrl,
             ),
           ],
           const SizedBox(height: 12),
