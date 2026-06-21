@@ -1,7 +1,8 @@
-import 'package:driving_test_prep/features/home/screens/traffic_sign_screen.dart';
+﻿import 'package:driving_test_prep/features/home/screens/traffic_sign_screen.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_list_screens.dart';
 import 'package:driving_test_prep/features/practice/screens/exam_topic_quets_screen.dart';
 import 'package:driving_test_prep/features/home/screens/tips_screen.dart';
+import 'package:driving_test_prep/features/simulation/screens/simulation_practice_screen.dart';
 import 'package:driving_test_prep/features/traffic_violations/screens/traffic_violation_search_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -53,10 +54,10 @@ class MenuGrid extends StatelessWidget {
         ),
       ),
       _MenuItem(
-        icon: Icons.change_history_rounded,
-        text: 'Sa hình',
+        icon: Icons.personal_video_rounded,
+        text: 'Mô phỏng',
         color: const Color(0xFF8B5CF6),
-        route: const ExamTopicQuetsScreen(topicId: 6, mode: 0),
+        route: const SimulationPracticeScreen(),
       ),
       _MenuItem(
         icon: Icons.lightbulb_rounded,
