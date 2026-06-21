@@ -1,4 +1,7 @@
 import 'package:driving_test_prep/data/models/simulation_situation_model.dart';
+import 'package:driving_test_prep/data/repository/simulation_situation_repository.dart';
+import 'package:driving_test_prep/data/services/sqlite/simulation_situation_local_service.dart';
+import 'package:driving_test_prep/features/simulation/screens/simulation_history_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -20,8 +23,11 @@ class SimulationPlayerScreen extends StatefulWidget {
 }
 
 class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
+  final _repository = SimulationSituationRepository.remote();
+
   late VideoPlayerController _controller;
   late Future<void> _initializeFuture;
+  late Future<SimulationProgressSummary?> _progressFuture;
   late int _currentIndex;
   late List<SimulationSituation> _situations;
 
@@ -46,6 +52,7 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
         ? [widget.situation]
         : List<SimulationSituation>.from(widget.situations);
     _currentIndex = widget.initialIndex.clamp(0, _situations.length - 1).toInt();
+    _progressFuture = _repository.getProgress(_situation.id);
     _createController();
   }
 
@@ -87,6 +94,20 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
       _flagSecond = second;
       _score = score;
     });
+
+    try {
+      await _repository.recordPracticeAttempt(
+        situation: _situation,
+        score: score,
+        flagSecond: second,
+      );
+      if (!mounted) return;
+      setState(() {
+        _progressFuture = _repository.getProgress(_situation.id);
+      });
+    } catch (_) {
+      // Practice scoring must stay usable even if local history cannot be saved.
+    }
   }
 
   Future<void> _replay() async {
@@ -111,6 +132,7 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
       _currentIndex = index;
       _flagSecond = null;
       _score = null;
+      _progressFuture = _repository.getProgress(_situation.id);
       _createController();
     });
     await oldController.dispose();
@@ -121,9 +143,22 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
     setState(() {
       _flagSecond = null;
       _score = null;
+      _progressFuture = _repository.getProgress(_situation.id);
       _createController();
     });
     await oldController.dispose();
+  }
+
+  void _openCurrentHistory() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SimulationHistoryScreen(
+          situation: _situation,
+          situations: _situations,
+        ),
+      ),
+    );
   }
 
   @override
@@ -226,6 +261,17 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
               ),
               const SizedBox(height: 12),
               _ScoreScale(score: _score, isDark: isDark),
+              const SizedBox(height: 12),
+              FutureBuilder<SimulationProgressSummary?>(
+                future: _progressFuture,
+                builder: (context, snapshot) {
+                  return _ProgressPanel(
+                    progress: snapshot.data,
+                    isDark: isDark,
+                    onOpenHistory: _openCurrentHistory,
+                  );
+                },
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -346,6 +392,120 @@ class _ResultPanel extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProgressPanel extends StatelessWidget {
+  final SimulationProgressSummary? progress;
+  final bool isDark;
+  final VoidCallback onOpenHistory;
+
+  const _ProgressPanel({
+    required this.progress,
+    required this.isDark,
+    required this.onOpenHistory,
+  });
+
+  String _formatSecond(double? second) {
+    if (second == null) return '--';
+    return '${second.toStringAsFixed(2)}s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = this.progress;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _ProgressStat(
+                  label: 'Số lần',
+                  value: '${progress?.attemptCount ?? 0}',
+                  isDark: isDark,
+                ),
+              ),
+              Expanded(
+                child: _ProgressStat(
+                  label: 'Cao nhất',
+                  value: '${progress?.bestScore ?? 0}/5',
+                  isDark: isDark,
+                ),
+              ),
+              Expanded(
+                child: _ProgressStat(
+                  label: 'Bấm tốt nhất',
+                  value: _formatSecond(progress?.bestFlagSecond),
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onOpenHistory,
+              icon: const Icon(Icons.history_rounded),
+              label: const Text('Xem lịch sử câu này'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProgressStat extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isDark;
+
+  const _ProgressStat({
+    required this.label,
+    required this.value,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: isDark
+                ? AppColors.darkTextMuted
+                : AppColors.lightTextSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
     );
   }
 }
