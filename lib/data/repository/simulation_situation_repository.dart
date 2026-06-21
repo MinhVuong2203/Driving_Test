@@ -1,9 +1,22 @@
+import 'dart:math';
+
 import 'package:driving_test_prep/data/models/simulation_situation_model.dart';
 import 'package:driving_test_prep/data/services/firebase/simulation_situation_api_service.dart';
 import 'package:driving_test_prep/data/services/sqlite/simulation_situation_local_service.dart';
 import 'package:driving_test_prep/core/database/DBProvider.dart';
 
 class SimulationSituationRepository {
+  static const simulationPassingScore = 35;
+  static const simulationMaxScore = 50;
+  static const _examChapterCounts = {
+    1: 2,
+    2: 1,
+    3: 2,
+    4: 1,
+    5: 2,
+    6: 2,
+  };
+
   final SimulationSituationApiService api;
   final SimulationSituationLocalService local;
 
@@ -78,6 +91,66 @@ class SimulationSituationRepository {
 
   Future<void> clearAttemptHistory({int? situationId}) {
     return local.clearAttempts(situationId: situationId);
+  }
+
+  List<SimulationSituation> generateExamSituations(
+    List<SimulationSituation> situations, {
+    Random? random,
+  }) {
+    final generator = random ?? Random();
+    final selected = <SimulationSituation>[];
+
+    for (final entry in _examChapterCounts.entries) {
+      final chapterSituations = filterByChapter(situations, entry.key);
+      chapterSituations.shuffle(generator);
+      selected.addAll(chapterSituations.take(entry.value));
+    }
+
+    if (selected.length < 10) {
+      final selectedIds = selected.map((item) => item.id).toSet();
+      final remaining = situations
+          .where((item) => item.isActive && !selectedIds.contains(item.id))
+          .toList()
+        ..shuffle(generator);
+      selected.addAll(remaining.take(10 - selected.length));
+    }
+
+    return selected.take(10).toList();
+  }
+
+  Future<int> saveExamResult({
+    required int totalScore,
+    required DateTime startedAt,
+    required DateTime submittedAt,
+    required List<SimulationExamAnswerInput> answers,
+  }) {
+    return local.saveExamResult(
+      totalScore: totalScore,
+      isPassed: totalScore >= simulationPassingScore,
+      startedAt: startedAt,
+      submittedAt: submittedAt,
+      answers: answers,
+    );
+  }
+
+  Future<List<SimulationExamSessionHistory>> getExamHistory({
+    int limit = 50,
+  }) {
+    return local.fetchExamSessions(limit: limit);
+  }
+
+  Future<List<SimulationExamAnswerHistory>> getExamAnswerHistory(
+    int sessionId,
+  ) {
+    return local.fetchExamAnswers(sessionId);
+  }
+
+  Future<void> deleteExamHistorySession(int sessionId) {
+    return local.deleteExamSession(sessionId);
+  }
+
+  Future<void> clearExamHistory() {
+    return local.clearExamHistory();
   }
 
   List<SimulationSituation> _activeSorted(List<SimulationSituation> situations) {

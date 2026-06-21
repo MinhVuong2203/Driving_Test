@@ -44,6 +44,60 @@ class SimulationAttemptHistory {
   });
 }
 
+class SimulationExamAnswerInput {
+  final int situationId;
+  final int orderIndex;
+  final int score;
+  final double? flagSecond;
+  final int duration;
+
+  const SimulationExamAnswerInput({
+    required this.situationId,
+    required this.orderIndex,
+    required this.score,
+    required this.flagSecond,
+    required this.duration,
+  });
+}
+
+class SimulationExamSessionHistory {
+  final int id;
+  final int totalScore;
+  final bool isPassed;
+  final DateTime startedAt;
+  final DateTime submittedAt;
+
+  const SimulationExamSessionHistory({
+    required this.id,
+    required this.totalScore,
+    required this.isPassed,
+    required this.startedAt,
+    required this.submittedAt,
+  });
+}
+
+class SimulationExamAnswerHistory {
+  final int id;
+  final int sessionId;
+  final int situationId;
+  final int orderIndex;
+  final int score;
+  final double? flagSecond;
+  final int duration;
+  final DateTime createdAt;
+
+  const SimulationExamAnswerHistory({
+    required this.id,
+    required this.sessionId,
+    required this.situationId,
+    required this.orderIndex,
+    required this.score,
+    required this.flagSecond,
+    required this.duration,
+    required this.createdAt,
+  });
+}
+
 class SimulationSituationLocalService {
   final AppDatabase db;
 
@@ -93,6 +147,29 @@ class SimulationSituationLocalService {
       )
     ''');
 
+    await db.customStatement('''
+      CREATE TABLE IF NOT EXISTS simulation_exam_sessions (
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        total_score INTEGER NOT NULL,
+        is_passed INTEGER NOT NULL,
+        started_at INTEGER NOT NULL,
+        submitted_at INTEGER NOT NULL
+      )
+    ''');
+
+    await db.customStatement('''
+      CREATE TABLE IF NOT EXISTS simulation_exam_answers (
+        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        session_id INTEGER NOT NULL,
+        situation_id INTEGER NOT NULL,
+        order_index INTEGER NOT NULL,
+        score INTEGER NOT NULL,
+        flag_second REAL NULL,
+        duration INTEGER NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
     await db.customStatement(
       'CREATE INDEX IF NOT EXISTS idx_simulation_chapter '
       'ON simulation_situations_cache (chapter, id)',
@@ -100,6 +177,10 @@ class SimulationSituationLocalService {
     await db.customStatement(
       'CREATE INDEX IF NOT EXISTS idx_simulation_attempts_situation '
       'ON simulation_attempts (situation_id, created_at)',
+    );
+    await db.customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_simulation_exam_answers_session '
+      'ON simulation_exam_answers (session_id, order_index)',
     );
 
     _isReady = true;
@@ -407,6 +488,133 @@ class SimulationSituationLocalService {
     });
   }
 
+  Future<int> saveExamResult({
+    required int totalScore,
+    required bool isPassed,
+    required DateTime startedAt,
+    required DateTime submittedAt,
+    required List<SimulationExamAnswerInput> answers,
+  }) async {
+    await ensureTables();
+
+    return db.transaction(() async {
+      await db.customStatement(
+        '''
+        INSERT INTO simulation_exam_sessions (
+          total_score,
+          is_passed,
+          started_at,
+          submitted_at
+        )
+        VALUES (?, ?, ?, ?)
+        ''',
+        [
+          totalScore,
+          isPassed ? 1 : 0,
+          startedAt.millisecondsSinceEpoch,
+          submittedAt.millisecondsSinceEpoch,
+        ],
+      );
+
+      final sessionRow = await db
+          .customSelect('SELECT last_insert_rowid() AS id')
+          .getSingle();
+      final sessionId = _readInt(sessionRow.data, 'id');
+
+      for (final answer in answers) {
+        await db.customStatement(
+          '''
+          INSERT INTO simulation_exam_answers (
+            session_id,
+            situation_id,
+            order_index,
+            score,
+            flag_second,
+            duration,
+            created_at
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+          ''',
+          [
+            sessionId,
+            answer.situationId,
+            answer.orderIndex,
+            answer.score,
+            answer.flagSecond,
+            answer.duration,
+            submittedAt.millisecondsSinceEpoch,
+          ],
+        );
+      }
+
+      return sessionId;
+    });
+  }
+
+  Future<List<SimulationExamSessionHistory>> fetchExamSessions({
+    int limit = 50,
+  }) async {
+    await ensureTables();
+
+    final rows = await db
+        .customSelect(
+          '''
+          SELECT *
+          FROM simulation_exam_sessions
+          ORDER BY submitted_at DESC
+          LIMIT ?
+          ''',
+          variables: [Variable.withInt(limit)],
+        )
+        .get();
+
+    return rows.map((row) => _examSessionFromRow(row.data)).toList();
+  }
+
+  Future<List<SimulationExamAnswerHistory>> fetchExamAnswers(
+    int sessionId,
+  ) async {
+    await ensureTables();
+
+    final rows = await db
+        .customSelect(
+          '''
+          SELECT *
+          FROM simulation_exam_answers
+          WHERE session_id = ?
+          ORDER BY order_index ASC
+          ''',
+          variables: [Variable.withInt(sessionId)],
+        )
+        .get();
+
+    return rows.map((row) => _examAnswerFromRow(row.data)).toList();
+  }
+
+  Future<void> deleteExamSession(int sessionId) async {
+    await ensureTables();
+
+    await db.transaction(() async {
+      await db.customStatement(
+        'DELETE FROM simulation_exam_answers WHERE session_id = ?',
+        [sessionId],
+      );
+      await db.customStatement(
+        'DELETE FROM simulation_exam_sessions WHERE id = ?',
+        [sessionId],
+      );
+    });
+  }
+
+  Future<void> clearExamHistory() async {
+    await ensureTables();
+
+    await db.transaction(() async {
+      await db.customStatement('DELETE FROM simulation_exam_answers');
+      await db.customStatement('DELETE FROM simulation_exam_sessions');
+    });
+  }
+
   SimulationSituation _situationFromRow(Map<String, Object?> row) {
     final rawWindows = row['score_windows_json']?.toString() ?? '[]';
     final decodedWindows = jsonDecode(rawWindows);
@@ -502,6 +710,29 @@ class SimulationSituationLocalService {
       situationId: _readInt(row, 'situation_id'),
       score: _readInt(row, 'score'),
       flagSecond: _readDouble(row, 'flag_second') ?? 0,
+      duration: _readInt(row, 'duration'),
+      createdAt: _readDateTime(row, 'created_at') ?? DateTime.now(),
+    );
+  }
+
+  SimulationExamSessionHistory _examSessionFromRow(Map<String, Object?> row) {
+    return SimulationExamSessionHistory(
+      id: _readInt(row, 'id'),
+      totalScore: _readInt(row, 'total_score'),
+      isPassed: _readInt(row, 'is_passed') == 1,
+      startedAt: _readDateTime(row, 'started_at') ?? DateTime.now(),
+      submittedAt: _readDateTime(row, 'submitted_at') ?? DateTime.now(),
+    );
+  }
+
+  SimulationExamAnswerHistory _examAnswerFromRow(Map<String, Object?> row) {
+    return SimulationExamAnswerHistory(
+      id: _readInt(row, 'id'),
+      sessionId: _readInt(row, 'session_id'),
+      situationId: _readInt(row, 'situation_id'),
+      orderIndex: _readInt(row, 'order_index'),
+      score: _readInt(row, 'score'),
+      flagSecond: _readDouble(row, 'flag_second'),
       duration: _readInt(row, 'duration'),
       createdAt: _readDateTime(row, 'created_at') ?? DateTime.now(),
     );
