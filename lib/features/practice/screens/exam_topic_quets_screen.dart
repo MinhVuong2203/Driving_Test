@@ -241,6 +241,15 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
     return _normalize(q.correctAnswer) == _normalize(selectedLabel);
   }
 
+  bool _isWrongAnswered(Question q) {
+    if (!widget.gradeInstantly || !judgedQuestionIds.contains(q.id)) {
+      return false;
+    }
+
+    final selected = selectedAnswers[q.id];
+    return selected != null && !_isCorrect(q, selected);
+  }
+
   void _removeQuestionFromCurrentList(int questionId) {
     final removedIndex = questions.indexWhere((q) => q.id == questionId);
     if (removedIndex == -1) return;
@@ -588,9 +597,22 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                     const SizedBox(width: _numberItemGap),
                 itemBuilder: (_, i) {
                   final active = i == currentIndex;
-                  final hasAnswer = selectedAnswers.containsKey(
-                    questions[i].id,
-                  );
+                  final question = questions[i];
+                  final hasAnswer = selectedAnswers.containsKey(question.id);
+                  final isWrong = _isWrongAnswered(question);
+                  final chipColor = isWrong
+                      ? AppColors.danger
+                      : (active
+                            ? AppColors.primary
+                            : (hasAnswer ? answeredChipColor : surfaceColor));
+                  final chipBorderColor = isWrong
+                      ? AppColors.danger
+                      : (active
+                            ? AppColors.primary
+                            : (hasAnswer ? AppColors.primary : borderColor));
+                  final chipTextColor = (active || isWrong)
+                      ? AppColors.white
+                      : (hasAnswer ? AppColors.primary : textSecondary);
 
                   return GestureDetector(
                     onTap: () => _setCurrentIndex(i),
@@ -599,13 +621,9 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: active
-                            ? AppColors.primary
-                            : (hasAnswer ? answeredChipColor : surfaceColor),
+                        color: chipColor,
                         border: Border.all(
-                          color: active
-                              ? AppColors.primary
-                              : (hasAnswer ? AppColors.primary : borderColor),
+                          color: chipBorderColor,
                           width: active ? 2 : 1,
                         ),
                       ),
@@ -614,9 +632,7 @@ class _ExamTopicQuetsScreenState extends State<ExamTopicQuetsScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
-                          color: active
-                              ? AppColors.white
-                              : (hasAnswer ? AppColors.primary : textSecondary),
+                          color: chipTextColor,
                         ),
                       ),
                     ),

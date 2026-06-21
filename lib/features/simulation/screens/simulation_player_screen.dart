@@ -51,7 +51,9 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
     _situations = widget.situations.isEmpty
         ? [widget.situation]
         : List<SimulationSituation>.from(widget.situations);
-    _currentIndex = widget.initialIndex.clamp(0, _situations.length - 1).toInt();
+    _currentIndex = widget.initialIndex
+        .clamp(0, _situations.length - 1)
+        .toInt();
     _progressFuture = _repository.getProgress(_situation.id);
     _createController();
   }
@@ -166,9 +168,7 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_situation.displayTitle),
-      ),
+      appBar: AppBar(title: Text(_situation.displayTitle)),
       body: FutureBuilder<void>(
         future: _initializeFuture,
         builder: (context, snapshot) {
@@ -222,6 +222,10 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
                 ),
               ),
               const SizedBox(height: 6),
+              if (_hasFlagged) ...[
+                _ScoreTimelineGuide(situation: _situation, isDark: isDark),
+                const SizedBox(height: 6),
+              ],
               ValueListenableBuilder<VideoPlayerValue>(
                 valueListenable: _controller,
                 builder: (context, value, _) {
@@ -295,8 +299,9 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed:
-                          _canGoNext ? () => _goToIndex(_currentIndex + 1) : null,
+                      onPressed: _canGoNext
+                          ? () => _goToIndex(_currentIndex + 1)
+                          : null,
                       icon: const Icon(Icons.chevron_right_rounded),
                       label: const Text('Tiếp'),
                     ),
@@ -314,6 +319,137 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _ScoreTimelineGuide extends StatelessWidget {
+  final SimulationSituation situation;
+  final bool isDark;
+
+  const _ScoreTimelineGuide({required this.situation, required this.isDark});
+
+  Color _scoreColor(int score) {
+    switch (score) {
+      case 5:
+        return AppColors.success;
+      case 4:
+        return const Color(0xFF84CC16);
+      case 3:
+        return AppColors.warning;
+      case 2:
+        return const Color(0xFFF97316);
+      case 1:
+        return AppColors.danger;
+      default:
+        return isDark ? AppColors.darkBorder : AppColors.lightBorder;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final duration = situation.duration <= 0
+        ? 1.0
+        : situation.duration.toDouble();
+    final windows =
+        situation.scoreWindows
+            .where((window) => window.to > window.from && window.score > 0)
+            .toList()
+          ..sort((a, b) => a.from.compareTo(b.from));
+
+    if (windows.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      height: 22,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 7,
+                child: Container(
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.darkInputBackground
+                        : AppColors.lightInputDisabledBackground,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
+              ),
+              for (final window in windows)
+                _ScoreWindowSegment(
+                  left: ((window.from / duration).clamp(0.0, 1.0)) * width,
+                  width:
+                      (((window.to - window.from) / duration).clamp(0.0, 1.0)) *
+                      width,
+                  color: _scoreColor(window.score),
+                  score: window.score,
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ScoreWindowSegment extends StatelessWidget {
+  final double left;
+  final double width;
+  final Color color;
+  final int score;
+
+  const _ScoreWindowSegment({
+    required this.left,
+    required this.width,
+    required this.color,
+    required this.score,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final segmentWidth = width < 3 ? 3.0 : width;
+
+    return Positioned(
+      left: left,
+      top: 5,
+      width: segmentWidth,
+      height: 12,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(99),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.24),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: segmentWidth >= 28
+            ? Center(
+                child: Text(
+                  '$scoređ',
+                  maxLines: 1,
+                  overflow: TextOverflow.clip,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              )
+            : null,
       ),
     );
   }
@@ -500,10 +636,7 @@ class _ProgressStat extends StatelessWidget {
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900),
         ),
       ],
     );
@@ -514,10 +647,7 @@ class _ScoreScale extends StatelessWidget {
   final int? score;
   final bool isDark;
 
-  const _ScoreScale({
-    required this.score,
-    required this.isDark,
-  });
+  const _ScoreScale({required this.score, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -539,9 +669,7 @@ class _ScoreScale extends StatelessWidget {
                 border: Border.all(
                   color: score == item
                       ? AppColors.success
-                      : (isDark
-                          ? AppColors.darkBorder
-                          : AppColors.lightBorder),
+                      : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                 ),
               ),
               child: Text(
@@ -550,8 +678,8 @@ class _ScoreScale extends StatelessWidget {
                   color: score == item
                       ? Colors.white
                       : (isDark
-                          ? AppColors.darkTextPrimary
-                          : AppColors.lightTextPrimary),
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary),
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
                 ),

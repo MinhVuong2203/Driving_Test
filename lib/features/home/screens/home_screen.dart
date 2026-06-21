@@ -186,10 +186,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           letterSpacing: 0,
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('Xem tất cả'),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -371,7 +367,7 @@ class _HeroHeader extends StatelessWidget {
               border: Border.all(color: Colors.white.withValues(alpha: 0.22)),
             ),
             child: const Icon(
-              Icons.directions_car_filled_rounded,
+              Icons.bolt_rounded,
               color: Colors.white,
               size: 52,
             ),

@@ -53,6 +53,10 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   Duration remaining = Duration.zero;
   Timer? timer;
   Timer? _autoNextTimer;
+  final ScrollController _numberStripController = ScrollController();
+
+  static const double _numberItemWidth = 38;
+  static const double _numberItemGap = 6;
 
   // Luu dap an theo nhan A/B/C/D
   final Map<int, String> selectedAnswers = {};
@@ -82,6 +86,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   void dispose() {
     timer?.cancel();
     _autoNextTimer?.cancel();
+    _numberStripController.dispose();
     if (!_isSubmitting && remaining.inSeconds > 0) {
       unawaited(_saveRemainingTime());
     }
@@ -103,9 +108,14 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
   }
 
   void _goToQuestion(int index) {
+    _setCurrentIndex(index);
+  }
+
+  void _setCurrentIndex(int index, {bool animated = true}) {
     if (index < 0 || index >= questions.length) return;
     _autoNextTimer?.cancel();
     setState(() => currentIndex = index);
+    _scheduleStripScroll(animated: animated);
   }
 
   void _scheduleAutoNext(int selectedQuestionId, int selectedQuestionIndex) {
@@ -116,10 +126,38 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       if (!mounted || questions.isEmpty) return;
       if (currentIndex != selectedQuestionIndex) return;
       if (questions[currentIndex].question.id != selectedQuestionId) return;
-      setState(() {
-        currentIndex += 1;
-      });
+      _setCurrentIndex(currentIndex + 1);
     });
+  }
+
+  void _scheduleStripScroll({bool animated = true}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollNumberStripToCurrent(animated: animated);
+    });
+  }
+
+  void _scrollNumberStripToCurrent({bool animated = true}) {
+    if (!_numberStripController.hasClients) return;
+
+    final position = _numberStripController.position;
+    final viewportWidth = position.viewportDimension;
+    final itemExtent = _numberItemWidth + _numberItemGap;
+    final rawOffset =
+        (currentIndex * itemExtent) - ((viewportWidth - _numberItemWidth) / 2);
+    final target = rawOffset.clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
+
+    if (animated) {
+      _numberStripController.animateTo(
+        target,
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+      );
+    } else {
+      _numberStripController.jumpTo(target);
+    }
   }
 
   Future<void> _initVipAndAd() async {
@@ -169,6 +207,7 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
       currentIndex = firstUnansweredIndex == -1 ? 0 : firstUnansweredIndex;
       remaining = restoredRemaining;
     });
+    _scheduleStripScroll(animated: false);
     _startTimer();
   }
 
@@ -223,6 +262,15 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
 
   bool _isCorrect(Question q, String selectedLabel) {
     return _normalize(q.correctAnswer) == _normalize(selectedLabel);
+  }
+
+  bool _isWrongAnswered(Question q) {
+    if (!widget.gradeInstantly || !judgedQuestionIds.contains(q.id)) {
+      return false;
+    }
+
+    final selected = selectedAnswers[q.id];
+    return selected != null && !_isCorrect(q, selected);
   }
 
   String _optionTextByLabel(
@@ -525,31 +573,44 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: List.generate(questions.length, (i) {
+            SizedBox(
+              height: 40,
+              child: ListView.separated(
+                controller: _numberStripController,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                scrollDirection: Axis.horizontal,
+                itemCount: questions.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(width: _numberItemGap),
+                itemBuilder: (_, i) {
                   final active = i == currentIndex;
-                  final hasAnswer = selectedAnswers.containsKey(
-                    questions[i].question.id,
-                  );
+                  final question = questions[i].question;
+                  final hasAnswer = selectedAnswers.containsKey(question.id);
+                  final isWrong = _isWrongAnswered(question);
+                  final chipColor = isWrong
+                      ? AppColors.danger
+                      : (active
+                            ? AppColors.primary
+                            : (hasAnswer ? answeredChipColor : surfaceColor));
+                  final chipBorderColor = isWrong
+                      ? AppColors.danger
+                      : (active
+                            ? AppColors.primary
+                            : (hasAnswer ? AppColors.primary : borderColor));
+                  final chipTextColor = (active || isWrong)
+                      ? AppColors.white
+                      : (hasAnswer ? AppColors.primary : textSecondary);
+
                   return GestureDetector(
                     onTap: () => _goToQuestion(i),
                     child: Container(
-                      width: 38,
-                      height: 32,
+                      width: _numberItemWidth,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: active
-                            ? AppColors.primary
-                            : (hasAnswer ? answeredChipColor : surfaceColor),
+                        color: chipColor,
                         border: Border.all(
-                          color: active
-                              ? AppColors.primary
-                              : (hasAnswer ? AppColors.primary : borderColor),
+                          color: chipBorderColor,
                           width: active ? 2 : 1,
                         ),
                       ),
@@ -558,14 +619,12 @@ class _ExamSetsQuestScreenState extends State<ExamSetsQuestScreen> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
-                          color: active
-                              ? AppColors.white
-                              : (hasAnswer ? AppColors.primary : textSecondary),
+                          color: chipTextColor,
                         ),
                       ),
                     ),
                   );
-                }),
+                },
               ),
             ),
             const SizedBox(height: 12),
