@@ -21,6 +21,6 @@ class SeedsExamGroups {
         ),
       );
     }
-    print("✅ Seed exam_groups xong");
+    print("Seed exam_groups xong");
   }
 }

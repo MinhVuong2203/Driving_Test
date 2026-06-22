@@ -23,6 +23,6 @@ class SeedsTrafficSigns {
       batch.insertAllOnConflictUpdate(db.trafficSigns, rows);
     });
 
-    print("✅ Seed traffic_signs xong (${rows.length} biển báo)");
+    print("Seed traffic_signs xong (${rows.length} biển báo)");
   }
 }

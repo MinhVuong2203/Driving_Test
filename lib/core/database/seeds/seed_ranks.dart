@@ -26,6 +26,6 @@ class SeedsRanks {
       );
     }
 
-    print("✅ Seed ranks xong");
+    print("Seed ranks xong");
   }
 }

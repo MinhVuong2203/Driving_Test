@@ -43,6 +43,6 @@ class SeedsQuestions {
       }
     }
 
-    print("✅ Seed questions xong (4 files)");
+    print("Seed questions xong (4 files)");
   }
 }

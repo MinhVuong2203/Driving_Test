@@ -30,6 +30,6 @@ class SeedsExamSetQuestions {
       });
     }
 
-    print("✅ Seed exam_set_questions (5 files) xong");
+    print("Seed exam_set_questions (5 files) xong");
   }
 }

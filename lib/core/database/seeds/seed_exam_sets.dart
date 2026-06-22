@@ -29,6 +29,6 @@ class SeedsExamSets {
       }
     }
 
-    print("✅ Seed exam_sets (5 files) xong");
+    print("Seed exam_sets (5 files) xong");
   }
 }

@@ -8,6 +8,6 @@ class SeedsSetting {
     await db.into(db.setting).insert(
       SettingCompanion.insert(SettingId: 1)
     );
-    print("✅ Setting xong");
+    print("Setting xong");
   }
 }

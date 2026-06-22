@@ -21,6 +21,6 @@ class SeedsTopics {
         ),
       );
     }
-    print("✅ Seed topics xong");
+    print("Seed topics xong");
   }
 }

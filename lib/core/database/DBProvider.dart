@@ -11,6 +11,6 @@ class DBProvider {
 
   DBProvider._internal() {
     db = AppDatabase();
-    print("✅ Đã tạo mới DB nè");
+    print("Đã tạo mới DB nè");
   }
 }
