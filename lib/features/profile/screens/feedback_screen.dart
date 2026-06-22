@@ -66,6 +66,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     var recentCount = 0;
 
     for (final item in feedbacks) {
+      if (item.status == 'spam') {
+        return 'Bạn không thể gửi góp ý vì đã có phản hồi không phù hợp.';
+      }
+
       final createdAt = item.createdAt;
 
       if (createdAt != null && now.difference(createdAt) <= _spamWindow) {
@@ -165,6 +169,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         throw Exception(_errorMessageFromResponse(response));
       }
 
+      final isSpamFeedback = _responseHasSpamRisk(response);
+
       if (!mounted) return;
 
       _contentController.clear();
@@ -174,11 +180,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Cảm ơn bạn đã gửi góp ý. Chúng tôi sẽ phản hồi ngay trên màn hình này.',
+            isSpamFeedback
+                ? 'Phản hồi không phù hợp.'
+                : 'Cảm ơn bạn đã gửi góp ý. Chúng tôi sẽ phản hồi ngay trên màn hình này.',
           ),
-          backgroundColor: AppColors.success,
+          backgroundColor: isSpamFeedback
+              ? AppColors.warning
+              : AppColors.success,
         ),
       );
     } catch (e) {
@@ -420,7 +430,7 @@ class _FeedbackComposer extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Tối thiểu 10 ký tự. Tối đa 3 phản hồi trong 30 phút để hạn chế spam.',
+                  'Tối thiểu 10 ký tự.',
                   style: TextStyle(
                     color: mutedColor,
                     fontSize: 12.5,
@@ -834,10 +844,25 @@ String _formatDate(DateTime? value) {
 
 String _replyTitle(String source) {
   return switch (source) {
-    'auto_ai' => 'AI tự động phản hồi',
-    'ai' => 'AI hỗ trợ phản hồi',
+    'auto_ai' => 'Phản hồi từ nhà sản xuất',
+    'auto_fallback' => 'Phản hồi từ nhà sản xuất',
+    'ai' => 'Phản hồi từ nhà sản xuất',
     _ => 'Phản hồi từ quản trị viên',
   };
+}
+
+bool _responseHasSpamRisk(http.Response response) {
+  try {
+    final decoded = jsonDecode(utf8.decode(response.bodyBytes));
+    if (decoded is! Map) return false;
+
+    if (decoded['spamRisk'] == true) return true;
+
+    final reply = decoded['reply'];
+    return reply is Map && reply['spamRisk'] == true;
+  } catch (_) {
+    return false;
+  }
 }
 
 String _errorMessageFromResponse(http.Response response) {
