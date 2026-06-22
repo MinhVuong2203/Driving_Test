@@ -2,6 +2,7 @@ import 'package:driving_test_prep/data/models/vip_package_model.dart';
 import 'package:driving_test_prep/data/models/user_vip_model.dart';
 import 'dart:io';
 import 'package:driving_test_prep/data/repository/vip_repository.dart';
+import 'package:driving_test_prep/data/services/external/app_update_service.dart';
 import 'package:driving_test_prep/data/services/firebase/user_profile_api_service.dart';
 import 'package:driving_test_prep/data/services/firebase/vip_firebase_service.dart';
 import 'package:driving_test_prep/data/services/firebase/user_vip_service.dart';
@@ -12,10 +13,12 @@ import 'package:driving_test_prep/shared/screen/login_view.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_config.dart';
 import 'package:driving_test_prep/shared/widgets/car_animated_button.dart';
+import 'package:driving_test_prep/shared/widgets/app_update_gate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:driving_test_prep/features/profile/screens/feedback_screen.dart';
@@ -29,14 +32,17 @@ class InfoScreen extends StatefulWidget {
 
 class _InfoScreenState extends State<InfoScreen> {
   late final VipRepository _vipRepository;
+  late final AppUpdateService _appUpdateService;
   late Future<List<VipPackageModel>> _vipPackagesFuture;
   late Future<UserVipModel?> _currentVipFuture;
+  late Future<PackageInfo> _packageInfoFuture;
 
   String? _selectedPackageId;
   int _currentPackageIndex = 0;
   int? _lastOrderCode;
   bool _isCreatingPayment = false;
   bool _isCheckingPayment = false;
+  bool _isCheckingAppVersion = false;
   bool _isUploadingAvatar = false;
   bool _isUpdatingDisplayName = false;
   bool _isSigningOut = false;
@@ -47,8 +53,10 @@ class _InfoScreenState extends State<InfoScreen> {
   void initState() {
     super.initState();
     _vipRepository = VipRepository(VipFirebaseService());
+    _appUpdateService = AppUpdateService();
     _vipPackagesFuture = _vipRepository.getActiveVipPackages();
     _currentVipFuture = UserVipService().getCurrentUserVip();
+    _packageInfoFuture = PackageInfo.fromPlatform();
     _avatarUrl = FirebaseAuth.instance.currentUser?.photoURL;
     _displayName = FirebaseAuth.instance.currentUser?.displayName;
   }
@@ -148,6 +156,34 @@ class _InfoScreenState extends State<InfoScreen> {
       );
     } catch (e) {
       _showMessage('Không chia sẻ được liên kết: $e');
+    }
+  }
+
+  Future<void> _checkAppVersion() async {
+    if (_isCheckingAppVersion) return;
+
+    setState(() => _isCheckingAppVersion = true);
+    try {
+      final packageInfo = await _packageInfoFuture;
+      final updateInfo = await _appUpdateService.checkForUpdate();
+
+      if (!mounted) return;
+      if (updateInfo == null) {
+        _showMessage('Phiên bản mới nhất hiện tại ${packageInfo.version}');
+        return;
+      }
+
+      await showAppUpdateDialog(
+        context: context,
+        service: _appUpdateService,
+        updateInfo: updateInfo,
+      );
+    } catch (_) {
+      _showMessage('Không kiểm tra được phiên bản. Vui lòng thử lại.');
+    } finally {
+      if (mounted) {
+        setState(() => _isCheckingAppVersion = false);
+      }
     }
   }
 
@@ -413,193 +449,212 @@ class _InfoScreenState extends State<InfoScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _refreshPackages,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 88),
+        child: Stack(
           children: [
-            FutureBuilder<UserVipModel?>(
-              future: _currentVipFuture,
-              builder: (context, snapshot) {
-                return _UserSummaryCard(
-                  user: user,
-                  avatarUrl: user == null ? null : _avatarUrl ?? user.photoURL,
-                  displayName: user == null
-                      ? null
-                      : _displayName ?? user.displayName,
-                  vip: snapshot.data,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                  isDark: isDark,
-                  isUploadingAvatar: _isUploadingAvatar,
-                  isUpdatingDisplayName: _isUpdatingDisplayName,
-                  onAvatarTap: user == null || _isUploadingAvatar
-                      ? null
-                      : _pickAndUploadAvatar,
-                  onEditDisplayNameTap: user == null || _isUpdatingDisplayName
-                      ? null
-                      : _showEditDisplayNameDialog,
-                );
-              },
-            ),
-            if (user == null) ...[
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 48,
-                child: FilledButton.icon(
-                  onPressed: _openLoginScreen,
-                  icon: const Icon(Icons.login_rounded),
-                  label: const Text('Đăng nhập'),
-                ),
-              ),
-            ],
-            const SizedBox(height: 18),
-            Row(
+            ListView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
               children: [
-                Expanded(
-                  child: Text(
-                    'Gói VIP',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
+                FutureBuilder<UserVipModel?>(
+                  future: _currentVipFuture,
+                  builder: (context, snapshot) {
+                    return _UserSummaryCard(
+                      user: user,
+                      avatarUrl: user == null
+                          ? null
+                          : _avatarUrl ?? user.photoURL,
+                      displayName: user == null
+                          ? null
+                          : _displayName ?? user.displayName,
+                      vip: snapshot.data,
+                      textColor: textColor,
+                      mutedColor: mutedColor,
+                      isDark: isDark,
+                      isUploadingAvatar: _isUploadingAvatar,
+                      isUpdatingDisplayName: _isUpdatingDisplayName,
+                      onAvatarTap: user == null || _isUploadingAvatar
+                          ? null
+                          : _pickAndUploadAvatar,
+                      onEditDisplayNameTap:
+                          user == null || _isUpdatingDisplayName
+                          ? null
+                          : _showEditDisplayNameDialog,
+                    );
+                  },
+                ),
+                if (user == null) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 48,
+                    child: FilledButton.icon(
+                      onPressed: _openLoginScreen,
+                      icon: const Icon(Icons.login_rounded),
+                      label: const Text('Đăng nhập'),
                     ),
                   ),
+                ],
+                const SizedBox(height: 18),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Gói VIP',
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: _isCheckingPayment ? null : _checkLastPayment,
+                      icon: const Icon(Icons.sync_rounded, size: 18),
+                      label: Text(
+                        _isCheckingPayment ? 'Đang kiểm tra' : 'Kiểm tra',
+                      ),
+                    ),
+                  ],
                 ),
-                TextButton.icon(
-                  onPressed: _isCheckingPayment ? null : _checkLastPayment,
-                  icon: const Icon(Icons.sync_rounded, size: 18),
-                  label: Text(
-                    _isCheckingPayment ? 'Đang kiểm tra' : 'Kiểm tra',
+                const SizedBox(height: 10),
+                FutureBuilder<UserVipModel?>(
+                  future: _currentVipFuture,
+                  builder: (context, vipSnapshot) {
+                    return FutureBuilder<List<VipPackageModel>>(
+                      future: _vipPackagesFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 56),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+
+                        if (snapshot.hasError) {
+                          return _ErrorState(
+                            message: 'Không tải được gói VIP.',
+                            onRetry: _refreshPackages,
+                          );
+                        }
+
+                        final packages = _filterPackagesForCurrentVip(
+                          snapshot.data ?? [],
+                          vipSnapshot.data,
+                        );
+                        if (packages.isEmpty) {
+                          return const _EmptyState();
+                        }
+
+                        final activeIndex = _currentPackageIndex.clamp(
+                          0,
+                          packages.length - 1,
+                        );
+
+                        final pagerHeight = _vipPackagePagerHeight(context);
+
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: pagerHeight,
+                              child: PageView.builder(
+                                itemCount: packages.length,
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    _currentPackageIndex = index;
+                                    _selectedPackageId = packages[index].id;
+                                  });
+                                },
+                                itemBuilder: (context, index) {
+                                  final package = packages[index];
+
+                                  return VipPackageCard(
+                                    package: package,
+                                    isSelected: true,
+                                    isLoading:
+                                        _isCreatingPayment &&
+                                        (_selectedPackageId == null
+                                            ? index == activeIndex
+                                            : _selectedPackageId == package.id),
+                                    onTap: () {
+                                      setState(
+                                        () => _selectedPackageId = package.id,
+                                      );
+                                    },
+                                    onPay: () => _pay(package),
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                packages.length,
+                                (index) => AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  width: index == activeIndex ? 18 : 7,
+                                  height: 7,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: index == activeIndex
+                                        ? AppColors.primary
+                                        : AppColors.lightBorder,
+                                    borderRadius: BorderRadius.circular(99),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 18),
+                _ProfileLinksCard(
+                  isDark: isDark,
+                  textColor: textColor,
+                  mutedColor: mutedColor,
+                  onTermsTap: () => _openWebView(
+                    url: AppConfig.termsOfUseUrl,
+                    title: 'Điều khoản sử dụng',
                   ),
+                  onFeedbackTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+                    );
+                  },
+                  onContactTap: () => _openWebView(
+                    url: AppConfig.developmentTeamUrl,
+                    title: 'Liên hệ',
+                  ),
+                  onPrivacyTap: () => _openWebView(
+                    url: AppConfig.privacyPolicyUrl,
+                    title: 'Chính sách riêng tư',
+                  ),
+                ),
+                const SizedBox(height: 18),
+                _DownloadAppCard(
+                  isDark: isDark,
+                  textColor: textColor,
+                  qrAssetPath: AppConfig.downloadQrAsset,
+                  isCheckingVersion: _isCheckingAppVersion,
+                  onCheckVersionTap: _checkAppVersion,
+                  onShareTap: _shareDownloadApp,
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            FutureBuilder<UserVipModel?>(
-              future: _currentVipFuture,
-              builder: (context, vipSnapshot) {
-                return FutureBuilder<List<VipPackageModel>>(
-                  future: _vipPackagesFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 56),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-
-                    if (snapshot.hasError) {
-                      return _ErrorState(
-                        message: 'Không tải được gói VIP.',
-                        onRetry: _refreshPackages,
-                      );
-                    }
-
-                    final packages = _filterPackagesForCurrentVip(
-                      snapshot.data ?? [],
-                      vipSnapshot.data,
-                    );
-                    if (packages.isEmpty) {
-                      return const _EmptyState();
-                    }
-
-                    final activeIndex = _currentPackageIndex.clamp(
-                      0,
-                      packages.length - 1,
-                    );
-
-                    final pagerHeight = _vipPackagePagerHeight(context);
-
-                    return Column(
-                      children: [
-                        SizedBox(
-                          height: pagerHeight,
-                          child: PageView.builder(
-                            itemCount: packages.length,
-                            onPageChanged: (index) {
-                              setState(() {
-                                _currentPackageIndex = index;
-                                _selectedPackageId = packages[index].id;
-                              });
-                            },
-                            itemBuilder: (context, index) {
-                              final package = packages[index];
-
-                              return VipPackageCard(
-                                package: package,
-                                isSelected: true,
-                                isLoading:
-                                    _isCreatingPayment &&
-                                    (_selectedPackageId == null
-                                        ? index == activeIndex
-                                        : _selectedPackageId == package.id),
-                                onTap: () {
-                                  setState(
-                                    () => _selectedPackageId = package.id,
-                                  );
-                                },
-                                onPay: () => _pay(package),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            packages.length,
-                            (index) => AnimatedContainer(
-                              duration: const Duration(milliseconds: 180),
-                              width: index == activeIndex ? 18 : 7,
-                              height: 7,
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              decoration: BoxDecoration(
-                                color: index == activeIndex
-                                    ? AppColors.primary
-                                    : AppColors.lightBorder,
-                                borderRadius: BorderRadius.circular(99),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 18),
-            _ProfileLinksCard(
-              isDark: isDark,
-              textColor: textColor,
-              mutedColor: mutedColor,
-              onTermsTap: () => _openWebView(
-                url: AppConfig.termsOfUseUrl,
-                title: 'Điều khoản sử dụng',
+            Positioned(
+              right: 16,
+              bottom: 10,
+              child: SafeArea(
+                top: false,
+                child: _AppVersionLabel(
+                  packageInfoFuture: _packageInfoFuture,
+                  mutedColor: mutedColor,
+                ),
               ),
-              onFeedbackTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const FeedbackScreen()),
-                );
-              },
-              onContactTap: () => _openWebView(
-                url: AppConfig.developmentTeamUrl,
-                title: 'Liên hệ',
-              ),
-              onPrivacyTap: () => _openWebView(
-                url: AppConfig.privacyPolicyUrl,
-                title: 'Chính sách riêng tư',
-              ),
-            ),
-            const SizedBox(height: 18),
-            _DownloadAppCard(
-              isDark: isDark,
-              textColor: textColor,
-              qrAssetPath: AppConfig.downloadQrAsset,
-              onDownloadTap: () => _openWebView(
-                url: AppConfig.downloadAppUrl,
-                title: 'Tải ứng dụng',
-              ),
-              onShareTap: _shareDownloadApp,
             ),
           ],
         ),
@@ -781,14 +836,16 @@ class _DownloadAppCard extends StatelessWidget {
   final bool isDark;
   final Color textColor;
   final String qrAssetPath;
-  final VoidCallback onDownloadTap;
+  final bool isCheckingVersion;
+  final VoidCallback onCheckVersionTap;
   final VoidCallback onShareTap;
 
   const _DownloadAppCard({
     required this.isDark,
     required this.textColor,
     required this.qrAssetPath,
-    required this.onDownloadTap,
+    required this.isCheckingVersion,
+    required this.onCheckVersionTap,
     required this.onShareTap,
   });
 
@@ -831,17 +888,32 @@ class _DownloadAppCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Row(
+          Column(
             children: [
-              Expanded(
+              SizedBox(
+                width: double.infinity,
                 child: FilledButton.icon(
-                  onPressed: onDownloadTap,
-                  icon: const Icon(Icons.download_rounded, size: 18),
-                  label: const Text('Tải app'),
+                  onPressed: isCheckingVersion ? null : onCheckVersionTap,
+                  icon: isCheckingVersion
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.system_update_alt_rounded, size: 18),
+                  label: Text(
+                    isCheckingVersion ? 'Đang kiểm tra' : 'Kiểm tra phiên bản',
+                  ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
+
+              const SizedBox(height: 10),
+
+              SizedBox(
+                width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: onShareTap,
                   icon: const Icon(Icons.share_rounded, size: 18),
@@ -852,6 +924,39 @@ class _DownloadAppCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AppVersionLabel extends StatelessWidget {
+  final Future<PackageInfo> packageInfoFuture;
+  final Color mutedColor;
+
+  const _AppVersionLabel({
+    required this.packageInfoFuture,
+    required this.mutedColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<PackageInfo>(
+      future: packageInfoFuture,
+      builder: (context, snapshot) {
+        final version = snapshot.data?.version;
+        if (version == null || version.trim().isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Text(
+          'Phiên bản $version',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: mutedColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        );
+      },
     );
   }
 }

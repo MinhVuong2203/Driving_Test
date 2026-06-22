@@ -277,33 +277,41 @@ class _SimulationPlayerScreenState extends State<SimulationPlayerScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              Row(
+              Column(
                 children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _canGoPrevious
-                          ? () => _goToIndex(_currentIndex - 1)
-                          : null,
-                      icon: const Icon(Icons.chevron_left_rounded),
-                      label: const Text('Trước'),
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _canGoPrevious
+                              ? () => _goToIndex(_currentIndex - 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_left_rounded),
+                          label: const Text('Trước'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: _canGoNext
+                              ? () => _goToIndex(_currentIndex + 1)
+                              : null,
+                          icon: const Icon(Icons.chevron_right_rounded),
+                          iconAlignment: IconAlignment.end,
+                          label: const Text('Tiếp'),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
+
+                  const SizedBox(height: 8),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
                       onPressed: _replay,
                       icon: const Icon(Icons.replay_rounded),
                       label: const Text('Làm lại'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _canGoNext
-                          ? () => _goToIndex(_currentIndex + 1)
-                          : null,
-                      icon: const Icon(Icons.chevron_right_rounded),
-                      label: const Text('Tiếp'),
                     ),
                   ),
                 ],
