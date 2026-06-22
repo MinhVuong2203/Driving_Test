@@ -1,5 +1,6 @@
 import 'package:driving_test_prep/data/models/simulation_situation_model.dart';
 import 'package:driving_test_prep/data/repository/simulation_situation_repository.dart';
+import 'package:driving_test_prep/features/simulation/screens/simulation_exam_screen.dart';
 import 'package:driving_test_prep/features/simulation/screens/simulation_history_screen.dart';
 import 'package:driving_test_prep/features/simulation/screens/simulation_situation_list_screen.dart';
 import 'package:driving_test_prep/shared/utils/constants/app_colors.dart';
@@ -94,6 +95,23 @@ class _SimulationPracticeScreenState extends State<SimulationPracticeScreen> {
             children: [
               _SummaryPanel(total: situations.length),
               const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: () {
+                  final examSituations =
+                      _repository.generateExamSituations(situations);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SimulationExamScreen(
+                        situations: examSituations,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.quiz_rounded),
+                label: const Text('Thi mô phỏng'),
+              ),
+              const SizedBox(height: 10),
               OutlinedButton.icon(
                 onPressed: () {
                   Navigator.push(
